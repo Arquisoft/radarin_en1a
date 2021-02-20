@@ -4,16 +4,32 @@
 
 [role="arc42help"]
 ****
-.Contents
-Any requirement that constrains software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+.Technical Constraints
+[options="header",cols="1,2"]
+|===
+|Constraint|Description
+| _React_ | 
+| _Solid_ | 
+| _Docker_ | 
+|===
 
-.Motivation
-Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.
+.Organizational Constraints
+[options="header",cols="1,2"]
+|===
+|Constraint|Description
+| _Time_ | 
+| _Team size_ | 
+| _Data_ |
+| _Scope_ |
+|===
 
-.Form
-Simple tables of constraints with explanations.
-If needed you can subdivide them into
-technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)
-****
+.Conventions
+[options="header",cols="1,2"]
+|===
+|Constraint|Description
+| _JavaScript Conventions_ | 
+| _Language_ | 
+|  |
+|  |
+|  |
+|===
