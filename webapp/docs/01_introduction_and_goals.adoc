@@ -6,6 +6,7 @@
 The goal of this proyect is to facilitate meetings between friends using new technologies. The application will use the localization of the phones to connect close friends.
 
 The technologies that will be used in this project will be:
+
 * The localization provided by the phone, if the users voluntarily allow it
 * The system will be compatible with the SOLID project.
 * The system only can store locations and timestamps which those locations happens, but it wont store other personal information.
@@ -16,6 +17,7 @@ The technologies that will be used in this project will be:
 [role="arc42help"]
 ****
 Here we have the functional requirements that our application will provide:
+
 * Users will be able to visualize and maganage locations in the web application.
 * Admins will have options to manage users and monitor server status.
 * Users will be able to send their location to the server and get notified if friends are nearby.
