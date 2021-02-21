@@ -1,24 +1,49 @@
 [[section-solution-strategy]]
+
 == Solution Strategy
 
+=== Technologies
+	React::
+        React allows us to create an adaptable graphic interface and managing data changes with ease.
+	Solid::
+        Solid gives the user the freedom to choose what data he wants to share and gives us an easy way of accessing it.
+	Docker & Heroku::
+        Docker and Heroku will be user for application deployment.
 
-[role="arc42help"]
-****
-.Contents
-A short summary and explanation of the fundamental decisions and solution strategies, that shape the system's architecture. These include
+=== Top-level decomposition of the system.
+	MVC::
+        MVC is a very common architectural pattern for applications that need a user interface. It is widely known and easy to work with.
 
-* technology decisions
-* decisions about the top-level decomposition of the system, e.g. usage of an architectural pattern or design pattern
-* decisions on how to achieve key quality goals
-* relevant organizational decisions, e.g. selecting a development process or delegating certain tasks to third parties.
+=== Key quality goals
+        Privacy::
+        One of the points in which we want to focus is user privacy. With the use of SOLID pods, we are able to sotre of minimal personal information from the user.
+                This increases their privacy and reduces the number of ways a user can can be attacked. In this aspect, we also want to make sure we don't compromise the information
+                that the users give us by trying to reduce the risk of a security break.
 
-.Motivation
-These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules.
+        Software quality::
+        Another important point we want to take in mind is the development of quality software. We want our project to follow a minimum number of conventions, have a correct package structure and 
+                 make use of well known arquitectural and design patterns when possible, aside of having an addecuate number of comments and documentation to explain the functionalities of the system. 
 
-.Form
-Keep the explanation of these key decisions short.
+        Proper system operation::
+        To make sure the application accomplishes a minimum of quality goals, we want to make sure a proper testing methodology is followed. One of the main problems we want to avoid is simple 
+                bugs that evolve into more complex ones. We belive the best way around this is to find errors as soon as possible. To accomplish these with the maximum level of coordination among the
+                team members, small tests for specific parts of the application will be ran before implementing new functionalities to the full application. After making sure everyting works as expected,
+                it will be merged with the main project, where it will be tested again. The types of tests to be ran are unit tests, acceptance tests and load tests.
+        Once the application is deployed, we want to prevent it from crashing in an unexpected way. That's why we want to implement a monitoring system for administrators, where the state of 
+                fundamental parts of the application such as the DB can be checked and managed.
 
-Motivate what you have decided and why you decided that way,
-based upon your problem statement, the quality goals and key constraints.
-Refer to details in the following sections.
-****
+=== Organizational decisions
+	Lenguage::
+        Comments, code and issues will be in English for internationalization purposes.
+		The work will be decomposed in smaller tasks, that will be assigned to a member or a group.
+		These tasks will most of the times be represented as issues in Github.
+	Issues::
+        For each task in current development, a member or group of members will be assigned.
+		Any doubt that comes up during the development of a task will be written as a comment to the issue,
+		to be further discussed among the whole development team. These will help us divide the application
+		into smaller pieces, but taking advantage of the skills of every member.
+	Microsoft Teams::
+        Regular meetings will be organized. In these meetings all team members will discuss
+		important development topics, such as important design/architectural decisions or the way of organizing
+		a set of functionalities to be implemented, a change in documentation... Due to the pandemic situation
+		at the time of development, these meetings will take place via Microsoft Teams.
