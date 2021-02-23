@@ -1,22 +1,23 @@
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
-[role="arc42help"]
-****
+
 The goal of this proyect is to facilitate meetings between friends using new technologies. The application will use the localization of the phones to connect close friends.
 
+
 The technologies that will be used in this project will be:
+
 
 * The localization provided by the phone, if the users voluntarily allow it
 * The system will be compatible with the SOLID project.
 * The system only can store locations and timestamps which those locations happens, but it wont store other personal information.
-****
+
 
 === Requirements Overview
 
-[role="arc42help"]
-****
+
 Here we have the functional requirements that our application will provide:
+
 
 * Users will be able to visualize and maganage locations in the web application.
 * Admins will have options to manage users and monitor server status.
@@ -24,13 +25,12 @@ Here we have the functional requirements that our application will provide:
 * Users' data will be stored in a decentralized way, from their personal pod.
 * The most part of users' information will be queried from the users' pod.
 
-****
 
 === Quality Goals
 
-[role="arc42help"]
-****
+
 Our quality goals in this application are:
+
 
 [options="header",cols="1,2"]
 |===
@@ -41,13 +41,10 @@ Our quality goals in this application are:
 | Originality | The application idea and solution should be innovative.
 |===
 
-****
 
 === Stakeholders
 
-[role="arc42help"]
-****
-****
+
 [options="header",cols="1,2"]
 |===
 |Role/Name|Expectations

@@ -5,5 +5,6 @@
 === Level 1
 image:documentation5-diagram-level1.jpg["Overview of the system"]
 
+
 === Level 2
 image:documentation5-diagram-level2.jpg["Some details of the different components"]

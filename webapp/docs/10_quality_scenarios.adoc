@@ -3,16 +3,14 @@
 
 === Quality Tree
 
-[role="arc42help"]
-****
+
 [caption="Quality Tree"]
 image::Quality_Tree.png[]
-****
+
 
 === Quality Scenarios
 
-[role="arc42help"]
-****
+
 Here we have a table with our quality goals, the scenarios and the priorities:
 
 * Quality goal: quality measurable subject which needs to reach a target level.
@@ -30,5 +28,3 @@ Here we have a table with our quality goals, the scenarios and the priorities:
 | Testability |  The application should be designed to be tested, so the implementation flaws can be found. | Medium | Medium
 | Modifybility | The application should easily modifiable or new options should be easyly added. We should use programming patrons and design. | Medium | High
 |===
-
-****

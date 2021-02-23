@@ -2,8 +2,6 @@
 == Architecture Constraints
 
 
-[role="arc42help"]
-****
 .Technical Constraints
 [options="header",cols="1,2"]
 |===
@@ -29,7 +27,4 @@
 |Constraint|Description
 | _JavaScript Conventions_ | 
 | _Language_ | 
-|  |
-|  |
-|  |
 |===
