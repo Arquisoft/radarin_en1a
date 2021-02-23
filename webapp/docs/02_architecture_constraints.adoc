@@ -6,25 +6,24 @@
 [options="header",cols="1,2"]
 |===
 |Constraint|Description
-| _React_ | 
-| _Solid_ | 
-| _Docker_ | 
+| _React_ | The application will be programmed using the React Framework.
+| _Solid_ | The application must follow the Solid conventions (https://github.com/solid/solid-spec).
+| _Docker_ | The application will run on docker.
 |===
 
 .Organizational Constraints
 [options="header",cols="1,2"]
 |===
 |Constraint|Description
-| _Time_ | 
-| _Team size_ | 
-| _Data_ |
-| _Scope_ |
+| _Time_ |  The application will be finished before the end of the course.
+| _Team size_ | The team is composed of four people.
+| _Data_ |  The data storage will be separated from the application.
 |===
 
 .Conventions
 [options="header",cols="1,2"]
 |===
 |Constraint|Description
-| _JavaScript Conventions_ | 
-| _Language_ | 
+| _JavaScript Conventions_ | The application will be written following the Javascript conventions https://jsdoc.app/
+| _Language_ | The application will be in English
 |===
