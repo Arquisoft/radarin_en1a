@@ -40,6 +40,11 @@
   padding-top:5vh;
 }
 
+.map-section {
+  width: 90%;
+  margin: auto;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

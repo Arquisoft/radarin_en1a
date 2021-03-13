@@ -5,17 +5,35 @@ import Welcome from './components/Welcome';
 import EmailForm from "./components/EmailForm";
 import UserList from "./components/UserList";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Map from "./components/Map";
 
 class App extends React.Component{
-  constructor(){
-    super()
-    this.state = {users:[]}
+  constructor(props){
+    super(props)
+    this.getLocation();
+    this.state = {
+      users:[],
+      currentLat : null,
+      currentLng : null
+    };
   }
 
   refreshUsers(users){
     this.setState({users:users})
   }
-
+  
+  getLocation() {
+    const self = this;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) { //watchPosition()
+        self.setState({
+          currentLat: position.coords.latitude,
+          currentLng: position.coords.longitude
+        });
+      });
+    }
+  }
+  
   render(){
     return(
       <div className="App">
@@ -24,6 +42,10 @@ class App extends React.Component{
           <Welcome name="ASW students"/>
         </header>
         <div className="App-content">
+          {
+            this.state.currentLat && this.state.currentLng ?
+            <Map lat={this.state.currentLat} lng={this.state.currentLng}/> : null
+          }
           <EmailForm refreshUsers={this.refreshUsers.bind(this)}/>
           <UserList users={this.state.users}/>
           <a className="App-link"
