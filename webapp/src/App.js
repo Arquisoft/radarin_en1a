@@ -44,7 +44,8 @@ class App extends React.Component{
         <div className="App-content">
           {
             this.state.currentLat && this.state.currentLng ?
-            <Map lat={this.state.currentLat} lng={this.state.currentLng}/> : null
+            <Map lat={this.state.currentLat} lng={this.state.currentLng}/>
+            : <h2>Location needed for services</h2>
           }
           <EmailForm refreshUsers={this.refreshUsers.bind(this)}/>
           <UserList users={this.state.users}/>
