@@ -33,34 +33,6 @@ class App extends React.Component {
     }
   }
 
-  render() {
-    return (
-      <div className="App">
-        <header>
-          <h1>Radarin Admin</h1>
-        </header>
-        <TodoList />
-        <div className="App-content">
-          {
-            this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} />
-              : <h2>Location needed for services</h2>
-          }
-        </div>
-      </div>
-    )
-  }
-
-}
-
-class TodoList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      locations: [],
-    }
-  }
-
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
@@ -88,14 +60,24 @@ class TodoList extends React.Component {
 
   render() {
     return (
-      <div className="App-content">
+      <div className="App">
+        <header>
+          <h1>Radarin - Friends Location</h1>
+        </header>
         <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
         <LocationListDisplay locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
         <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} />
-        
+        <div className="App-content">
+          {
+            this.state.currentLat && this.state.currentLng ?
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={LocationList(this.state.locations)}/>
+              : <h2>Location needed for services</h2>
+          }
+        </div>
       </div>
-    );
+    )
   }
+
 }
 
 class InputLocation extends React.Component {
@@ -147,12 +129,11 @@ function LocationList(input) {
     input.map(l => { // l es cada location
       var tp = l.split(',');
       var d = {
-        lat: tp[0],
-        lng: tp[1]
+        lat: parseInt(tp[0]),
+        lng: parseInt(tp[1])
       }
       return d;
     })
-  console.log(data);
   return data;
 }
 

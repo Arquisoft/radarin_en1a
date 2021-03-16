@@ -8,21 +8,27 @@ import {
 } from "react-google-maps";
 //import mapStyles from "./mapStyles"
 
-const Map = ( {lat,lng} ) => {    
+const Map = ( {lat,lng,locations} ) => {    
     const WrappedMap = withScriptjs(withGoogleMap((props) => 
         <GoogleMap 
             defaultZoom={10} 
             defaultCenter={{ lat: lat, lng: lng }}
-            //defaultOptions={{style: mapStyles}}
-            //{ allLocations.map(location=>{...}) }
         >
+            {locations.forEach((loc) => (
+                <Marker 
+                    position={{ lat: loc.lat, lng: loc.lng }} 
+                    icon = {{ 
+                        url: '/user.png', 
+                        scaledSize: new window.google.maps.Size(30,30) }
+                    }
+                />
+            ))}
             <Marker
                 position={{ lat: lat, lng: lng }}
                 icon = {{ 
                     url: '/user.png', 
                     scaledSize: new window.google.maps.Size(30,30) }
                 }
-                //onClick={()=>{showUserSelected()}}
             />
             <Circle
                 defaultCenter={{ lat: lat, lng: lng }}
