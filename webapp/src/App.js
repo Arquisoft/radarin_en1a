@@ -13,13 +13,14 @@ class App extends React.Component {
     this.state = {
       users: [],
       currentLat: null,
-      currentLng: null
+      currentLng: null,
+      locations : []
     };
   }
-  refreshUsers(users){
+  refreshUsers(users) {
     this.setState({ users: users })
   }
-  
+
   getLocation() {
     const self = this;
     if (navigator.geolocation) {
@@ -31,40 +32,10 @@ class App extends React.Component {
       });
     }
   }
-  
-  render(){
-    return (
-      <div className="App">
-        <div className="App">
-          <header>
-            <h1>Admin Radain</h1>
-          </header>
-          <LocationsList />
-        </div>
-        <div className="App-content">
-          {
-            this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} />
-              : <h2>Location needed for services</h2>
-          }
-        </div>
-      </div>
-    )
-  }
-
-}
-
-class LocationsList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      locations: [],
-    }
-  }
 
   handleNewLocation(location) {
     if (location === "") {
-      alert("Empty location is not allowed!");
+      alert("Empty location not allowed!");
       return;
     }
     const locations = this.state.locations.concat(location);
@@ -89,13 +60,24 @@ class LocationsList extends React.Component {
 
   render() {
     return (
-      <div className="App-content">
+      <div className="App">
+        <header>
+          <h1>Radarin - Friends Location</h1>
+        </header>
         <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
-        <LocationList locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
+        <LocationListDisplay locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
         <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} />
+        <div className="App-content">
+          {
+            this.state.currentLat && this.state.currentLng ?
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations}/>
+              : <h2>Location needed for services</h2>
+          }
+        </div>
       </div>
-    );
+    )
   }
+
 }
 
 class InputLocation extends React.Component {
@@ -129,20 +111,30 @@ class InputLocation extends React.Component {
 
 }
 
-//TODO: MODIFICAR ESTO PARA RENDERIZAR EL MAPA (API GOOGLE MAPS)
-function LocationList(props) {
+function LocationListDisplay(props) {
+  LocationList(props.locations);
+  return (
+    props.locations.map(t => {
+      return (
+        <li key={t}>
+          {t}<button onClick={() => props.deleteLocation(t)}>-</button>
+        </li>
+      );
+    })
+  );
+}
+
+function LocationList(input) {
   var data =
-    props.locations.map(l => { // l es cada location
+    input.map(l => { // l es cada location
       var tp = l.split(',');
       var d = {
-        lat: tp[0],
-        lon: tp[1]
-
+        lat: parseInt(tp[0]),
+        lng: parseInt(tp[1])
       }
       return d;
     })
-  console.log(JSON.stringify(data));
-  return null;
+  return data;
 }
 
 class SolidStorage extends React.Component {
@@ -159,37 +151,34 @@ class SolidStorage extends React.Component {
 async function loadSolidLocations() {
   let session = await getCurrentSession();
   let url = session.webId.replace("profile/card#me", "radarin/last.ttl#locations");
-  let locationList = data[url];
+  let radar = data[url];
   const locations = [];
-  for await (const location of locationList.schema_itemListElement) {
+  for await (const location of radar.schema_itemListElement) {
     locations.push(location.toString());
   }
   return Array.from(locations.values());
 }
 
-async function saveSolidLocations(newlocations, oldLocations) {
+async function saveSolidLocations(locations, oldLocations) {
   let session = await getCurrentSession();
   let url = session.webId.replace("profile/card#me", "radarin/last.ttl#locations");
-  let locations = data[url];
+  let radar = data[url];
   for (const t of oldLocations) {
-    await locations["schema:itemListElement"].delete(t.toString());
+    await radar["schema:itemListElement"].delete(t.toString());
   }
-  for (const t of newlocations) {
-    await locations["schema:itemListElement"].add(t.toString());
+  for (const t of locations) {
+    await radar["schema:itemListElement"].add(t.toString());
   }
   alert("Saved to your Solid POD");
 }
 
 async function getCurrentSession() {
   let session = await auth.currentSession();
-  let popupUri = 'https://inrupt.net/common/popup.html';
+  let popupUri = 'https://solid.community/common/popup.html';
   if (!session) {
     session = await auth.popupLogin({ popupUri });
   }
   return session;
 }
-
-//MAPA
-
 
 export default App;
