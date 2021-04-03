@@ -70,7 +70,7 @@ class App extends React.Component {
         <div className="App-content">
           {
             this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={LocationList(this.state.locations)}/>
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations}/>
               : <h2>Location needed for services</h2>
           }
         </div>

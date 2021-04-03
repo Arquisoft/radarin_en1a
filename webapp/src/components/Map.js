@@ -1,51 +1,62 @@
 import React from "react";
 import {
-    GoogleMap,
-    withScriptjs, //embeded js code map function
-    withGoogleMap,
-    Marker,
-    Circle
-} from "react-google-maps";
-//import mapStyles from "./mapStyles"
+   GoogleMap,
+   useLoadScript,
+   Marker,
+   Circle
+} from "@react-google-maps/api";
+import mapsStyles from "./MapStyles";
+
+const libraries = ["places"];
+const mapContainerStyle = {
+    width: '68vw',
+    height: '68vh',
+}
+const options = {
+    styles: mapsStyles,
+    disableDefaultUI: true,
+    zoomControl: true,
+}
 
 const Map = ( {lat,lng,locations} ) => {    
-    const WrappedMap = withScriptjs(withGoogleMap((props) => 
+    const {isLoaded,loadError} = useLoadScript({
+        googleMapsApiKey : process.env.REACT_APP_GOOGLE_KEY,
+        libraries,
+    });
+
+    if(loadError) return "Error loading map";
+    if(!isLoaded) return "Map not loaded";
+
+    return(
         <GoogleMap 
-            defaultZoom={10} 
-            defaultCenter={{ lat: lat, lng: lng }}
-        >
-            {locations.forEach((loc) => (
-                <Marker 
-                    position={{ lat: loc.lat, lng: loc.lng }} 
-                    icon = {{ 
-                        url: '/user.png', 
-                        scaledSize: new window.google.maps.Size(30,30) }
-                    }
-                />
-            ))}
-            <Marker
-                position={{ lat: lat, lng: lng }}
-                icon = {{ 
+            mapContainerStyle={mapContainerStyle} 
+            zoom={12} 
+            center={{lat:lat, lng:lng}}
+            options={options}>
+            <Marker 
+                position={{lat:lat, lng:lng,}} 
+                icon={{
                     url: '/user.png', 
-                    scaledSize: new window.google.maps.Size(30,30) }
-                }
+                    scaledSize: new window.google.maps.Size(36,36) 
+                }}
             />
-            <Circle
-                defaultCenter={{ lat: lat, lng: lng }}
-                draggable={false}
-                radius={15000}
-            />
-        </GoogleMap>    
-    )); 
-    return( 
-        <div className="map-section">
-            <WrappedMap googleMapURL = {`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.REACT_APP_GOOGLE_KEY}`} 
-                loadingElement={<div style={{ height: `100%` }} />} 
-                containerElement={<div style={{ height: `400px` }} />}
-                mapElement={<div style={{ height: `160%` }} />}
-            />
-        </div> 
-    );
+            {/* Establecer valor por el usuario */}
+            <Circle center={{lat:lat, lng:lng}} radius={6000}/>    
+            {locations.map(marker => 
+                <Marker 
+                    key={marker.split(",")[0]} 
+                    position={{
+                        lat: parseFloat(marker.split(",")[0]), 
+                        lng: parseFloat(marker.split(",")[1])
+                    }}
+                    icon={{
+                        url: '/user.png', 
+                        scaledSize: new window.google.maps.Size(15,15) 
+                    }}
+                />)
+            }
+        </GoogleMap>
+    )
 }
 
 export default Map;
