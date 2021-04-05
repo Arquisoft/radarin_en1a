@@ -14,9 +14,11 @@ class App extends React.Component {
       users: [],
       currentLat: null,
       currentLng: null,
-      locations : []
+      rangeSelection: "6000",
+      locations : ["43.5169,-6.01471","43.55473,-5.92483","43.4667,-5.9167"]
     };
   }
+  
   refreshUsers(users) {
     this.setState({ users: users })
   }
@@ -33,6 +35,10 @@ class App extends React.Component {
     }
   }
 
+  handRangeChange(event) {
+    this.setState({rangeSelection: event.target.value})
+  }
+  
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
@@ -68,11 +74,15 @@ class App extends React.Component {
         <LocationListDisplay locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
         <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} />
         <div className="App-content">
+          <span>{this.state.rangeSelection} meters</span>
+          <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)}/>
+          <div className="Map-content">
           {
-            this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations}/>
+            this.state.currentLat && this.state.currentLng ? 
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection}/>
               : <h2>Location needed for services</h2>
           }
+          </div>
         </div>
       </div>
     )
