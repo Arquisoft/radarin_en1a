@@ -18,7 +18,7 @@ class App extends React.Component {
       rangeSelection: "6000"
     };
   }
-  
+
   refreshUsers(users) {
     this.setState({ users: users })
   }
@@ -36,9 +36,9 @@ class App extends React.Component {
   }
 
   handRangeChange(event) {
-    this.setState({rangeSelection: event.target.value})
+    this.setState({ rangeSelection: event.target.value })
   }
-  
+
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
@@ -71,11 +71,13 @@ class App extends React.Component {
     let radar = data[friends];
     const locations = [];
     for await (const pod of radar.schema_itemListElement) {
-      let location = await fetch('https://' + pod.toString() + '/radarin/last.txt#locations').then(response => {
-        if (response.status === 200) return response.text()
-      });
-      locations.push(location.toString());
-      this.setState({ locations });
+      try {
+        let location = await fetch('https://' + pod.toString() + '/radarin/last.txt#locations').then(response => {
+          if (response.status === 200) return response.text()
+        });
+        locations.push(location.toString());
+        this.setState({ locations });
+      } catch { }
     }
   }
 
@@ -90,13 +92,13 @@ class App extends React.Component {
         <SolidStorage loadFromSolid={() => this.loadFriendsLocations()} saveToSolid={() => this.saveToSolid()} />
         <div className="App-content">
           <span>{this.state.rangeSelection} meters</span>
-          <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)}/>
+          <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
           <div className="Map-content">
-          {
-            this.state.currentLat && this.state.currentLng ? 
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection}/>
-              : <h2>Location needed for services</h2>
-          }
+            {
+              this.state.currentLat && this.state.currentLng ?
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection} />
+                : <h2>Location needed for services</h2>
+            }
           </div>
         </div>
       </div>
