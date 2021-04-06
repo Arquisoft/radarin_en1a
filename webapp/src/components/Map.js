@@ -18,7 +18,7 @@ const options = {
     zoomControl: true,
 }
 
-const Map = ( {lat,lng,locations} ) => {    
+const Map = ( {lat,lng,locations,radius} ) => {    
     const {isLoaded,loadError} = useLoadScript({
         googleMapsApiKey : process.env.REACT_APP_GOOGLE_KEY,
         libraries,
@@ -41,7 +41,7 @@ const Map = ( {lat,lng,locations} ) => {
                 }}
             />
             {/* Establecer valor por el usuario */}
-            <Circle center={{lat:lat, lng:lng}} radius={6000}/>    
+            <Circle center={{lat:lat, lng:lng}} radius={radius}/>    
             {locations.map(marker => 
                 <Marker 
                     key={marker.split(",")[0]} 

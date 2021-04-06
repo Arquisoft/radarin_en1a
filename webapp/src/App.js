@@ -14,7 +14,8 @@ class App extends React.Component {
       users: [],
       currentLat: null,
       currentLng: null,
-      locations : []
+      locations: [],
+      radio: 10000
     };
   }
   refreshUsers(users) {
@@ -49,13 +50,28 @@ class App extends React.Component {
   }
 
   async loadFromSolid() {
-    let locations = await loadSolidLocations();
+    let locations = await loadSolidLocations("/radarin/stored_locations.ttl");
     this.setState({ locations });
   }
 
   async saveToSolid() {
-    let oldLocations = await loadSolidLocations();
+    let oldLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
     saveSolidLocations(this.state.locations, oldLocations);
+  }
+
+  async loadFriendsLocations() {
+    let session = await getCurrentSession();
+    let friends = session.webId.replace("profile/card#me", "/radarin/friends.ttl#pods");
+
+    let radar = data[friends];
+    const locations = [];
+    for await (const pod of radar.schema_itemListElement) {
+      let location = await fetch('https://' + pod.toString() + '/radarin/last.txt#locations').then(response => {
+        if (response.status === 200) return response.text()
+      });
+      locations.push(location.toString());
+      this.setState({ locations });
+    }
   }
 
   render() {
@@ -66,11 +82,11 @@ class App extends React.Component {
         </header>
         <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
         <LocationListDisplay locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-        <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} />
+        <SolidStorage loadFromSolid={() => this.loadFriendsLocations()} saveToSolid={() => this.saveToSolid()} />
         <div className="App-content">
           {
             this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations}/>
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} radius={this.state.radio} />
               : <h2>Location needed for services</h2>
           }
         </div>
@@ -148,9 +164,9 @@ class SolidStorage extends React.Component {
   }
 }
 
-async function loadSolidLocations() {
+async function loadSolidLocations(filename) {
   let session = await getCurrentSession();
-  let url = session.webId.replace("profile/card#me", "radarin/last.ttl#locations");
+  let url = session.webId.replace("profile/card#me", filename + "#locations");
   let radar = data[url];
   const locations = [];
   for await (const location of radar.schema_itemListElement) {
@@ -161,7 +177,7 @@ async function loadSolidLocations() {
 
 async function saveSolidLocations(locations, oldLocations) {
   let session = await getCurrentSession();
-  let url = session.webId.replace("profile/card#me", "radarin/last.ttl#locations");
+  let url = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl#locations");
   let radar = data[url];
   for (const t of oldLocations) {
     await radar["schema:itemListElement"].delete(t.toString());
@@ -174,7 +190,7 @@ async function saveSolidLocations(locations, oldLocations) {
 
 async function getCurrentSession() {
   let session = await auth.currentSession();
-  let popupUri = 'https://solid.community/common/popup.html';
+  let popupUri = 'https://inrupt.net/common/popup.html';
   if (!session) {
     session = await auth.popupLogin({ popupUri });
   }
