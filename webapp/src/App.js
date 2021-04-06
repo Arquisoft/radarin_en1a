@@ -15,9 +15,10 @@ class App extends React.Component {
       currentLat: null,
       currentLng: null,
       locations: [],
-      radio: 10000
+      rangeSelection: "6000"
     };
   }
+  
   refreshUsers(users) {
     this.setState({ users: users })
   }
@@ -34,6 +35,10 @@ class App extends React.Component {
     }
   }
 
+  handRangeChange(event) {
+    this.setState({rangeSelection: event.target.value})
+  }
+  
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
@@ -84,11 +89,15 @@ class App extends React.Component {
         <LocationListDisplay locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
         <SolidStorage loadFromSolid={() => this.loadFriendsLocations()} saveToSolid={() => this.saveToSolid()} />
         <div className="App-content">
+          <span>{this.state.rangeSelection} meters</span>
+          <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)}/>
+          <div className="Map-content">
           {
-            this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} radius={this.state.radio} />
+            this.state.currentLat && this.state.currentLng ? 
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection}/>
               : <h2>Location needed for services</h2>
           }
+          </div>
         </div>
       </div>
     )
