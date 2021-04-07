@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
-
+import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
@@ -77,7 +77,7 @@ class App extends React.Component {
   // show them in the map later
   async loadFriendsLocations() {
     let session = await getCurrentSession();
-    let friends = session.webId.replace("profile/card#me", "/radarin/friends.ttl#pods");
+    let friends = await session.webId.replace("profile/card#me", "/radarin/friends.ttl#pods");
 
     let radar = data[friends];
     const locations = [];
@@ -119,25 +119,34 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header>
+        <header className="App-header">
+          <button id="ShowMenu" onClick={() => this.displayMenu()}>Side Menu</button>
+
           <h1>Radarin - Friends Location</h1>
+          
         </header>
 
-
         <div className="App-content">
-          <button id="ShowMenu" onClick={() => this.displayMenu()}>Side Menu</button>
+
           <div id="sidemenu">
+
+            <LoggedOut>
+              <LoginButton popup="https://inrupt.net/common/popup.html" />
+            </LoggedOut>
+            <LoggedIn>
+              <LogoutButton />
             <p> Load and edit your saved locations </p>
             <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
 
             <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
 
-            <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} display = {() => this.displayCurrentLocations()} />
-          </div>
+            <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} display={() => this.displayCurrentLocations()} />
 
+            </LoggedIn>
+          </div>
           <span>{this.state.rangeSelection} meters</span>
 
-          <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
+          <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
           <button onClick={() => this.loadFriendsLocations()}>Refresh</button>
           <div className="Map-content">
             {
@@ -147,7 +156,7 @@ class App extends React.Component {
             }
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 
@@ -218,7 +227,7 @@ function LocationList(input) {
 }
 
 class SolidStorage extends React.Component {
-  
+
   // Renders the buttons of solid actions 
   render() {
     return (
