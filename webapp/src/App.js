@@ -43,6 +43,7 @@ class App extends React.Component {
     this.setState({ rangeSelection: event.target.value })
   }
 
+  // Handles the insertion of a new location checking that it is not empty
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
@@ -52,22 +53,28 @@ class App extends React.Component {
     this.setState({ myLocations });
   }
 
+  // Handles the deletion of a location and 
+  // deletes the location from myLocations of the state
   handleDeleteLocation(location) {
     const myLocations = this.state.myLocations.slice();
     myLocations.splice(myLocations.indexOf(location), 1);
     this.setState({ myLocations });
   }
 
+  // Load the locations from solid and put them into the state
   async loadFromSolid() {
     let myLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
     this.setState({ myLocations });
   }
 
+  // Save all the locations to solid
   async saveToSolid() {
     let oldLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
     saveSolidLocations(this.state.myLocations, oldLocations);
   }
 
+  // Method that loads the friends location to 
+  // show them in the map later
   async loadFriendsLocations() {
     let session = await getCurrentSession();
     let friends = session.webId.replace("profile/card#me", "/radarin/friends.ttl#pods");
@@ -85,6 +92,7 @@ class App extends React.Component {
     }
   }
 
+  // Displays the side menu 
   displayMenu() {
 
     var width = document.getElementById('sidemenu').style.width;
