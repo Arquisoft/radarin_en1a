@@ -15,7 +15,7 @@ class App extends React.Component {
       currentLat: null,
       currentLng: null,
       locations: [],
-      myLocations: [],
+      myLocations: [], // Locations from solid pod and manually added
       rangeSelection: "6000"
     };
   }
@@ -44,13 +44,25 @@ class App extends React.Component {
   }
 
   // Handles the insertion of a new location checking that it is not empty
+  // It also checks if the location is already in the list before inserting it
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
       return;
     }
-    const myLocations = this.state.myLocations.concat(location);
-    this.setState({ myLocations });
+
+    let repetida = false;
+    for(let i = 0; i < this.state.myLocations.length; i++)
+    {
+      if(location.toString() == this.state.myLocations[i].toString())
+        repetida = true; 
+    }
+
+    if(!repetida){
+      const myLocations = this.state.myLocations.concat(location);
+      this.setState({ myLocations });
+    }else
+      alert("Repeated location not allowed!");
   }
 
   // Handles the deletion of a location and 
@@ -176,6 +188,7 @@ class InputLocation extends React.Component {
   // Handles the value change of the state
   handleChange(event) {
     this.setState({ value: event.target.value });
+    //this.state.myLocations;
   }
 
   // Handles the new location and adds it into the props
@@ -222,7 +235,7 @@ function LocationList(input) {
         lng: parseInt(tp[1])
       }
       return d;
-    })
+    });
   return data;
 }
 
