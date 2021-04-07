@@ -15,6 +15,7 @@ class App extends React.Component {
       currentLat: null,
       currentLng: null,
       locations: [],
+      myLocations: [],
       rangeSelection: "6000"
     };
   }
@@ -44,24 +45,24 @@ class App extends React.Component {
       alert("Empty location not allowed!");
       return;
     }
-    const locations = this.state.locations.concat(location);
-    this.setState({ locations });
+    const myLocations = this.state.myLocations.concat(location);
+    this.setState({ myLocations });
   }
 
   handleDeleteLocation(location) {
-    const locations = this.state.locations.slice();
-    locations.splice(locations.indexOf(location), 1);
-    this.setState({ locations });
+    const myLocations = this.state.myLocations.slice();
+    myLocations.splice(myLocations.indexOf(location), 1);
+    this.setState({ myLocations });
   }
 
   async loadFromSolid() {
-    let locations = await loadSolidLocations("/radarin/stored_locations.ttl");
-    this.setState({ locations });
+    let myLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
+    this.setState({ myLocations });
   }
 
   async saveToSolid() {
     let oldLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
-    saveSolidLocations(this.state.locations, oldLocations);
+    saveSolidLocations(this.state.myLocations, oldLocations);
   }
 
   async loadFriendsLocations() {
@@ -81,18 +82,48 @@ class App extends React.Component {
     }
   }
 
+  displayMenu() {
+
+    var width = document.getElementById('sidemenu').style.width;
+    if (width.toString().length === 0) {
+      document.getElementById('sidemenu').style.width = '15%';
+      document.getElementById('ShowMenu').innerHTML = "Hide";
+    }
+    else {
+      document.getElementById('sidemenu').style.width = '';
+      document.getElementById('ShowMenu').innerText = "Side Menu";
+    }
+  }
+  displayCurrentLocations() {
+    this.state.locations = this.state.myLocations;
+
+  }
+
+
+
   render() {
     return (
       <div className="App">
         <header>
           <h1>Radarin - Friends Location</h1>
         </header>
-        <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
-        <LocationListDisplay locations={this.state.locations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-        <SolidStorage loadFromSolid={() => this.loadFriendsLocations()} saveToSolid={() => this.saveToSolid()} />
+
+
         <div className="App-content">
+          <button id="ShowMenu" onClick={() => this.displayMenu()}>Side Menu</button>
+          <div id="sidemenu">
+            <p> Load and edit your saved locations </p>
+            <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
+
+            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
+
+            <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} display = {() => this.displayCurrentLocations()} />
+          </div>
+
           <span>{this.state.rangeSelection} meters</span>
+
           <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
+          <button onClick={() => this.loadFriendsLocations()}>Refresh</button>
           <div className="Map-content">
             {
               this.state.currentLat && this.state.currentLng ?
@@ -170,6 +201,8 @@ class SolidStorage extends React.Component {
       <div>
         <button onClick={() => this.props.loadFromSolid()}>Load from Solid</button>
         <button onClick={() => this.props.saveToSolid()}>Save to Solid</button>
+        <button onClick={() => this.props.display()}>Display Saved locations</button>
+
       </div>
     );
   }
