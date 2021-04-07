@@ -20,10 +20,12 @@ class App extends React.Component {
     };
   }
 
+  // Refresh the user list stored in the state
   refreshUsers(users) {
     this.setState({ users: users })
   }
 
+  // Obtains the localization with the navigator
   getLocation() {
     const self = this;
     if (navigator.geolocation) {
@@ -36,6 +38,7 @@ class App extends React.Component {
     }
   }
 
+  // Handles the change of the range slider
   handRangeChange(event) {
     this.setState({ rangeSelection: event.target.value })
   }
@@ -100,7 +103,11 @@ class App extends React.Component {
   }
 
 
-
+  // Renders the most part of the webpage:
+  // - Title
+  // - Menu button and menu
+  // - Range and its slider
+  // - Usable map
   render() {
     return (
       <div className="App">
@@ -149,15 +156,19 @@ class InputLocation extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  // Handles the value change of the state
   handleChange(event) {
     this.setState({ value: event.target.value });
   }
 
+  // Handles the new location and adds it into the props
   handleSubmit(event) {
     this.props.addNewLocation(this.state.value);
     event.preventDefault();
   }
 
+  // Renders the text input and the button that adds
+  // the locations entered in the input
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
@@ -169,6 +180,8 @@ class InputLocation extends React.Component {
 
 }
 
+// Obtains the list of locations and returns the html list of
+// locations with a button to delete each one
 function LocationListDisplay(props) {
   LocationList(props.locations);
   return (
@@ -182,6 +195,7 @@ function LocationListDisplay(props) {
   );
 }
 
+// Returns the list of locations obtained from the input
 function LocationList(input) {
   var data =
     input.map(l => { // l es cada location
@@ -196,6 +210,8 @@ function LocationList(input) {
 }
 
 class SolidStorage extends React.Component {
+  
+  // Renders the buttons of solid actions 
   render() {
     return (
       <div>
@@ -208,6 +224,7 @@ class SolidStorage extends React.Component {
   }
 }
 
+// Loads the locations from the solid profile
 async function loadSolidLocations(filename) {
   let session = await getCurrentSession();
   let url = session.webId.replace("profile/card#me", filename + "#locations");
@@ -219,6 +236,7 @@ async function loadSolidLocations(filename) {
   return Array.from(locations.values());
 }
 
+// Saves the locations into the solid profile
 async function saveSolidLocations(locations, oldLocations) {
   let session = await getCurrentSession();
   let url = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl#locations");
@@ -232,6 +250,7 @@ async function saveSolidLocations(locations, oldLocations) {
   alert("Saved to your Solid POD");
 }
 
+// Returns the current session
 async function getCurrentSession() {
   let session = await auth.currentSession();
   let popupUri = 'https://inrupt.net/common/popup.html';
