@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
    GoogleMap,
    useLoadScript,
@@ -19,7 +19,7 @@ const options = {
     zoomControl: true,
 }
 
-const Map = ( {lat,lng,locations,range} ) => {    
+const Map = ( {lat,lng,locations,range,friends} ) => {    
     const [selected, setSelected] = React.useState(null);
     const markers = [];
     
@@ -36,9 +36,18 @@ const Map = ( {lat,lng,locations,range} ) => {
     if(loadError) return "Error loading map";
     if(!isLoaded) return "Map not loaded";
 
+    // Map associating locations with user's last location
+    const friendsMapLocations = (locations, friends) => {
+        const map = new Map();
+        for(let i=0;i<locations.length;i++)
+            map.set(locations[i],friends[i]);
+        return map;
+    }
+    const friendsLocations = friendsMapLocations;
+
     // Turn string locations into google markers
     locations.map((location) => markers.push(<Marker 
-        key={location.split(",")[0]} 
+        key={friendsLocations.get(location)} 
         position={{
             lat: parseFloat(location.split(",")[0]), 
             lng: parseFloat(location.split(",")[1])
@@ -70,7 +79,7 @@ const Map = ( {lat,lng,locations,range} ) => {
                         return marker;
                 })
             }
-            {selected ? (<InfoWindow key={1} position={{lat:parseFloat(selected.split(",")[0]),lng: parseFloat(selected.split(",")[1])}} onCloseClick={()=>setSelected(null)} ><div>INFO HERE</div></InfoWindow> ) : null}
+            {selected ? (<InfoWindow position={{lat:parseFloat(selected.split(",")[0]),lng: parseFloat(selected.split(",")[1])}} onCloseClick={()=>setSelected(null)} ><div>{friendsLocations.get(selected)}</div></InfoWindow> ) : null}
         </GoogleMap>
     )
 }

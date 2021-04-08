@@ -16,7 +16,8 @@ class App extends React.Component {
       currentLng: null,
       locations: [],
       myLocations: [],
-      rangeSelection: "6000"
+      rangeSelection: "6000",
+      friendsList: []
     };
   }
 
@@ -81,13 +82,16 @@ class App extends React.Component {
 
     let radar = data[friends];
     const locations = [];
+    const friendsList = [];
     for await (const pod of radar.schema_itemListElement) {
       try {
         let location = await fetch('https://' + pod.toString() + '/radarin/last.txt#locations').then(response => {
           if (response.status === 200) return response.text()
         });
         locations.push(location.toString());
+        friendsList.push(pod.toString());
         this.setState({ locations });
+        this.setState({ friendsList });
       } catch { }
     }
   }
