@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
-
+import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
@@ -15,9 +15,8 @@ class App extends React.Component {
       currentLat: null,
       currentLng: null,
       locations: [],
-      myLocations: [],
-      rangeSelection: "6000",
-      friendsList: []
+      myLocations: [], // Locations from solid pod and manually added
+      rangeSelection: "6000"
     };
   }
 
@@ -36,22 +35,50 @@ class App extends React.Component {
           currentLng: position.coords.longitude
         });
       });
+      //this.saveLocationToSolid()
     }
   }
 
+  /*
+  async saveLocationToSolid()
+  {
+    var locationString = this.state.currentLat + ',' + this.state.currentLng;
+    let session = await getCurrentSession();
+    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+    let last = data[url];
+    for (const t of last) {
+      await last.delete(t.toString());
+    }
+      await last.add(locationString);
+    
+    alert("Saved to your Solid POD");
+
+  }
+  */
   // Handles the change of the range slider
   handRangeChange(event) {
     this.setState({ rangeSelection: event.target.value })
   }
 
   // Handles the insertion of a new location checking that it is not empty
+  // It also checks if the location is already in the list before inserting it
   handleNewLocation(location) {
     if (location === "") {
       alert("Empty location not allowed!");
       return;
     }
-    const myLocations = this.state.myLocations.concat(location);
-    this.setState({ myLocations });
+
+    let repetida = false;
+    for (let i = 0; i < this.state.myLocations.length; i++) {
+      if (location.toString() == this.state.myLocations[i].toString())
+        repetida = true;
+    }
+
+    if (!repetida) {
+      const myLocations = this.state.myLocations.concat(location);
+      this.setState({ myLocations });
+    } else
+      alert("Repeated location not allowed!");
   }
 
   // Handles the deletion of a location and 
@@ -64,38 +91,48 @@ class App extends React.Component {
 
   // Load the locations from solid and put them into the state
   async loadFromSolid() {
-    let myLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
+    let myLocations = await loadSolidLocations("radarin/stored_locations.ttl");
     this.setState({ myLocations });
+    console.log("loaded");
   }
 
   // Save all the locations to solid
   async saveToSolid() {
-    let oldLocations = await loadSolidLocations("/radarin/stored_locations.ttl");
+    let oldLocations = await loadSolidLocations("radarin/stored_locations.ttl");
     saveSolidLocations(this.state.myLocations, oldLocations);
+    console.log("saved");
   }
 
   // Method that loads the friends location to 
   // show them in the map later
+  // Made by Fran, one friday at 1 AM, who drank maybe a bit too much cocacola
   async loadFriendsLocations() {
-    let session = await getCurrentSession();
-    let friends = session.webId.replace("profile/card#me", "/radarin/friends.ttl#pods");
-
-    let radar = data[friends];
-    const locations = [];
-    const friendsList = [];
-    for await (const pod of radar.schema_itemListElement) {
-      try {
-        let location = await fetch('https://' + pod.toString() + '/radarin/last.txt#locations').then(response => {
-          if (response.status === 200) return response.text()
-        });
-        locations.push(location.toString());
-        friendsList.push(pod.toString());
-        this.setState({ locations });
-        this.setState({ friendsList });
-      } catch { }
-    }
+    var session = await getCurrentSession();
+    var person = data[session.webId]
+    const friends = [];
+    for await (const friend of person.friends)
+      friends.push(`${await data[friend]}`);
+    //this.setState({ friends })
+    this.reloadFriendLocations(friends);
   }
 
+  // Method that requests the last location to the friend's pods
+  async reloadFriendLocations(friends) {
+    var locations = []
+    for await (var friend of friends) {
+      var location = friend.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
+      location = await fetch(location + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+        if (x.status === 200)  // if the file exists, return the text
+          return x.text()
+      });
+
+      if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
+        locations.push(location)
+      }
+
+    }
+    this.setState({ locations }) //Update the state variable
+  }
   // Displays the side menu 
   displayMenu() {
 
@@ -110,8 +147,8 @@ class App extends React.Component {
     }
   }
   displayCurrentLocations() {
-    this.state.locations = this.state.myLocations;
-
+    var locations = this.state.myLocations;
+    this.setState({ locations })
   }
 
 
@@ -123,25 +160,34 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header>
+        <header className="App-header">
+          <button id="ShowMenu" onClick={() => this.displayMenu()}>Side Menu</button>
+
           <h1>Radarin - Friends Location</h1>
+
         </header>
 
-
         <div className="App-content">
-          <button id="ShowMenu" onClick={() => this.displayMenu()}>Side Menu</button>
+
           <div id="sidemenu">
-            <p> Load and edit your saved locations </p>
-            <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
 
-            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
+            <LoggedOut>
+              <LoginButton popup="https://inrupt.net/common/popup.html" />
+            </LoggedOut>
+            <LoggedIn>
+              <LogoutButton />
+              <p> Load and edit your saved locations </p>
+              <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
 
-            <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} display = {() => this.displayCurrentLocations()} />
+              <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
+
+              <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} display={() => this.displayCurrentLocations()} />
+
+            </LoggedIn>
           </div>
-
           <span>{this.state.rangeSelection} meters</span>
 
-          <input type="range" min="4000" max="10000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
+          <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
           <button onClick={() => this.loadFriendsLocations()}>Refresh</button>
           <div className="Map-content">
             {
@@ -151,7 +197,7 @@ class App extends React.Component {
             }
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 
@@ -171,6 +217,7 @@ class InputLocation extends React.Component {
   // Handles the value change of the state
   handleChange(event) {
     this.setState({ value: event.target.value });
+    //this.state.myLocations;
   }
 
   // Handles the new location and adds it into the props
@@ -217,12 +264,12 @@ function LocationList(input) {
         lng: parseInt(tp[1])
       }
       return d;
-    })
+    });
   return data;
 }
 
 class SolidStorage extends React.Component {
-  
+
   // Renders the buttons of solid actions 
   render() {
     return (
@@ -265,8 +312,8 @@ async function saveSolidLocations(locations, oldLocations) {
 // Returns the current session
 async function getCurrentSession() {
   let session = await auth.currentSession();
-  let popupUri = 'https://inrupt.net/common/popup.html';
   if (!session) {
+    let popupUri = 'https://solidcommunity.net/common/popup.html';
     session = await auth.popupLogin({ popupUri });
   }
   return session;
