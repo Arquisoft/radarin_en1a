@@ -3,13 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
+import { overwriteFile } from "@inrupt/solid-client";
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.getLocation();
     this.state = {
       users: [],
       currentLat: null,
@@ -18,6 +18,7 @@ class App extends React.Component {
       myLocations: [], // Locations from solid pod and manually added
       rangeSelection: "6000"
     };
+    this.getLocation();
   }
 
   // Refresh the user list stored in the state
@@ -26,35 +27,45 @@ class App extends React.Component {
   }
 
   // Obtains the localization with the navigator
+  // Then saves the localization into the last.txt file of the pod
   getLocation() {
     const self = this;
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) { //watchPosition()
-        self.setState({
-          currentLat: position.coords.latitude,
-          currentLng: position.coords.longitude
-        });
-      });
-      //this.saveLocationToSolid()
+        self.setAndSaveLocation(self, position,  function (){
+          self.saveLocationToSolid();
+        })
+      })
     }
   }
 
-  /*
+  // Intermediate step to make the getLocation and saveLocationToSolid work syncronous
+  setAndSaveLocation(self, position, callback)
+  {
+    // Sets the latitude and longitude into the state
+    // Latitude and longitude are taken from the geolocation
+    self.setState({
+      currentLat: position.coords.latitude,
+      currentLng: position.coords.longitude
+    })
+    callback();
+  }
+
+  // Saves the actual location into the pod TODO
   async saveLocationToSolid()
   {
-    var locationString = this.state.currentLat + ',' + this.state.currentLng;
+    var locationString = this.state.currentLat + ',' + this.state.currentLng; // Son ambos null ??
+    console.log(locationString);
     let session = await getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let last = data[url];
-    for (const t of last) {
-      await last.delete(t.toString());
-    }
-      await last.add(locationString);
-    
-    alert("Saved to your Solid POD");
+    if(this.state.currentLat != null && this.state.currentLng != null)
+      await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
 
+    console.log("Saved to the pod");
   }
-  */
+ 
   // Handles the change of the range slider
   handRangeChange(event) {
     this.setState({ rangeSelection: event.target.value })
@@ -77,8 +88,8 @@ class App extends React.Component {
     if (!repetida) {
       const myLocations = this.state.myLocations.concat(location);
       this.setState({ myLocations });
-    } else
-      alert("Repeated location not allowed!");
+    }else
+        alert("Repeated location not allowed!");
   }
 
   // Handles the deletion of a location and 
@@ -93,14 +104,12 @@ class App extends React.Component {
   async loadFromSolid() {
     let myLocations = await loadSolidLocations("radarin/stored_locations.ttl");
     this.setState({ myLocations });
-    console.log("loaded");
   }
 
   // Save all the locations to solid
   async saveToSolid() {
     let oldLocations = await loadSolidLocations("radarin/stored_locations.ttl");
     saveSolidLocations(this.state.myLocations, oldLocations);
-    console.log("saved");
   }
 
   // Method that loads the friends location to 
