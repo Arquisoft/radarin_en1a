@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@inrupt/solid-client": "^1.6.1",
     "@react-google-maps/api": "^2.1.1",
     "@solid/query-ldflex": "^2.11.3",
     "@solid/react": "^1.10.0",
