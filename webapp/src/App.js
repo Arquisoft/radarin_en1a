@@ -9,15 +9,18 @@ const { default: data } = require('@solid/query-ldflex');
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.getLocation();
     this.state = {
       users: [],
       currentLat: null,
       currentLng: null,
       locations: [],
       myLocations: [], // Locations from solid pod and manually added
-      rangeSelection: "6000"
-    };
+      rangeSelection: "6000",
+      ring1:[], //Rings for location retrieval optimization
+      ring2:[],
+      ring3:[] 
+    };    
+    this.getLocation();
   }
 
   // Refresh the user list stored in the state
@@ -113,26 +116,31 @@ class App extends React.Component {
     for await (const friend of person.friends)
       friends.push(`${await data[friend]}`);
     //this.setState({ friends })
-    this.reloadFriendLocations(friends);
+    console.log(friends)
+    this.reloadRing(friends);
   }
 
   // Method that requests the last location to the friend's pods
-  async reloadFriendLocations(friends) {
-    var locations = []
-    for await (var friend of friends) {
-      var location = friend.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
-      location = await fetch(location + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+  async reloadRing(ring) {
+    for await (var f of ring) {
+      var friend = f.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
+      var location = await fetch(friend + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
         if (x.status === 200)  // if the file exists, return the text
           return x.text()
       });
+      
 
       if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
-        locations.push(location)
+        this.state.locations[friend] = location;
       }
 
     }
-    this.setState({ locations }) //Update the state variable
   }
+
+  distanceBetweenCoordinates(lat2, lng2){
+    return window.google.maps.geometry.spherical.computeDistanceBetween(new window.google.maps.LatLng({lat: this.state.currentLat,lng: this.state.currentLng}),
+        new window.google.maps.LatLng({lat:lat2,lng:lng2}));
+}
   // Displays the side menu 
   displayMenu() {
 
@@ -258,14 +266,18 @@ function LocationListDisplay(props) {
 function LocationList(input) {
   var data =
     input.map(l => { // l es cada location
-      var tp = l.split(',');
-      var d = {
-        lat: parseInt(tp[0]),
-        lng: parseInt(tp[1])
-      }
-      return d;
+      return latAndLngFromLocation(l);
     });
   return data;
+}
+
+function latAndLngFromLocation(l){
+  var tp = l.split(',');
+    var d = {
+      lat: parseInt(tp[0]),
+      lng: parseInt(tp[1])
+    }
+    return d;
 }
 
 class SolidStorage extends React.Component {
