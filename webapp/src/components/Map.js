@@ -20,6 +20,8 @@ const options = {
 }
 
 const Map = ( {lat,lng,locations,range} ) => {    
+    console.log("Locations in Map: " + locations);
+    const [selected, setSelected] = React.useState(null);
     const markers = [];
     
     const {isLoaded,loadError} = useLoadScript({
@@ -32,11 +34,20 @@ const Map = ( {lat,lng,locations,range} ) => {
             new window.google.maps.LatLng({lat:lat2,lng:lng2}));
     }
 
-    if(loadError) return "Error loading map";
-    if(!isLoaded) return "Map not loaded";
+    if(loadError){
+        console.log("Error loading map");
+        return "Error loading map";
+    }
+    if(!isLoaded) {
+        
+        console.log("Error loading map");
+        return "Map not loaded";
+    }
 
     // Turn string locations into google markers
-    locations.map((location) => markers.push(<Marker 
+    Object.keys(locations).map((x) =>{
+        var location = locations[x];
+        markers.push(<Marker 
         key={location.split(",")[0]} 
         position={{
             lat: parseFloat(location.split(",")[0]), 
@@ -46,10 +57,12 @@ const Map = ( {lat,lng,locations,range} ) => {
             url: '/user.png', 
             scaledSize: new window.google.maps.Size(15,15)
         }}
-    />))
+        onClick={() => setSelected(location)}
+    />)})
 
     return(
         <GoogleMap 
+            id="radarin-map"
             mapContainerStyle={mapContainerStyle} 
             zoom={12} 
             center={{lat:lat, lng:lng}}
@@ -67,6 +80,7 @@ const Map = ( {lat,lng,locations,range} ) => {
                         return marker;
                 })
             }
+            {selected ? (<InfoWindow key={1} position={{lat:parseFloat(selected.split(",")[0]),lng: parseFloat(selected.split(",")[1])}} onCloseClick={()=>setSelected(null)} ><div>INFO HERE</div></InfoWindow> ) : null}
         </GoogleMap>
     )
 }
