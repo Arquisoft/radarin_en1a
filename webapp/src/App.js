@@ -25,6 +25,8 @@ class App extends React.Component {
       currentLng: null,
       locations: [],
       myLocations: [], // Locations from solid pod and manually added
+      friendsNames: [],
+      friendsPhotos: [],
       rangeSelection: "6000"
     };
     this.getLocation();
@@ -85,7 +87,7 @@ class App extends React.Component {
 
     let repetida = false;
     for (let i = 0; i < this.state.myLocations.length; i++) {
-      if (location.toString() == this.state.myLocations[i].toString())
+      if (location.toString() === this.state.myLocations[i].toString())
         repetida = true;
     }
 
@@ -123,9 +125,16 @@ class App extends React.Component {
     var session = await this.getCurrentSession();
     var person = data[session.webId]
     const friends = [];
-    for await (const friend of person.friends)
+    const friendsNames = [];
+    const friendsPhotos = [];
+    for await (const friend of person.friends){
       friends.push(`${await data[friend]}`);
+      friendsNames.push(await data[friend].name.value);
+      friendsPhotos.push(await data[friend]["vcard:hasPhoto"].value);
+    }
     //this.setState({ friends })
+    this.setState({ friendsNames });
+    this.setState({ friendsPhotos });
     this.reloadFriendLocations(friends);
   }
 
@@ -243,7 +252,8 @@ class App extends React.Component {
           <div className="Map-content">
             {
               this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection} />
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection} 
+                  friendsNames={this.state.friendsNames} friendsPhotos={this.state.friendsPhotos}/>
                 : <h2>Location needed for services</h2>
             }
           </div>
