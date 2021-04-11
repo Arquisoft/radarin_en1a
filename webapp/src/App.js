@@ -19,7 +19,6 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      refresh: 1000,
       users: [],
       currentLat: null,
       currentLng: null,
@@ -127,7 +126,7 @@ class App extends React.Component {
     const friends = [];
     const friendsNames = [];
     const friendsPhotos = [];
-    for await (const friend of person.friends){
+    for await (const friend of person.friends) {
       friends.push(`${await data[friend]}`);
       friendsNames.push(await data[friend].name.value);
       friendsPhotos.push(await data[friend]["vcard:hasPhoto"].value);
@@ -135,6 +134,7 @@ class App extends React.Component {
     this.setState({ friends });
     this.setState({ friendsNames });
     this.setState({ friendsPhotos });
+    await this.getMyPhoto();
     this.reloadFriendLocations(friends);
   }
 
@@ -158,6 +158,7 @@ class App extends React.Component {
 
   async reloadRings() {
     setInterval(() => {
+      console.log("tic");
       this.reloadFriendLocations(this.state.friends);
     }, 1000);
     //this.reloadFriendLocations()
@@ -218,6 +219,11 @@ class App extends React.Component {
     return session;
   }
 
+  async getMyPhoto() {
+    let session = await this.getCurrentSession();
+    var myPhoto = (await data[session.webId]["vcard:hasPhoto"].value);
+    this.setState({ myPhoto });
+  }
 
   // Renders the most part of the webpage:
   // - Title
@@ -256,14 +262,15 @@ class App extends React.Component {
           <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
           <button onClick={() => {
             this.loadFriendsLocations().then(
-            this.reloadRings())
+              this.reloadRings())
           }}>
             Refresh</button>
           <div className="Map-content">
             {
               this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection} 
-                  friendsNames={this.state.friendsNames} friendsPhotos={this.state.friendsPhotos}/>
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection}
+                  friendsNames={this.state.friendsNames} friendsPhotos={this.state.friendsPhotos}
+                  myIcon={this.state.myPhoto} />
                 : <h2>Location needed for services</h2>
             }
           </div>

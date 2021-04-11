@@ -25,8 +25,7 @@ const options = {
 /**
  * Constant storing resulting Map configuration and its behaviour
  */
-const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos }) => {
-    console.log("Locations in Map: " + locations);
+const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon}) => {
     const [selected, setSelected] = React.useState(null);
     const markers = [];
 
@@ -99,7 +98,7 @@ const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos }) => {
             <Marker
                 position={{ lat: lat, lng: lng, }}
                 icon={{
-                    url: '/user.png',
+                    url: myIcon,
                     scaledSize: new window.google.maps.Size(36, 36)
                 }}
             />
