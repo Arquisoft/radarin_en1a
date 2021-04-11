@@ -20,7 +20,6 @@ jobs:
     - run: npm test
     - uses: codecov/codecov-action@v1
   e2e-tests:
-    needs: [build-test-webapp, build-test-restapi]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
