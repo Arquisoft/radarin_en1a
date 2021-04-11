@@ -26,6 +26,7 @@ const options = {
  * Constant storing resulting Map configuration and its behaviour
  */
 const Map = ( {lat,lng,locations,range,friendsNames,friendsPhotos} ) => {    
+    console.log("Locations in Map: " + locations);
     const [selected, setSelected] = React.useState(null);
     const markers = [];
     
@@ -73,7 +74,7 @@ const Map = ( {lat,lng,locations,range,friendsNames,friendsPhotos} ) => {
     const friendsLocations = friendsMapLocations; 
 
     // Turn string locations into google markers objects
-    locations.map((location) => markers.push(<Marker 
+    locations.map( (location) => { markers.push(<Marker 
         key={friendsLocations.get(location)} 
         position={{
             lat: parseFloat(location.split(",")[0]), 
@@ -84,7 +85,7 @@ const Map = ( {lat,lng,locations,range,friendsNames,friendsPhotos} ) => {
             scaledSize: new window.google.maps.Size(20,20)
         }}
         onClick={() => setSelected(location)}
-    />))
+    />) } )
 
     return(
         <GoogleMap 
