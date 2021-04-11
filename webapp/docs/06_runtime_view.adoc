@@ -16,14 +16,27 @@ _Alice : Moves -> Radarin : requests a location update -> Alice's pod -> updates
 
 === Checking someone else's location:
 
-_Bob : Check's Alice location -> Radarin : checks if the location for bob is been updated -> Alice's pod_
-
-* If it's been updated:
-_Alice's pod : sends the updated information -> Radarin -> updates the location for Alice on Bob's local DB and displays it_
-
-* Else:
-_Alice's pod : sends a message telling Radarin that it's information is up to date -> Radarin : Displays Alice's current location_
+_Bob : Check's Alice location -> Alice's pod : Sends the current location -> Radarin : Displays Alice's current location_
 
 === Checking for nearby friends:
 
-* _Alice : checks for nearby friends -> radarin : checks DB for recent locations -> Radarin -> updates map with those locations_
+* _Alice : checks for nearby friends -> Radarin: Checks for all friends that are nearby (if their distance from Alice is less or equal than a given range) -> update map with those locations_
+
+=== Update all friend's locations:
+
+* _Alice : Click the "Refresh" button -> Radarin: Asks all Alice's friend's pods for their location -> Display the returned locations_
+
+=== Load saved locations:
+
+* _Alice : Clicks the "Load from solid" button -> Radarin: Requests Alice's pod for its saved locations list -> Display the list on the map_
+
+=== Remove a location from the saved locations:
+
+* _Alice : Loads her saved locations -> clicks on the "-" button next to the location to remove -> Radarin: Remove the location from the list._
+
+=== Add a location to the saved locations:
+
+* _Alice: Writes a location in the text area -> Clicks on the "+" button -> Radarin: Add the location to the list._
+
+== Save the changes on the saved locations list:
+* _Alice: Makes changes to her locations list -> Clicks the "Save to solid" button -> Radarin: asks Alice's pod to override the saved locations list -> Alice's pod: Updates the location's list._
