@@ -14,6 +14,7 @@ import InputLocation from "./components/InputLocation";
 import { overwriteFile } from "@inrupt/solid-client";
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
+const fetch = auth.fetch;
 
 class App extends React.Component {
   constructor(props) {
@@ -104,13 +105,13 @@ class App extends React.Component {
   }
 
   // Load the locations from solid and put them into the state
-  async loadFromSolid() {
+  async loadStoredLocationFromSolid() {
     let myLocations = await this.loadSolidLocations("radarin/stored_locations.ttl");
     this.setState({ myLocations });
   }
 
   // Save all the locations to solid
-  async saveToSolid() {
+  async saveStoredLocationToSolid() {
     let oldLocations = await this.loadSolidLocations("radarin/stored_locations.ttl");
     this.saveSolidLocations(this.state.myLocations, oldLocations);
   }
@@ -231,7 +232,7 @@ class App extends React.Component {
 
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
 
-              <SolidStorage loadFromSolid={() => this.loadFromSolid()} saveToSolid={() => this.saveToSolid()} display={() => this.displayCurrentLocations()} />
+              <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
 
             </LoggedIn>
           </div>
