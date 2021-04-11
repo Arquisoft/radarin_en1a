@@ -5,7 +5,6 @@ import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 
 import LocationListDisplay from "./components/LocationList";
-import FriendList from "./components/FriendList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
 
@@ -20,11 +19,13 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      refresh: 1000,
       users: [],
       currentLat: null,
       currentLng: null,
       locations: [],
       myLocations: [], // Locations from solid pod and manually added
+      friends: [],
       friendsNames: [],
       friendsPhotos: [],
       rangeSelection: "6000"
@@ -66,9 +67,8 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let last = data[url];
-    if (this.state.currentLat != null && this.state.currentLng != null){
+    if (this.state.currentLat != null && this.state.currentLng != null) {
       await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
-      console.log("Location : " + locationString + " saved to " + last.value);
     }
   }
 
@@ -132,7 +132,7 @@ class App extends React.Component {
       friendsNames.push(await data[friend].name.value);
       friendsPhotos.push(await data[friend]["vcard:hasPhoto"].value);
     }
-    //this.setState({ friends })
+    this.setState({ friends });
     this.setState({ friendsNames });
     this.setState({ friendsPhotos });
     this.reloadFriendLocations(friends);
@@ -154,6 +154,13 @@ class App extends React.Component {
 
     }
     this.setState({ locations }) //Update the state variable
+  }
+
+  async reloadRings() {
+    setInterval(() => {
+      this.reloadFriendLocations(this.state.friends);
+    }, 1000);
+    //this.reloadFriendLocations()
   }
 
   // Displays the side menu 
@@ -242,13 +249,16 @@ class App extends React.Component {
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
 
               <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
-
             </LoggedIn>
           </div>
           <span>{this.state.rangeSelection} meters</span>
 
           <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
-          <button onClick={() => this.loadFriendsLocations()}>Refresh</button>
+          <button onClick={() => {
+            this.loadFriendsLocations().then(
+            this.reloadRings())
+          }}>
+            Refresh</button>
           <div className="Map-content">
             {
               this.state.currentLat && this.state.currentLng ?
