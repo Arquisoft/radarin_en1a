@@ -25,9 +25,9 @@ const options = {
 /**
  * Constant storing resulting Map configuration and its behaviour
  */
-const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon}) => {
+const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon }) => {
     const [selected, setSelected] = React.useState(null);
-    const markers = [];
+    var markers = [];
 
     /**
      * Load GoogleMaps API key and used libraries
@@ -72,7 +72,8 @@ const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon
      */
     const friendsLocations = friendsMapLocations(locations, friendsNames, friendsPhotos);
 
-    // Turn string locations into google markers objects
+    async function createMarkers(locations) {
+        markers = [];
         locations.map((location) => {
             markers.push(<Marker
                 key={friendsLocations.get(location)}
@@ -81,14 +82,30 @@ const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon
                     lng: parseFloat(location.split(",")[1])
                 }}
                 icon={{ // If user has a profile image we select it, otherwise we user a default one
-                    url: location === null ? "/user.png" : ( friendsLocations.get(location)[1] === undefined? "/user.png" : friendsLocations.get(location)[1] ),
+                    url: location === null ? "/user.png" : (friendsLocations.get(location)[1] === undefined ? "/user.png" : friendsLocations.get(location)[1]),
                     scaledSize: new window.google.maps.Size(20, 20)
                 }}
                 onClick={() => setSelected(location)}
             />)
         })
+    }
+
+
+    var markerList;
+    function displayMarkers() {
+        markerList = markers.map(marker => {
+            if (distanceBetweenCoordinates(marker.props.position.lat, marker.props.position.lng) < parseFloat(range))
+                return marker;
+            return null;
+        })
+        return markerList;
+
+    }
+    // Turn string locations into google markers objects
+    // createMarkers(locations)
+
     return (
-        <GoogleMap
+        <GoogleMap onchange={createMarkers(locations)}
             id="radarin-map"
             mapContainerStyle={mapContainerStyle}
             zoom={12}
@@ -105,14 +122,9 @@ const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon
             {/* Visualization of range selected by the user */}
             <Circle center={{ lat: lat, lng: lng }} radius={parseFloat(range)} />
             {/* Only shows friends inside the range selected by the user */}
-            {markers.map(marker => {
-                if (distanceBetweenCoordinates(marker.props.position.lat, marker.props.position.lng) < parseFloat(range))
-                    return marker;
-                return null;
-            })
-            }
+            {displayMarkers()}
             {/* Show friends information when click on its marker */}
-            {selected ? (<InfoWindow position={{ lat: parseFloat(selected.split(",")[0]), lng: parseFloat(selected.split(",")[1]) }} onCloseClick={() => setSelected(null)} ><div>{friendsLocations.get(selected)[0]}</div></InfoWindow>) : null}
+            {(selected && friendsLocations.get(selected)) ? (<InfoWindow position={{ lat: parseFloat(selected.split(",")[0]), lng: parseFloat(selected.split(",")[1]) }} onCloseClick={() => setSelected(null)} ><div>{friendsLocations.get(selected)[0]}</div></InfoWindow>) : null}
         </GoogleMap>
     )
 }
