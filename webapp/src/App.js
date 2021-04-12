@@ -8,6 +8,7 @@ import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
 import { overwriteFile } from "@inrupt/solid-client";
+import FriendList from './components/FriendList';
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
@@ -58,10 +59,10 @@ class App extends React.Component {
       currentLat: position.coords.latitude,
       currentLng: position.coords.longitude
     })
-    
+
     // Checks if the user is logged in before saving its location to solid
     let session = this.getCurrentSession();
-    if(session.state != "pending") // 
+    if (session.state != "pending") // 
       this.saveLocationToSolid();
   }
 
@@ -95,11 +96,11 @@ class App extends React.Component {
         repeated = true;
     }
 
-    if (!repeated) { 
+    if (!repeated) {
       const myLocations = this.state.myLocations.concat(location);
       this.setState({ myLocations });
     } else
-        alert("Repeated location not allowed!");
+      alert("Repeated location not allowed!");
   }
 
   // Handles the deletion of a location and 
@@ -164,11 +165,19 @@ class App extends React.Component {
   }
 
   // shows the friends
-  showFriendsListInHTML(){
+  showFriendsListInHTML() {
+    const self = this;
     let friendsList = this.state.friends;
-    return friendsList.map( (prop) => <li>{prop}</li> ); 
-  }
+    return friendsList.map((prop) => {
+      var index = friendsList.indexOf(prop);
+      var photo = self.state.friendsPhotos[index];
+      if (photo == undefined)
+        photo = "/user.png"
+      console.log(photo)
 
+      return <li><img width="24px" height="24px" src={photo} /><a target="_blank" className="friendLink" href={prop}>{self.state.friendsNames[index]}</a></li>
+    });
+  }
   // Sets the online flag to true, and starts the timer to reload the friends locations every second
   async startTimer() {
     // This code is a bit hacky, I'll try to explain it as best as possible. First, we set the "online" variable to true, so the "reloadFriendLocations"
@@ -179,10 +188,10 @@ class App extends React.Component {
     this.setState({ locations })
     // When all that is done, we can set the interval to reload the friends every second.
     // TODO: This should be a state variable
-    timer = setInterval(() => { 
+    timer = setInterval(() => {
       this.reloadFriendLocations(this.state.friends);
       this.getLocation();
-     }, 1000);
+    }, 1000);
     //this.reloadFriendLocations()
   }
 

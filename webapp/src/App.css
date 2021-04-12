@@ -28,7 +28,24 @@
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
+.friendLink:link {
+  color: red;
+}
 
+/* visited link */
+.friendLink:visited {
+  color: green;
+}
+
+/* mouse over link */
+.friendLink:hover {
+  color: hotpink;
+}
+
+/* selected link */
+.friendLink:active {
+  color: blue;
+}
 
 .App-header {
   background-color: #282c34;
