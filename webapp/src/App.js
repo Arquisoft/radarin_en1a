@@ -3,13 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
-
+import FriendsList from "./components/FriendList"
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-
-
-
 import { overwriteFile } from "@inrupt/solid-client";
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
@@ -172,7 +169,10 @@ class App extends React.Component {
     this.setState({ locations })
     // When all that is done, we can set the interval to reload the friends every second.
     // TODO: This should be a state variable
-    timer = setInterval(() => { this.reloadFriendLocations(this.state.friends); }, 1000);
+    timer = setInterval(() => { 
+      this.reloadFriendLocations(this.state.friends);
+      this.getLocation();
+     }, 1000);
     //this.reloadFriendLocations()
   }
 
@@ -285,6 +285,7 @@ class App extends React.Component {
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
 
               <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
+            
             </LoggedIn>
           </div>
           <span>{this.state.rangeSelection} meters</span>
