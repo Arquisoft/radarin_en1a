@@ -3,23 +3,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
-
+import FriendsList from "./components/FriendList"
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-
-
-
 import { overwriteFile } from "@inrupt/solid-client";
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
 
+var timer;
+
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      refresh: 1000,
       users: [],
       currentLat: null,
       currentLng: null,
@@ -30,6 +28,8 @@ class App extends React.Component {
       friendsPhotos: [],
       rangeSelection: "6000"
     };
+
+    this.online = true;
     this.getLocation();
   }
 
@@ -131,7 +131,7 @@ class App extends React.Component {
     const friends = [];
     const friendsNames = [];
     const friendsPhotos = [];
-    for await (const friend of person.friends){
+    for await (const friend of person.friends) {
       friends.push(`${await data[friend]}`);
       friendsNames.push(await data[friend].name.value);
       friendsPhotos.push(await data[friend]["vcard:hasPhoto"].value);
@@ -139,25 +139,28 @@ class App extends React.Component {
     this.setState({ friends });
     this.setState({ friendsNames });
     this.setState({ friendsPhotos });
+    await this.getMyPhoto();
     this.reloadFriendLocations(friends);
   }
 
   // Method that requests the last location to the friend's pods
   async reloadFriendLocations(friends) {
-    var locations = []
-    for await (var friend of friends) {
-      var location = friend.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
-      location = await fetch(location + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
-        if (x.status === 200)  // if the file exists, return the text
-          return x.text()
-      });
+    if (this.online) {
+      var locations = []
+      for await (var friend of friends) {
+        var location = friend.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
+        location = await fetch(location + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+          if (x.status === 200)  // if the file exists, return the text
+            return x.text()
+        });
 
-      if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
-        locations.push(location)
+        if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
+          locations.push(location)
+        }
       }
 
-    }
-    this.setState({ locations }) //Update the state variable
+    } if (this.online)
+      this.setState({ locations }) //Update the state variable
   }
 
   // shows the friends
@@ -166,10 +169,20 @@ class App extends React.Component {
     return friendsList.map( (prop) => <li>{prop}</li> ); 
   }
 
-  async reloadRings() {
-    setInterval(() => {
+  // Sets the online flag to true, and starts the timer to reload the friends locations every second
+  async startTimer() {
+    // This code is a bit hacky, I'll try to explain it as best as possible. First, we set the "online" variable to true, so the "reloadFriendLocations"
+    // function will work.
+    this.online = true;
+    // Then we delete all previous locations. This is to flush any marker from previous operations (mainly, load and display from solid)
+    const locations = [];
+    this.setState({ locations })
+    // When all that is done, we can set the interval to reload the friends every second.
+    // TODO: This should be a state variable
+    timer = setInterval(() => { 
       this.reloadFriendLocations(this.state.friends);
-    }, 1000);
+      this.getLocation();
+     }, 1000);
     //this.reloadFriendLocations()
   }
 
@@ -178,7 +191,7 @@ class App extends React.Component {
 
     var width = document.getElementById('sidemenu').style.width;
     if (width.toString().length === 0) {
-      document.getElementById('sidemenu').style.width = '15%';
+      document.getElementById('sidemenu').style.width = '25%';
       document.getElementById('ShowMenu').innerHTML = "Hide";
     }
     else {
@@ -186,9 +199,27 @@ class App extends React.Component {
       document.getElementById('ShowMenu').innerText = "Side Menu";
     }
   }
+
+  // Displays the locations from myLocations
   displayCurrentLocations() {
-    var locations = this.state.myLocations;
-    this.setState({ locations })
+
+    // First, we set the online flag to false, so if the reload friends function is beeing executed asyncronously, it will know that it's time to stop
+    this.online = false;
+
+    // We remove the timer interval.
+    clearInterval(timer);
+
+    // Flush the locations state variable, so no markers are left over
+    var locations = [];
+    this.setState({ locations });
+
+    // Set the variable to "myLocations"
+    locations = this.state.myLocations;
+    this.setState({ locations });
+
+    // Remove the friends names and photos, so they won't show up on the new markers
+    this.state.friendsNames = [];
+    this.state.friendsPhotos = [];
   }
 
 
@@ -228,6 +259,11 @@ class App extends React.Component {
     return session;
   }
 
+  async getMyPhoto() {
+    let session = await this.getCurrentSession();
+    var myPhoto = (await data[session.webId]["vcard:hasPhoto"].value);
+    this.setState({ myPhoto });
+  }
 
   // Renders the most part of the webpage:
   // - Title
@@ -259,27 +295,25 @@ class App extends React.Component {
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
 
               <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
+
               <p>Friends list:</p>
 
               <ul id='friends_list'>
                 {this.showFriendsListInHTML()}
               </ul>
-
             </LoggedIn>
           </div>
           <span>{this.state.rangeSelection} meters</span>
 
           <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
-          <button onClick={() => {
-            this.loadFriendsLocations().then(
-            this.reloadRings())
-          }}>
-            Refresh</button>
+          <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
+            Start</button>
           <div className="Map-content">
             {
               this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection} 
-                  friendsNames={this.state.friendsNames} friendsPhotos={this.state.friendsPhotos}/>
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection}
+                  friendsNames={this.state.friendsNames} friendsPhotos={this.state.friendsPhotos}
+                  myIcon={this.state.myPhoto} />
                 : <h2>Location needed for services</h2>
             }
           </div>

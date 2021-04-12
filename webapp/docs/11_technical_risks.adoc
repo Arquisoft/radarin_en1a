@@ -1,5 +1,39 @@
 [[section-technical-risks]]
 == Risks and Technical Debts
 
+We have identified the risk or technical debts we might encounter during the project. They are ordered by priority from higher risk to lower.
 
-TO DO
+.Risks Table
+|=========================================================
+| Risk | Explanation | Solution 
+
+| Lack of knowledge of SOLID
+| It's a new technology, and we have no idea how to work with it. The documentation is lacklester and there are not many examples. Some of the 
+| We must do our own research, ask other students and other developers. We need to have a good understanding of the technology first.
+
+| Lack of knowledge of React
+| Although we have some knowledge of JavaScript, we are new to React and Node.
+| React has very good documentation, so we have to check examples. We have to understand how Node works. This part should be easier to deal with than the previous one.
+
+| Time
+| We are limited by the deadlines of the course.
+| All we can do is optimize our working time.
+
+| Working on teams
+| Working with other people is not always easy, since each one does things its way.
+| We have to do regular meetings and try to comment our code, so everyone can understand it and work with it.
+
+|=========================================================
+
+
+.Technical Debts Table
+|=========================================================
+| Technical Debt | Explanation 
+
+| Corrupted Locations
+| Given the case that the last location in a user's pod gets corrupted, it will simply not show up on the map. However, it will be added to the list anyway. This should be fixed in later versions.
+
+| Pod permissions
+| The user has to give the application permission to use the pod, else it won't work. The user has to make 2 files by himself too. This must be changed later, to make those files automatically if they do not exisist.
+
+|=========================================================  
