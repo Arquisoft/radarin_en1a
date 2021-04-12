@@ -58,7 +58,11 @@ class App extends React.Component {
       currentLat: position.coords.latitude,
       currentLng: position.coords.longitude
     })
-    this.saveLocationToSolid();
+    
+    // Checks if the user is logged in before saving its location to solid
+    let session = this.getCurrentSession();
+    if(session.state != "pending") // 
+      this.saveLocationToSolid();
   }
 
   // Saves the actual location into the pod TODO
@@ -85,17 +89,17 @@ class App extends React.Component {
       return;
     }
 
-    let repetida = false;
+    let repeated = false;
     for (let i = 0; i < this.state.myLocations.length; i++) {
       if (location.toString() === this.state.myLocations[i].toString())
-        repetida = true;
+        repeated = true;
     }
 
-    if (!repetida) {
+    if (!repeated) { 
       const myLocations = this.state.myLocations.concat(location);
       this.setState({ myLocations });
     } else
-      alert("Repeated location not allowed!");
+        alert("Repeated location not allowed!");
   }
 
   // Handles the deletion of a location and 
@@ -157,6 +161,12 @@ class App extends React.Component {
 
     } if (this.online)
       this.setState({ locations }) //Update the state variable
+  }
+
+  // shows the friends
+  showFriendsListInHTML(){
+    let friendsList = this.state.friends;
+    return friendsList.map( (prop) => <li>{prop}</li> ); 
   }
 
   // Sets the online flag to true, and starts the timer to reload the friends locations every second
@@ -285,7 +295,12 @@ class App extends React.Component {
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
 
               <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
-            
+
+              <p>Friends list:</p>
+
+              <ul id='friends_list'>
+                {this.showFriendsListInHTML()}
+              </ul>
             </LoggedIn>
           </div>
           <span>{this.state.rangeSelection} meters</span>
