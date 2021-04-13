@@ -39,3 +39,21 @@ Accepted.
 Consequences::
 
 A very user-friendly way to let the users add friends and very accessible from the SOLID pod webpage. Also, we leave a door open to futher improvement and maybe a friend adding interface. The main counterpart of this is that for testing purposes we need to create several pods and is not as easy as changing a file.
+
+=== Usage of a MongoDB central Database
+
+Context:: 
+
+We need to be able to access the last location of every user and show it to their friends. At first glance a central database to store it seemed a good solution and, even if this goes partially against SOLID principles, we thought the last location was a good trade off for the perfomance boost we would get by avoiding asking the PODs every time.
+
+Decision::
+
+Once we started implementing, we realised that accesing a SOLID POD was not at all as time consuming as we thought, so we decided to keep the idea of the central database in the background just in case and follow the path of asking directly each POD. This decision was taken after testing the time a POD request takes, which was fairly low, and some research, where we found that in one of the main social networks today, Facebook, the average person has 150 friends. Since in this application you share something even more private than your photos, which is your real-time location, we assume that this number will be even lower, since there will be only close friends. Besides, using SOLID guarantees that our users will be people that worry about their own privacy, which will probably work in the same direction.
+
+Status::
+
+Rejected.
+
+Consequences::
+
+SOLID principles are stronger in our application, since there is no kind of central server and the application works even if deployed locally by the user. Besides, we also avoid mutual interference in performance between users and add an extra layer of security: if there are no central servers nor databases, they cannot be attacked and, in case a user had too many friends for the application to handle mantaining an acceptable performance, it would affect only them
