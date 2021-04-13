@@ -1,5 +1,16 @@
 [[section-glossary]]
 == Glossary
 
+Here we have a table with some domain and technical terms that the stakeholders may find useful.
 
-TO DO
+.Useful terms
+|===
+|Term |Definitions 
+
+|API    |A set of methods and tools that can be used for building software applications.
+
+|Pod    |A place for storing documents, with mechanisms for controlling who can access what is inside.
+
+|Solid  |A specification that lets people store their data securely in decentralized data stores called Pods
+
+|===
