@@ -1,5 +1,41 @@
 [[section-design-decisions]]
 == Design Decisions
 
+In this section, we document the decions made that affect the application. However, they are not simply listed, they are explained with their context, status adn consequences.
+Here we have the decisions made:
 
-TO DO
+=== Usage of google maps API
+
+Context:: 
+
+Obviously, for this app we need a map. So at first thought, like everybody nowadays, google maps come up. 
+
+Decision::
+
+After some investigation and some discussion, we decided that we were going to use the google maps API despite the fact that the free or demo part is limited. We thought that for a prototype like this application, we get a very useful API without the need of any payment.
+
+Status::
+
+Accepted.
+
+Consequences::
+
+The usage of google maps API has brought us several useful functions, for example the calculation of the distance between two points. We take for granted that we don't surpass the limit of the free version by now.
+
+=== Usage of built in SOLID friends 
+
+Context:: 
+
+In this app the work with friends is strictly neccesary (if not it would be useless). Furthermore, there are several ways of storing friends and connection between accounts.
+
+Decision::
+
+Initially, we used to store the friends of each user in a file called "friends.ttl". However, we found out that we could easily use the SOLID friends. In your SOLID pod you can add friends and so we get the list of friends and their pod.
+
+Status::
+
+Accepted.
+
+Consequences::
+
+A very user-friendly way to let the users add friends and very accessible from the SOLID pod webpage. Also, we leave a door open to futher improvement and maybe a friend adding interface. The main counterpart of this is that for testing purposes we need to create several pods and is not as easy as changing a file.
