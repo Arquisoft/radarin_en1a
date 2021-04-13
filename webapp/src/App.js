@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
-import FriendsList from "./components/FriendList"
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
@@ -99,7 +98,8 @@ class App extends React.Component {
     if (!repeated) {
       const myLocations = this.state.myLocations.concat(location);
       this.setState({ myLocations });
-    } else
+    }
+    else
       alert("Repeated location not allowed!");
   }
 
@@ -160,24 +160,11 @@ class App extends React.Component {
         }
       }
 
-    } if (this.online)
+    }
+    if (this.online)
       this.setState({ locations }) //Update the state variable
   }
 
-  // shows the friends
-  showFriendsListInHTML() {
-    const self = this;
-    let friendsList = this.state.friends;
-    return friendsList.map((prop) => {
-      var index = friendsList.indexOf(prop);
-      var photo = self.state.friendsPhotos[index];
-      if (photo == undefined)
-        photo = "/user.png"
-      console.log(photo)
-
-      return <li><img width="24px" height="24px" src={photo} /><a target="_blank" className="friendLink" href={prop}>{self.state.friendsNames[index]}</a></li>
-    });
-  }
   // Sets the online flag to true, and starts the timer to reload the friends locations every second
   async startTimer() {
     // This code is a bit hacky, I'll try to explain it as best as possible. First, we set the "online" variable to true, so the "reloadFriendLocations"
@@ -306,10 +293,10 @@ class App extends React.Component {
               <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
 
               <p>Friends list:</p>
-
               <ul id='friends_list'>
-                {this.showFriendsListInHTML()}
+                <FriendList friends={this.state.friends} friendsPhotos={this.state.friendsPhotos} friendsNames={this.state.friendsNames} online={this.online}></FriendList>
               </ul>
+
             </LoggedIn>
           </div>
           <span>{this.state.rangeSelection} meters</span>

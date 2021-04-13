@@ -1,24 +1,26 @@
 import React from 'react';
-import ListGroup from "react-bootstrap/ListGroup";
-
 
 class FriendList extends React.Component {
-    constructor(users) {
-        super();
-        this.users = users
+    constructor(props) {
+        super(props);
     }
+
     render() {
-        return (
-            <div className="FriendList">
-                <h2>Friend List</h2>
-                <ListGroup>
-                    {
-                        this.users.map(function (user) {
-                            return <p id={'user-' + user.name}>{user.name}</p>
-                        })}
-                </ListGroup>
-            </div>
-        )
+        let friendsList = this.props.friends;
+        if (this.props.online) {
+            const self = this;
+            return friendsList.map((prop) => {
+                var index = friendsList.indexOf(prop);
+                var photo = self.props.friendsPhotos[index];
+
+                if (photo == undefined)
+                    photo = "/user.png"
+                console.log(photo)
+
+                return <li><img width="24px" height="24px" src={photo} /><a target="_blank" className="friendLink" href={prop}>{self.props.friendsNames[index]}</a></li>
+            });
+        }
+        else return <div></div>;
     }
 }
 
