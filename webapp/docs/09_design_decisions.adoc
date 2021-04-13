@@ -56,4 +56,21 @@ Rejected.
 
 Consequences::
 
-SOLID principles are stronger in our application, since there is no kind of central server and the application works even if deployed locally by the user. Besides, we also avoid mutual interference in performance between users and add an extra layer of security: if there are no central servers nor databases, they cannot be attacked and, in case a user had too many friends for the application to handle mantaining an acceptable performance, it would affect only them
+SOLID principles are stronger in our application, since there is no kind of central server and the application works even if deployed locally by the user. Besides, we also avoid mutual interference in performance between users and add an extra layer of security: if there are no central servers nor databases, they cannot be attacked and, in case a user had too many friends for the application to handle mantaining an acceptable performance, it would affect only them.
+
+=== Usage of an optimization ring system to obtain friends' locations.
+
+Context:: 
+
+Even if, as explained above, the average user of this app will not have too many friends, just in case we decided to create an optimization system to reduce the number of POD requests we send. The reasoning behind it is that you don't need to constantly request a location that you won't display since it is too far away. E.g: If your friend is in Madrid and you are in Oviedo with a range of 5km, it will take at least 1 hour for your friend to be close enough to be painted in the map. In this mean time we do not need to upload their location as frequently.
+Decision::
+
+The friends are divided in 3 different rings according to their distance to the user after the first time the whole list is traversed. From then on, each ring will be assigned a time interval after which it will be updated
+
+Status::
+
+Accepted.
+
+Consequences::
+
+Improvement in performance, which will be greater for users with lots of friends.
