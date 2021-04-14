@@ -61,7 +61,7 @@ class App extends React.Component {
 
     // Checks if the user is logged in before saving its location to solid
     let session = this.getCurrentSession();
-    if (session.state != "pending") // 
+    if (session.state !== "pending")
       this.saveLocationToSolid();
   }
 
@@ -214,8 +214,11 @@ class App extends React.Component {
     this.setState({ locations });
 
     // Remove the friends names and photos, so they won't show up on the new markers
-    this.state.friendsNames = [];
-    this.state.friendsPhotos = [];
+    //this.state.friendsNames = [];
+    //this.state.friendsPhotos = [];
+    this.setState({friendsNames : []});
+    this.setState({friendsPhotos : []});
+
   }
 
 
