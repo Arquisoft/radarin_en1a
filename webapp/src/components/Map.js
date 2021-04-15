@@ -75,7 +75,7 @@ const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon
     async function createMarkers(locations) {
         markers = [];
         locations.map((location) => {
-            markers.push(<Marker
+            return ( markers.push(<Marker
                 key={friendsLocations.get(location)}
                 position={{
                     lat: parseFloat(location.split(",")[0]),
@@ -86,7 +86,8 @@ const MyMap = ({ lat, lng, locations, range, friendsNames, friendsPhotos, myIcon
                     scaledSize: new window.google.maps.Size(20, 20)
                 }}
                 onClick={() => setSelected(location)}
-            />)
+                />)
+            )
         })
     }
 
