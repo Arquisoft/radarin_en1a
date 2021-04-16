@@ -18,7 +18,6 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      users: [],
       currentLat: null,
       currentLng: null,
       locations: [],
@@ -297,7 +296,7 @@ class App extends React.Component {
 
               <p>Friends list:</p>
               <ul id='friends_list'>
-                <FriendList friends={this.state.friends} friendsPhotos={this.state.friendsPhotos} friendsNames={this.state.friendsNames} online={this.online}></FriendList>
+                <FriendList friends={this.state.friends} data={data} online={this.online}></FriendList>
               </ul>
 
             </LoggedIn>
@@ -310,9 +309,7 @@ class App extends React.Component {
           <div className="Map-content">
             {
               this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} locations={this.state.locations} range={this.state.rangeSelection}
-                  friendsNames={this.state.friendsNames} friendsPhotos={this.state.friendsPhotos}
-                  myIcon={this.state.myPhoto} />
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends} range={this.state.rangeSelection} myIcon={this.state.myPhoto} />
                 : <h2>Location needed for services</h2>
             }
           </div>
