@@ -6,11 +6,13 @@ import './App.css';
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-import { overwriteFile, saveFileInContainer } from "@inrupt/solid-client";
+import { overwriteFile} from "@inrupt/solid-client"; //, saveFileInContainer 
 import FriendList from './components/FriendList';
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
+const FC   = require('solid-file-client')
+const fc   = new FC( auth )
 
 var timer;
 
@@ -72,7 +74,7 @@ class App extends React.Component {
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let last = data[url];
     if (last === undefined)
-      saveFileInContainer(url, new Blob("", {type: "plain/text"} ), {slug: "last.txt"});
+      await fc.createFile(url + "last.txt");
     if (this.state.currentLat != null && this.state.currentLng != null) {
       await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
     }
