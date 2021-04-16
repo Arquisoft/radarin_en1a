@@ -216,8 +216,8 @@ class App extends React.Component {
     // Remove the friends names and photos, so they won't show up on the new markers
     //this.state.friendsNames = [];
     //this.state.friendsPhotos = [];
-    this.setState({friendsNames : []});
-    this.setState({friendsPhotos : []});
+    //this.setState({friendsNames : []});
+    //this.setState({friendsPhotos : []});
 
   }
 
