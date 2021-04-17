@@ -38,9 +38,9 @@ class FriendMarkers extends React.Component {
 
         return this.friends.map(
             (friend) => {
-                <Marker position={friend[0]}>
+                <Marker position={friend.location}>
                     <Popup>
-                        friend[1]
+                        {friend.name}
           </Popup>
                 </Marker>
             }

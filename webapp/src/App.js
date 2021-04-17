@@ -1,17 +1,23 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from "./components/LeafletMap";
+import Map from "./components/Map";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-import { overwriteFile, saveFileInContainer } from "@inrupt/solid-client";
+import { overwriteFile } from "@inrupt/solid-client"; //, saveFileInContainer 
 import FriendList from './components/FriendList';
+import { LoadScript } from "@react-google-maps/api"
+
+
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
+const FC = require('solid-file-client');
+const fc = new FC(auth);
+const libraries = ["places", "geometry"];
 
 var timer;
 
@@ -23,11 +29,10 @@ class App extends React.Component {
       currentLng: null,
       locations: [],
       myLocations: [], // Locations from solid pod and manually added
-      friends: [],
-      friendsPhotos: [],
       rangeSelection: "6000"
     };
-
+    this.friends = [];
+    this.myPhoto = "./user.png";
     this.online = true;
     this.getLocation();
   }
@@ -57,11 +62,6 @@ class App extends React.Component {
       currentLat: position.coords.latitude,
       currentLng: position.coords.longitude
     })
-
-    // Checks if the user is logged in before saving its location to solid
-    let session = this.getCurrentSession();
-    if (session.state !== "pending")
-      this.saveLocationToSolid();
   }
 
   // Saves the actual location into the pod TODO
@@ -70,18 +70,16 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let last = data[url];
-    if (last === undefined) {
-      saveFileInContainer(url, new Blob("", { type: "plain/text" }), { slug: "last.txt" });
+
+    if (last.status !== 200) {
+      await fc.createFile(url);
+      console.log("File created!");
     }
     if (this.state.currentLat != null && this.state.currentLng != null) {
       await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
     }
   }
 
-  // Handles the change of the range slider
-  handRangeChange(event) {
-    this.setState({ rangeSelection: event.target.value })
-  }
 
   // Handles the insertion of a new location checking that it is not empty
   // It also checks if the location is already in the list before inserting it
@@ -131,38 +129,36 @@ class App extends React.Component {
   async loadFriendsLocations() {
     var session = await this.getCurrentSession();
     var person = data[session.webId]
-    const friends = [];
+    var friends = [];
     for await (const friend of person.friends) {
-      var lFriend = [];
-      lFriend.push(`${await data[friend]}`);
-      lFriend.push(await data[friend].name.value);
-      lFriend.push(await data[friend]["vcard:hasPhoto"].value);
+      var lFriend = {
+        pod: `${await data[friend]}`,
+        name: await data[friend].name.value,
+        photo: await data[friend]["vcard:hasPhoto"].value,
+        location: null
+      };
       friends.push(lFriend);
     }
-    this.setState({ friends });
+
+    this.friends = friends;
     await this.getMyPhoto();
     this.reloadFriendLocations(friends);
   }
 
   // Method that requests the last location to the friend's pods
   async reloadFriendLocations(friends) {
-    if (this.online) {
-      var locations = []
+    if (this.online && friends !== undefined) {
       for await (var friend of friends) {
-        var location = friend.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
-        location = await fetch(location + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+        var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
+        var location = await auth.fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
           if (x.status === 200)  // if the file exists, return the text
             return x.text()
         });
-
         if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
-          locations.push(location)
+          friend.location = location
         }
       }
-
     }
-    if (this.online)
-      this.setState({ locations }) //Update the state variable
   }
 
   // Sets the online flag to true, and starts the timer to reload the friends locations every second
@@ -176,7 +172,7 @@ class App extends React.Component {
     // When all that is done, we can set the interval to reload the friends every second.
     // TODO: This should be a state variable
     timer = setInterval(() => {
-      this.reloadFriendLocations(this.state.friends);
+      this.reloadFriendLocations(this.friends);
       this.getLocation();
     }, 1000);
     //this.reloadFriendLocations()
@@ -254,8 +250,11 @@ class App extends React.Component {
 
   async getMyPhoto() {
     let session = await this.getCurrentSession();
-    var myPhoto = (await data[session.webId]["vcard:hasPhoto"].value);
-    this.setState({ myPhoto });
+    data[session.webId]["vcard:hasPhoto"].then((x) => {
+      const photo = x.value;
+      console.log(photo)
+      this.myPhoto = photo;
+    });
   }
 
   // Renders the most part of the webpage:
@@ -291,23 +290,28 @@ class App extends React.Component {
 
               <p>Friends list:</p>
               <ul id='friends_list'>
-                <FriendList friends={this.state.friends} data={data} online={this.online}></FriendList>
+                <FriendList friends={this.friends}></FriendList>
               </ul>
 
             </LoggedIn>
           </div>
           <span>{this.state.rangeSelection} meters</span>
 
-          <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
+          
           <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
             Start</button>
-          <div className="leaflet-container">
+         
+            <LoadScript
+              id="script-loader"
+              googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+              libraries={libraries}
+            >
+            </LoadScript>
             {
               this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends} />
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} range={this.state.rangeSelection} myIcon={this.myPhoto} />
                 : <h2>Location needed for services</h2>
             }
-          </div>
         </div>
       </div >
     )
