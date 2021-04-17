@@ -11,8 +11,8 @@ import FriendList from './components/FriendList';
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
-const FC   = require('solid-file-client')
-const fc   = new FC( auth )
+const FC   = require('solid-file-client');
+const fc   = new FC( auth );
 
 var timer;
 
@@ -73,9 +73,12 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let last = data[url];
-    if (last === undefined)
-      await fc.createFile(url + "last.txt");
-    if (this.state.currentLat != null && this.state.currentLng != null) {
+    if (last.status !== 200)
+    { 
+      await fc.createFile(url);
+      console.log("File created!");
+    }
+     if (this.state.currentLat != null && this.state.currentLng != null) {
       await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
     }
   }
