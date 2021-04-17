@@ -11,6 +11,7 @@ webapp/node_modules
 # production
 webapp/build
 webapp/node_modules
+webapp/package.json
 webapp/package-lock.json
 
 npm-debug.log*
