@@ -48,12 +48,18 @@
 }
 
 .leaflet-container {
-  background-color: #282c34;
+  width: 90vh;
+  height: 90vh;
   min-height: 20vh;
-  display: grid;
-  flex-direction: row;
+}
+
+.map-Container{
+  
+  padding-top:2vh;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; 
 }
 
 .App-header {

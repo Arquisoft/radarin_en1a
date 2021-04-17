@@ -7,10 +7,6 @@ import {
 } from "@react-google-maps/api";
 import mapsStyles from "./MapStyles";
 
-const auth = require('solid-auth-client');
-const { default: data } = require('@solid/query-ldflex');
-const fetch = auth.fetch;
-
 const mapContainerStyle = {
     width: '68vw',
     height: '68vh',
@@ -59,8 +55,9 @@ class MyMap extends React.Component {
         //const locations = getLocations();
         this.markers = [];
         var self = this;
-        if (this.friends !== undefined)
-            this.friends.map((friend) => {
+        console.log(this.state.friends)
+        if (this.state.friends !== undefined)
+            this.state.friends.map((friend) => {
                 return (self.markers.push(<Marker
                     key={friend.pod}
                     position={{
@@ -99,14 +96,14 @@ class MyMap extends React.Component {
 
     render() {
         return (<div className="leaflet-container">
-            
-          <span>{this.range} meters</span>
+
+            <span>{this.range} meters</span>
             <input type="range" min="4000" max="100000" step="500" value={this.range} onChange={this.handRangeChange.bind(this)} />
 
-            <GoogleMap onchange={this.createMarkers()}
+            <GoogleMap onChange={this.createMarkers()}
                 id="radarin-map"
                 mapContainerStyle={mapContainerStyle}
-                zoom={12}
+                zoom={10}
                 center={{ lat: this.state.lat, lng: this.state.lng }}
                 options={options}>
                 {/* User current location marker */}

@@ -1,15 +1,14 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from "./components/Map";
+import Map from "./components/LeafletMap";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-import { overwriteFile } from "@inrupt/solid-client"; //, saveFileInContainer 
+//import { overwriteFile } from "@inrupt/solid-client"; //, saveFileInContainer 
 import FriendList from './components/FriendList';
-import { LoadScript } from "@react-google-maps/api"
 
 
 const auth = require('solid-auth-client');
@@ -17,7 +16,6 @@ const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
 const FC = require('solid-file-client');
 const fc = new FC(auth);
-const libraries = ["places", "geometry"];
 
 var timer;
 
@@ -27,18 +25,13 @@ class App extends React.Component {
     this.state = {
       currentLat: null,
       currentLng: null,
-      locations: [],
-      myLocations: [], // Locations from solid pod and manually added
+      friends: [],
+      myLocations: []// Locations from solid pod and manually added
     };
-    this.friends = [];
     this.myPhoto = "./user.png";
     this.online = true;
     this.getLocation();
-  }
-
-  // Refresh the user list stored in the state
-  refreshUsers(users) {
-    this.setState({ users: users })
+    this.loadFriendsLocations();
   }
 
   // Obtains the localization with the navigator
@@ -69,13 +62,14 @@ class App extends React.Component {
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     if (this.state.currentLat != null && this.state.currentLng != null) {
       // If the file does not exist its created, otherwise is just overwritten
-      await fc.postFile(url, new Blob([locationString]), {type : "plain/text"});
+      await fc.postFile(url, new Blob([locationString]), { type: "plain/text" });
     }
   }
 
   // Handles the insertion of a new location checking that it is not empty
   // It also checks if the location is already in the list before inserting it
   handleNewLocation(location) {
+
     if (location === "") {
       alert("Empty location not allowed!");
       return;
@@ -86,9 +80,9 @@ class App extends React.Component {
       if (location.toString() === this.state.myLocations[i].toString())
         repeated = true;
     }
-
+    let coords = location.split(",")
     if (!repeated) {
-      const myLocations = this.state.myLocations.concat(location);
+      const myLocations = this.state.myLocations.concat(coords);
       this.setState({ myLocations });
     }
     else
@@ -127,29 +121,39 @@ class App extends React.Component {
         pod: `${await data[friend]}`,
         name: await data[friend].name.value,
         photo: await data[friend]["vcard:hasPhoto"].value,
-        location: null
+        lat: null,
+        lng: null
       };
       friends.push(lFriend);
     }
-    this.friends = friends;
+    this.setState({ friends: friends });
     await this.getMyPhoto();
     this.reloadFriendLocations(friends);
   }
 
   // Method that requests the last location to the friend's pods
   async reloadFriendLocations(friends) {
+
+    // We do this to get a copy of the list.
+    let friendList = friends;
+
     if (this.online && friends !== undefined) {
       for await (var friend of friends) {
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
-        var location = await auth.fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+        var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
           if (x.status === 200)  // if the file exists, return the text
             return x.text()
         });
         if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
-          friend.location = location
+          let coords = location.split(",")
+          friend.lat = coords[0]
+          friend.lng = coords[1]
         }
       }
     }
+
+    this.setState({friends : friendList});
+
   }
 
   // Sets the online flag to true, and starts the timer to reload the friends locations every second
@@ -157,13 +161,10 @@ class App extends React.Component {
     // This code is a bit hacky, I'll try to explain it as best as possible. First, we set the "online" variable to true, so the "reloadFriendLocations"
     // function will work.
     this.online = true;
-    // Then we delete all previous locations. This is to flush any marker from previous operations (mainly, load and display from solid)
-    const locations = [];
-    this.setState({ locations })
     // When all that is done, we can set the interval to reload the friends every second.
     // TODO: This should be a state variable
     timer = setInterval(() => {
-      this.reloadFriendLocations(this.friends);
+      this.reloadFriendLocations(this.state.friends);
       this.getLocation();
     }, 1000);
     //this.reloadFriendLocations()
@@ -188,17 +189,8 @@ class App extends React.Component {
 
     // First, we set the online flag to false, so if the reload friends function is beeing executed asyncronously, it will know that it's time to stop
     this.online = false;
-
     // We remove the timer interval.
     clearInterval(timer);
-
-    // Flush the locations state variable, so no markers are left over
-    var locations = [];
-    this.setState({ locations });
-
-    // Set the variable to "myLocations"
-    locations = this.state.myLocations;
-    this.setState({ locations });
   }
 
 
@@ -208,8 +200,8 @@ class App extends React.Component {
 
     // If the file does not exist, is created
     let fileUrl = session.webId.replace("profile/card#me", filename);
-    if(!(await fc.itemExists(fileUrl))) 
-      await fc.postFile(fileUrl, new Blob(), {type : "text/turtle"});
+    if (!(await fc.itemExists(fileUrl)))
+      await fc.postFile(fileUrl, new Blob(), { type: "text/turtle" });
     // Until here
 
     let url = session.webId.replace("profile/card#me", filename + "#locations");
@@ -227,8 +219,8 @@ class App extends React.Component {
 
     // If the file does not exist, is created
     let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl");
-    if(!(await fc.itemExists(fileUrl))) 
-      await fc.postFile(fileUrl, new Blob(), {type : "text/turtle"});
+    if (!(await fc.itemExists(fileUrl)))
+      await fc.postFile(fileUrl, new Blob(), { type: "text/turtle" });
     // Until here
 
     let url = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl#locations");
@@ -256,8 +248,7 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     data[session.webId]["vcard:hasPhoto"].then((x) => {
       const photo = x.value;
-      console.log(photo)
-      this.myPhoto = photo;
+      this.setState({ myPhoto: photo });
     });
   }
 
@@ -294,23 +285,16 @@ class App extends React.Component {
 
               <p>Friends list:</p>
               <ul id='friends_list'>
-                <FriendList friends={this.friends}></FriendList>
+                <FriendList friends={this.state.friends}></FriendList>
               </ul>
 
             </LoggedIn>
           </div>
-          <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
+          <button onClick={() => { this.loadFriendsLocations() }}>
             Start</button>
-
-          <LoadScript
-            id="script-loader"
-            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-            libraries={libraries}
-          >
-          </LoadScript>
           {
             this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} myIcon={this.myPhoto} />
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends} myIcon={this.state.myPhoto} locations={this.state.myLocations} />
               : <h2>Location needed for services</h2>
           }
         </div>
