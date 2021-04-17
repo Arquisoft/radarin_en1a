@@ -1,8 +1,9 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from "./components/Map";
+import Map from "./components/LeafletMap";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
+import './leaflet.css';
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
@@ -23,7 +24,6 @@ class App extends React.Component {
       locations: [],
       myLocations: [], // Locations from solid pod and manually added
       friends: [],
-      friendsNames: [],
       friendsPhotos: [],
       rangeSelection: "6000"
     };
@@ -70,8 +70,9 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let last = data[url];
-    if (last === undefined)
-      saveFileInContainer(url, new Blob("", {type: "plain/text"} ), {slug: "last.txt"});
+    if (last === undefined) {
+      saveFileInContainer(url, new Blob("", { type: "plain/text" }), { slug: "last.txt" });
+    }
     if (this.state.currentLat != null && this.state.currentLng != null) {
       await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
     }
@@ -131,16 +132,14 @@ class App extends React.Component {
     var session = await this.getCurrentSession();
     var person = data[session.webId]
     const friends = [];
-    const friendsNames = [];
-    const friendsPhotos = [];
     for await (const friend of person.friends) {
-      friends.push(`${await data[friend]}`);
-      friendsNames.push(await data[friend].name.value);
-      friendsPhotos.push(await data[friend]["vcard:hasPhoto"].value);
+      var lFriend = [];
+      lFriend.push(`${await data[friend]}`);
+      lFriend.push(await data[friend].name.value);
+      lFriend.push(await data[friend]["vcard:hasPhoto"].value);
+      friends.push(lFriend);
     }
     this.setState({ friends });
-    this.setState({ friendsNames });
-    this.setState({ friendsPhotos });
     await this.getMyPhoto();
     this.reloadFriendLocations(friends);
   }
@@ -213,12 +212,6 @@ class App extends React.Component {
     // Set the variable to "myLocations"
     locations = this.state.myLocations;
     this.setState({ locations });
-
-    // Remove the friends names and photos, so they won't show up on the new markers
-    //this.state.friendsNames = [];
-    //this.state.friendsPhotos = [];
-    //this.setState({friendsNames : []});
-    //this.setState({friendsPhotos : []});
 
   }
 
@@ -308,10 +301,10 @@ class App extends React.Component {
           <input type="range" min="4000" max="100000" step="500" value={this.state.rangeSelection} onChange={this.handRangeChange.bind(this)} />
           <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
             Start</button>
-          <div className="Map-content">
+          <div className="leaflet-container">
             {
               this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends} range={this.state.rangeSelection} myIcon={this.state.myPhoto} />
+                <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends} />
                 : <h2>Location needed for services</h2>
             }
           </div>
