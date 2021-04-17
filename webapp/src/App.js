@@ -139,7 +139,6 @@ class App extends React.Component {
       };
       friends.push(lFriend);
     }
-
     this.friends = friends;
     await this.getMyPhoto();
     this.reloadFriendLocations(friends);
@@ -297,21 +296,21 @@ class App extends React.Component {
           </div>
           <span>{this.state.rangeSelection} meters</span>
 
-          
+
           <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
             Start</button>
-         
-            <LoadScript
-              id="script-loader"
-              googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-              libraries={libraries}
-            >
-            </LoadScript>
-            {
-              this.state.currentLat && this.state.currentLng ?
-                <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} range={this.state.rangeSelection} myIcon={this.myPhoto} />
-                : <h2>Location needed for services</h2>
-            }
+
+          <LoadScript
+            id="script-loader"
+            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+            libraries={libraries}
+          >
+          </LoadScript>
+          {
+            this.state.currentLat && this.state.currentLng ?
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} range={this.state.rangeSelection} myIcon={this.myPhoto} />
+              : <h2>Location needed for services</h2>
+          }
         </div>
       </div >
     )
