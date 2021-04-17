@@ -29,7 +29,6 @@ class App extends React.Component {
       currentLng: null,
       locations: [],
       myLocations: [], // Locations from solid pod and manually added
-      rangeSelection: "6000"
     };
     this.friends = [];
     this.myPhoto = "./user.png";
@@ -300,9 +299,6 @@ class App extends React.Component {
 
             </LoggedIn>
           </div>
-          <span>{this.state.rangeSelection} meters</span>
-
-
           <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
             Start</button>
 
@@ -314,7 +310,7 @@ class App extends React.Component {
           </LoadScript>
           {
             this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} range={this.state.rangeSelection} myIcon={this.myPhoto} />
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} myIcon={this.myPhoto} />
               : <h2>Location needed for services</h2>
           }
         </div>

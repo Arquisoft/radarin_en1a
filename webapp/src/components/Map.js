@@ -39,7 +39,7 @@ class MyMap extends React.Component {
             myIcon: props.myIcon,
             selected: null
         }
-        this.range = props.range;
+        this.range = 6000;
         this.markers = [];
     };
 
@@ -99,6 +99,8 @@ class MyMap extends React.Component {
 
     render() {
         return (<div className="leaflet-container">
+            
+          <span>{this.range} meters</span>
             <input type="range" min="4000" max="100000" step="500" value={this.range} onChange={this.handRangeChange.bind(this)} />
 
             <GoogleMap onchange={this.createMarkers()}
