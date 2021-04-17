@@ -6,6 +6,7 @@ import {
     InfoWindow
 } from "@react-google-maps/api";
 import mapsStyles from "./MapStyles";
+import '../App.css'
 
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
@@ -35,11 +36,10 @@ class MyMap extends React.Component {
             lat: props.lat,
             lng: props.lng,
             friends: props.friends,
-            //range: props.range,
+            range : 6000,
             myIcon: props.myIcon,
             selected: null
         }
-        this.range = 6000;
         this.markers = [];
     };
 
@@ -94,15 +94,16 @@ class MyMap extends React.Component {
 
     // Handles the change of the range slider
     handRangeChange(event) {
-        this.range = event.target.value;
+        this.setState({ range: event.target.value })
     }
 
     render() {
-        return (<div className="leaflet-container">
-            
-          <span>{this.range} meters</span>
-            <input type="range" min="4000" max="100000" step="500" value={this.range} onChange={this.handRangeChange.bind(this)} />
-
+        return (
+        <div className="leaflet-container">
+            <div className="slider-container">
+                <span>{this.state.range} METERS</span>
+                <input className="slider" type="range" min="4000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
+            </div>
             <GoogleMap onchange={this.createMarkers()}
                 id="radarin-map"
                 mapContainerStyle={mapContainerStyle}
@@ -118,7 +119,7 @@ class MyMap extends React.Component {
                     }}
                 />
                 {/* Visualization of range selected by the user */}
-                <Circle center={{ lat: this.state.lat, lng: this.state.lng }} radius={parseFloat(this.range)} />
+                <Circle center={{ lat: this.state.lat, lng: this.state.lng }} radius={parseFloat(this.state.range)} />
                 {/* Only shows friends inside the range selected by the user */}
                 {this.displayMarkers()}
                 {/* Show friends information when click on its marker */}

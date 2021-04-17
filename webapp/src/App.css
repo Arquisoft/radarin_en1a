@@ -14,7 +14,6 @@
 }
 
 #sidemenu{
-  
     display:table-cell;
     height: 100%; /* 100% Full-height */
     width: 0%; /* 0 width - change this with JavaScript */
@@ -54,6 +53,48 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.slider-container {
+  padding: 1rem 0 1.6rem;
+  display: inline-grid;
+  color: inherit;
+  background-color: white;
+}
+
+.slider-container span {
+  padding-bottom: 0.6rem;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 70%;
+  height: 15px;
+  margin: 0 auto;
+  border-radius: 5px;  
+  background: black;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%; 
+  background: #8ab6d6;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #8ab6d6;
+  cursor: pointer;
 }
 
 .App-header {

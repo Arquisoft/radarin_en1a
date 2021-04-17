@@ -18,6 +18,7 @@ const fetch = auth.fetch;
 const FC = require('solid-file-client');
 const fc = new FC(auth);
 const libraries = ["places", "geometry"];
+const google = window.google;
 
 var timer;
 
@@ -277,9 +278,11 @@ class App extends React.Component {
         </header>
 
         <div className="App-content">
-
+            {google ? null : <LoadScript
+            id="script-loader"
+            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+            libraries={libraries}> </LoadScript>}
           <div id="sidemenu">
-
             <LoggedOut>
               <LoginButton popup="https://inrupt.net/common/popup.html" />
             </LoggedOut>
@@ -301,15 +304,9 @@ class App extends React.Component {
           </div>
           <button onClick={() => { this.loadFriendsLocations(); this.startTimer() }}>
             Start</button>
-
-          <LoadScript
-            id="script-loader"
-            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-            libraries={libraries}
-          >
-          </LoadScript>
+           
           {
-            this.state.currentLat && this.state.currentLng ?
+            this.state.currentLat && this.state.currentLng && window.google ?
               <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.friends} myIcon={this.myPhoto} />
               : <h2>Location needed for services</h2>
           }
