@@ -64,22 +64,15 @@ class App extends React.Component {
     })
   }
 
-  // Saves the actual location into the pod TODO
   async saveLocationToSolid() {
     var locationString = this.state.currentLat + ',' + this.state.currentLng; // Son ambos null ??
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-    let last = data[url];
-
-    if (last.status !== 200) {
-      await fc.createFile(url);
-      console.log("File created!");
-    }
     if (this.state.currentLat != null && this.state.currentLng != null) {
-      await overwriteFile(last.value, new Blob([locationString], { type: "plain/text" }));
+      // If the file does not exist its created, otherwise is just overwritten
+      await fc.postFile(url, new Blob([locationString]), {type : "plain/text"});
     }
   }
-
 
   // Handles the insertion of a new location checking that it is not empty
   // It also checks if the location is already in the list before inserting it
@@ -207,13 +200,19 @@ class App extends React.Component {
     // Set the variable to "myLocations"
     locations = this.state.myLocations;
     this.setState({ locations });
-
   }
 
 
   // Loads the locations from the solid profile
   async loadSolidLocations(filename) {
     let session = await this.getCurrentSession();
+
+    // If the file does not exist, is created
+    let fileUrl = session.webId.replace("profile/card#me", filename);
+    if(!(await fc.itemExists(fileUrl))) 
+      await fc.postFile(fileUrl, new Blob(), {type : "text/turtle"});
+    // Until here
+
     let url = session.webId.replace("profile/card#me", filename + "#locations");
     let radar = data[url];
     const locations = [];
@@ -226,6 +225,13 @@ class App extends React.Component {
   // Saves the locations into the solid profile
   async saveSolidLocations(locations, oldLocations) {
     let session = await this.getCurrentSession();
+
+    // If the file does not exist, is created
+    let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl");
+    if(!(await fc.itemExists(fileUrl))) 
+      await fc.postFile(fileUrl, new Blob(), {type : "text/turtle"});
+    // Until here
+
     let url = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl#locations");
     let radar = data[url];
     for (const t of oldLocations) {
