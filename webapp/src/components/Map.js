@@ -31,6 +31,13 @@ class MyMap extends React.Component {
             styles: mapsStyles,
             zoomControl: true,
             mapTypeControl: true,
+            mapTypeControlOptions:  { 
+                position : window.google.maps.ControlPosition.TOP_CENTER,
+                style: window.google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                //Default layer styles, if some layer must be removed delete it from here 
+                mapTypeIds: [window.google.maps.MapTypeId.HYBRID,window.google.maps.MapTypeId.ROADMAP,
+                    window.google.maps.MapTypeId.SATELLITE,window.google.maps.MapTypeId.TERRAIN] 
+            }
         }
 
     };
