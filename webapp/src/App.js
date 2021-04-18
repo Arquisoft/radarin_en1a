@@ -1,13 +1,13 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Map from "./components/Map";
+//import Map from "./components/LeafletMap";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-import { overwriteFile } from "@inrupt/solid-client"; //, saveFileInContainer 
 import FriendList from './components/FriendList';
 import { LoadScript } from "@react-google-maps/api"
 
@@ -169,11 +169,11 @@ class App extends React.Component {
     var width = document.getElementById('sidemenu').style.width;
     if (width.toString().length === 0) {
       document.getElementById('sidemenu').style.width = '25%';
-      document.getElementById('ShowMenu').innerHTML = "Hide";
+      document.getElementById('ShowMenu').style.transform = "scaleX(-1)";
     }
     else {
       document.getElementById('sidemenu').style.width = '';
-      document.getElementById('ShowMenu').innerText = "Side Menu";
+      document.getElementById('ShowMenu').style.transform = "scaleX(1)";
     }
   }
 
@@ -236,18 +236,12 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <button id="ShowMenu" onClick={() => this.displayMenu()}>Side Menu</button>
-
-          <h1>Radarin - Friends Location</h1>
-
-        </header>
-
-        <div className="App-content">
+        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" /></button>
           {google ? null : <LoadScript
             id="script-loader"
             googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
             libraries={libraries}> </LoadScript>}
+          
           <div id="sidemenu">
 
             <LoggedOut>
@@ -255,8 +249,8 @@ class App extends React.Component {
             </LoggedOut>
 
             <LoggedIn>
-              
-              <LogoutButton/>
+
+              <LogoutButton />
               <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
               <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
@@ -264,15 +258,13 @@ class App extends React.Component {
 
             </LoggedIn>
           </div>
-          <button onClick={() => { this.loadFriendsLocations() }}>
-            Start</button>
+
           {
             this.state.currentLat && this.state.currentLng ?
               <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations}/>
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} />
               : <h2>Location needed for services</h2>
           }
-        </div>
       </div >
     )
   }

@@ -9,15 +9,8 @@ import mapsStyles from "./MapStyles";
 import '../App.css'
 
 const mapContainerStyle = {
-    width: '68vw',
-    height: '68vh',
-}
-
-// UI Options for displayed map
-const options = {
-    styles: mapsStyles,
-    disableDefaultUI: true,
-    zoomControl: true,
+    width: '99vw',
+    height: '99vh',
 }
 
 
@@ -33,6 +26,13 @@ class MyMap extends React.Component {
             selected: null
         }
         this.markers = [];
+
+        this.options = {
+            styles: mapsStyles,
+            zoomControl: true,
+            mapTypeControl: true,
+        }
+
     };
 
     /**
@@ -68,17 +68,17 @@ class MyMap extends React.Component {
     render() {
 
         return (
-            <div className="map-container">
+            <div className="map-Container">
                 <div className="slider-container">
-                    <span>{this.state.range} METERS</span>
-                    <input className="slider" type="range" min="4000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
+                    <input className="slider" type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
                 </div>
                 <GoogleMap
                     id="radarin-map"
                     mapContainerStyle={mapContainerStyle}
-                    zoom={12}
+                    zoom={15}
                     center={{ lat: this.props.lat, lng: this.props.lng }}
-                    options={options}>
+                    options={this.options}
+                >
                     {/* User current location marker */}
                     <Marker
                         position={{ lat: this.props.lat, lng: this.props.lng, }}

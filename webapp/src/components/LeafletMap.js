@@ -23,10 +23,9 @@ class MyMap extends React.Component {
 
         console.log(this.props.friends)
         return (
-            <div className="map-Container">
-                <h2>Radar radius: {this.state.range}</h2>
-                <input type="range" min="4000" max="100000" step="500" value={this.state.range} onChange={this.handleRangeChange.bind(this)} />
-
+            <div className="map-Container"><div className="slider-container">
+                <input type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handleRangeChange.bind(this)} />
+            </div>
                 <MapContainer center={this.state.pos} zoom={10} scrollWheelZoom={true}>
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -37,7 +36,7 @@ class MyMap extends React.Component {
                     })}>
                     </Marker>
                     <FriendMarkers friends={this.props.friends} />
-                    <LocMarkers locations={this.props.locations} />
+                    <FriendMarkers friends={this.props.locations} />
                     <Circle center={this.state.pos} radius={this.state.range} />
 
                 </MapContainer>
@@ -69,22 +68,6 @@ class FriendMarkers extends React.Component {
                     console.log("Unable to get the location from " + friend.name)
                     return null;
                 }
-            }
-        )
-    }
-}
-
-class LocMarkers extends React.Component {
-
-
-    render() {
-        return this.props.locations.map(
-            (location) => {
-                console.log(location)
-                return (
-                    <Marker position={location}>
-                    </Marker>
-                )
             }
         )
     }

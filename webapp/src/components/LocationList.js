@@ -3,9 +3,6 @@ import React from 'react';
 // locations with a button to delete each one
 class LocationListDisplay extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
     render() {
         return (
             <table key="LocationListDisplayTable">

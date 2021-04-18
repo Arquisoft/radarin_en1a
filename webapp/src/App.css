@@ -15,17 +15,43 @@
 
 #sidemenu{
     display:table-cell;
-    height: 50%; /* 100% Full-height */
+    height: 100%; /* 100% Full-height */
     width: 0%; /* 0 width - change this with JavaScript */
-    z-index: 1; /* Stay on top */
+    z-index: 1;
     top: 0; /* Stay at the top */
     left: 0;
     position: fixed;
-    background-color: #888; /* Black*/
+    color: white;
+    background-color:  rgba(10, 10, 10, 0.8);
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
+
+#sidemenu li{
+
+  font-size: small;
+
+}
+
+#ShowMenu{
+  width: 5vh;
+  height: 5vh;
+  z-index: 2;
+  margin-top: 5vh;
+  margin-left: 0.5vw;
+  top: 0; /* Stay at the top */
+  left: 0;
+  position: fixed;
+  justify-self: left;
+}
+
+#ShowMenu img{
+  width: 3vh;
+  height: 3vh;
+  justify-self: center;
+}
+
 
 .friendLink:link {
   color: red;
@@ -47,25 +73,26 @@
 }
 
 .leaflet-container {
-  width: 90vh;
-  height: 90vh;
-  min-height: 20vh;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: auto;
 }
 
 .map-Container{
-  
-  padding-top:2vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; 
-}
+  margin: auto;
+  }
 
 .slider-container {
-  padding: 1rem 0 1.6rem;
-  display: inline-grid;
-  color: inherit;
-  background-color: white;
+  position: fixed;
+  z-index: 1;
+  top: 0; /* Stay at the top */
+  right: 0;
+  width: 30%;
+  margin-top: 5vh;
+  margin-right: 1vw;
+  color: white;
+  background-color: transparent;
 }
 
 .slider-container span {
@@ -153,17 +180,6 @@ h1 {
 
 #login{
   grid-column: 3;
-}
-
-#sidemenu li{
-
-  font-size: small;
-
-}
-
-#ShowMenu{
-  grid-column: 1;
-  justify-self: left;
 }
 
 .Map-content {
