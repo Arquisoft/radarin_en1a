@@ -35,6 +35,8 @@
 }
 
 #ShowMenu{
+  min-width: 48px;
+  min-height: 48px;
   width: 5vh;
   height: 5vh;
   z-index: 2;
@@ -44,11 +46,35 @@
   left: 0;
   position: fixed;
   justify-self: left;
+  display: inline-block;
+  border: none;
+  text-decoration: none;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  transition: background 250ms ease-in-out, 
+              transform 150ms ease;
+}
+
+#ShowMenu:hover,
+#ShowMenun:focus {
+  background: #f0f0f0;
+}
+
+#ShowMenu:focus {
+  outline: 1px solid #fff;
+  outline-offset: -4px;
+}
+
+#ShowMenu:active {
+  transform: scale(0.99);
 }
 
 #ShowMenu img{
   width: 3vh;
   height: 3vh;
+  min-width: 32px;
+  min-height: 32px;
   justify-self: center;
 }
 
