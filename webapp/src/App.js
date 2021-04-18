@@ -1,14 +1,15 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from "./components/LeafletMap";
+import Map from "./components/Map";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
 import LocationListDisplay from "./components/LocationList";
 import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
-//import { overwriteFile } from "@inrupt/solid-client"; //, saveFileInContainer 
+import { overwriteFile } from "@inrupt/solid-client"; //, saveFileInContainer 
 import FriendList from './components/FriendList';
+import { LoadScript } from "@react-google-maps/api"
 
 
 const auth = require('solid-auth-client');
@@ -16,6 +17,8 @@ const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
 const FC = require('solid-file-client');
 const fc = new FC(auth);
+const libraries = ["places", "geometry"];
+const google = window.google;
 
 var timer;
 
@@ -152,7 +155,7 @@ class App extends React.Component {
       }
     }
 
-    this.setState({friends : friendList});
+    this.setState({ friends: friendList });
 
   }
 
@@ -268,9 +271,11 @@ class App extends React.Component {
         </header>
 
         <div className="App-content">
-
+          {google ? null : <LoadScript
+            id="script-loader"
+            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+            libraries={libraries}> </LoadScript>}
           <div id="sidemenu">
-
             <LoggedOut>
               <LoginButton popup="https://inrupt.net/common/popup.html" />
             </LoggedOut>
