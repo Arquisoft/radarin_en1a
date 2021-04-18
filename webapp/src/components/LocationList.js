@@ -5,33 +5,24 @@ class LocationListDisplay extends React.Component {
 
     constructor(props) {
         super(props);
-        this.props = props;
     }
     render() {
-        this.LocationList(this.props.locations);
         return (
-            this.props.locations.map(t => {
-                return (
-                    <li key={t}>
-                        {t}<button onClick={() => this.props.deleteLocation(t)}>-</button>
-                    </li>
-                );
-            })
+            <table key="LocationListDisplayTable">
+                <tbody key="LocationListDisplayTableBody">
+                {this.props.locations.map((location) => {
+                    return (
+                        <tr key="LocationListDisplayTableRow">
+                            <td key={location.name}>
+                                {location.name}
+                                <button onClick={() => this.props.deleteLocation(location)}>-</button>
+                            </td>
+                        </tr>
+                    );
+                })}
+                </tbody>
+            </table>
         );
-    }
-
-    // Returns the list of locations obtained from the input
-    LocationList(input) {
-        var data =
-            input.map(l => { // l es cada location
-                var tp = l.split(',');
-                var d = {
-                    lat: parseInt(tp[0]),
-                    lng: parseInt(tp[1])
-                }
-                return d;
-            });
-        return data;
     }
 }
 export default LocationListDisplay

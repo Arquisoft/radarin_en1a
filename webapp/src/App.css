@@ -15,7 +15,7 @@
 
 #sidemenu{
     display:table-cell;
-    height: 100%; /* 100% Full-height */
+    height: 50%; /* 100% Full-height */
     width: 0%; /* 0 width - change this with JavaScript */
     z-index: 1; /* Stay on top */
     top: 0; /* Stay at the top */
@@ -163,6 +163,7 @@ h1 {
 
 #ShowMenu{
   grid-column: 1;
+  justify-self: left;
 }
 
 .Map-content {

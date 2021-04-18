@@ -29,12 +29,12 @@ class App extends React.Component {
       currentLat: null,
       currentLng: null,
       friends: [],
+      myPhoto: "./user.png",
       myLocations: []// Locations from solid pod and manually added
     };
-    this.myPhoto = "./user.png";
-    this.online = true;
     this.getLocation();
     this.loadFriendsLocations();
+    this.loadStoredLocationFromSolid();
   }
 
   // Obtains the localization with the navigator
@@ -57,6 +57,7 @@ class App extends React.Component {
       currentLat: position.coords.latitude,
       currentLng: position.coords.longitude
     })
+    this.saveLocationToSolid()
   }
 
   async saveLocationToSolid() {
@@ -65,27 +66,32 @@ class App extends React.Component {
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     if (this.state.currentLat != null && this.state.currentLng != null) {
       // If the file does not exist its created, otherwise is just overwritten
-      await fc.postFile(url, new Blob([locationString]), { type: "plain/text" });
+      await fc.postFile(url, new Blob([locationString]));
     }
   }
 
   // Handles the insertion of a new location checking that it is not empty
   // It also checks if the location is already in the list before inserting it
-  handleNewLocation(location) {
+  handleNewLocation(lat, lng, name) {
 
-    if (location === "") {
-      alert("Empty location not allowed!");
+    if (lat === "" | lng === "") {
+      alert("Empty coordinates not allowed!");
       return;
     }
+    let locationJson = {
+      lat: lat,
+      lng: lng,
+      name: name,
+      photo: "./logo192.png"
+    };
 
     let repeated = false;
     for (let i = 0; i < this.state.myLocations.length; i++) {
-      if (location.toString() === this.state.myLocations[i].toString())
+      if (locationJson.lat === this.state.myLocations[i].lat && locationJson.lng === this.state.myLocations[i].lng)
         repeated = true;
     }
-    let coords = location.split(",")
     if (!repeated) {
-      const myLocations = this.state.myLocations.concat(coords);
+      const myLocations = this.state.myLocations.concat(locationJson);
       this.setState({ myLocations });
     }
     else
@@ -98,18 +104,6 @@ class App extends React.Component {
     const myLocations = this.state.myLocations.slice();
     myLocations.splice(myLocations.indexOf(location), 1);
     this.setState({ myLocations });
-  }
-
-  // Load the locations from solid and put them into the state
-  async loadStoredLocationFromSolid() {
-    let myLocations = await this.loadSolidLocations("radarin/stored_locations.ttl");
-    this.setState({ myLocations });
-  }
-
-  // Save all the locations to solid
-  async saveStoredLocationToSolid() {
-    let oldLocations = await this.loadSolidLocations("radarin/stored_locations.ttl");
-    this.saveSolidLocations(this.state.myLocations, oldLocations);
   }
 
   // Method that loads the friends location to 
@@ -140,7 +134,7 @@ class App extends React.Component {
     // We do this to get a copy of the list.
     let friendList = friends;
 
-    if (this.online && friends !== undefined) {
+    if (friends !== undefined) {
       for await (var friend of friends) {
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
         var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
@@ -159,12 +153,8 @@ class App extends React.Component {
 
   }
 
-  // Sets the online flag to true, and starts the timer to reload the friends locations every second
+  // Starts the timer to reload the friends locations every second
   async startTimer() {
-    // This code is a bit hacky, I'll try to explain it as best as possible. First, we set the "online" variable to true, so the "reloadFriendLocations"
-    // function will work.
-    this.online = true;
-    // When all that is done, we can set the interval to reload the friends every second.
     // TODO: This should be a state variable
     timer = setInterval(() => {
       this.reloadFriendLocations(this.state.friends);
@@ -187,53 +177,36 @@ class App extends React.Component {
     }
   }
 
-  // Displays the locations from myLocations
-  displayCurrentLocations() {
-
-    // First, we set the online flag to false, so if the reload friends function is beeing executed asyncronously, it will know that it's time to stop
-    this.online = false;
-    // We remove the timer interval.
-    clearInterval(timer);
-  }
-
-
-  // Loads the locations from the solid profile
-  async loadSolidLocations(filename) {
+  // Load the locations from solid and put them into the state
+  async loadStoredLocationFromSolid() {
     let session = await this.getCurrentSession();
 
     // If the file does not exist, is created
-    let fileUrl = session.webId.replace("profile/card#me", filename);
+    let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
     if (!(await fc.itemExists(fileUrl)))
-      await fc.postFile(fileUrl, new Blob(), { type: "text/turtle" });
+      await fc.postFile(fileUrl, new Blob());
     // Until here
 
-    let url = session.webId.replace("profile/card#me", filename + "#locations");
-    let radar = data[url];
-    const locations = [];
-    for await (const location of radar.schema_itemListElement) {
-      locations.push(location.toString());
-    }
-    return Array.from(locations.values());
+    let url = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
+    let radar = await fetch(url).then((x) => {
+      if (x.status === 200)  // if the file exists, return the text
+        return x.text()
+    });
+    if (radar === "")
+      return;
+    console.log(radar)
+
+    const locations = JSON.parse(radar);
+    this.setState({ myLocations: locations })
   }
 
   // Saves the locations into the solid profile
-  async saveSolidLocations(locations, oldLocations) {
+  async saveStoredLocationToSolid() {
     let session = await this.getCurrentSession();
-
-    // If the file does not exist, is created
-    let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl");
-    if (!(await fc.itemExists(fileUrl)))
-      await fc.postFile(fileUrl, new Blob(), { type: "text/turtle" });
-    // Until here
-
-    let url = session.webId.replace("profile/card#me", "radarin/stored_locations.ttl#locations");
-    let radar = data[url];
-    for (const t of oldLocations) {
-      await radar["schema:itemListElement"].delete(t.toString());
-    }
-    for (const t of locations) {
-      await radar["schema:itemListElement"].add(t.toString());
-    }
+    // If the file does not exist, it is created
+    let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
+    let myJSON = JSON.stringify(this.state.myLocations);
+    await fc.postFile(fileUrl, new Blob([myJSON]));
     alert("Saved to your Solid POD");
   }
 
@@ -276,22 +249,18 @@ class App extends React.Component {
             googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
             libraries={libraries}> </LoadScript>}
           <div id="sidemenu">
+
             <LoggedOut>
               <LoginButton popup="https://inrupt.net/common/popup.html" />
             </LoggedOut>
+
             <LoggedIn>
-              <LogoutButton />
-              <p> Load and edit your saved locations </p>
-              <InputLocation addNewLocation={(location) => this.handleNewLocation(location)} />
-
+              
+              <LogoutButton/>
+              <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
+              <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
               <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-
-              <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} display={() => this.displayCurrentLocations()} />
-
-              <p>Friends list:</p>
-              <ul id='friends_list'>
-                <FriendList friends={this.state.friends}></FriendList>
-              </ul>
+              <FriendList friends={this.state.friends}></FriendList>
 
             </LoggedIn>
           </div>
@@ -299,7 +268,8 @@ class App extends React.Component {
             Start</button>
           {
             this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends} myIcon={this.state.myPhoto} locations={this.state.myLocations} />
+              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                myIcon={this.state.myPhoto} locations={this.state.myLocations}/>
               : <h2>Location needed for services</h2>
           }
         </div>

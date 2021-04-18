@@ -88,6 +88,7 @@ class MyMap extends React.Component {
                         }}
                     />
                     <FriendsMarkers friends={this.props.friends} setSelected={this.setSelected} />
+                    <FriendsMarkers friends={this.props.locations} setSelected={this.setSelected} />
                     {/* Visualization of range selected by the user */}
                     <Circle center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.state.range)} />
                     {/* Only shows friends inside the range selected by the user */}
