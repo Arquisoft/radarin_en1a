@@ -20,7 +20,7 @@ const fc = new FC(auth);
 const libraries = ["places", "geometry"];
 const google = window.google;
 
-var timer;
+//var timer;
 
 class App extends React.Component {
   constructor(props) {
@@ -156,7 +156,7 @@ class App extends React.Component {
   // Starts the timer to reload the friends locations every second
   async startTimer() {
     // TODO: This should be a state variable
-    timer = setInterval(() => {
+    setInterval(() => {
       this.reloadFriendLocations(this.state.friends);
       this.getLocation();
     }, 1000);
@@ -236,7 +236,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" /></button>
+        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="" /></button>
           {google ? null : <LoadScript
             id="script-loader"
             googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
