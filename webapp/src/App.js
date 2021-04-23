@@ -132,15 +132,18 @@ class App extends React.Component {
     this.reloadRing(1);
   }
 
-  // Method that requests the last location to the friend's pods in that ring
+ /**
+  * Method that requests the locations of the friends in a given ring
+  * @param {*} ring 
+  */
   async reloadRing(ring) {
 
     // We do this to get a copy of the list of friends.
-    let friendList = friends;
+    let friendList = this.state.friends;
 
-    if (friends !== undefined) {
+    if (friendList !== undefined) {
       for await (var friend of friendList) {
-        if(friend.ring = ring){
+        if(friend.ring === ring){
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
         var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
           if (x.status === 200)  // if the file exists, return the text
@@ -177,6 +180,16 @@ class App extends React.Component {
     if (distance > (this.state.range * 1.5)) {
       return 3;
     }
+  }
+  /**
+   * Calculates and returns the distance between the current location of the user and a given location
+   * @param {*} lat latitude to compute the distance to
+   * @param {*} lng longitude to compute the distance to
+   * @returns  distance between the user and the given location
+   */
+  distanceBetweenCoordinates(lat, lng) {
+    return window.google.maps.geometry.spherical.computeDistanceBetween(new window.google.maps.LatLng({ lat: this.state.currentLat, lng: this.state.currentLng }),
+      new window.google.maps.LatLng({ lat: lat, lng: lng }));
   }
 
 
