@@ -22,7 +22,7 @@ class MyMap extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            range: 6000,
+            range: this.props.range,
             selected: null
         }
         this.markers = [];

@@ -31,7 +31,8 @@ class App extends React.Component {
       friends: [],
       myPhoto: "./user.png",
       myLocations: [],// Locations from solid pod and manually added
-      mapType: 'gmap'
+      mapType: 'gmap',
+      range: 6000
     };
     this.getLocation();
     this.loadFriendsLocations();
@@ -145,18 +146,39 @@ class App extends React.Component {
           if (x.status === 200)  // if the file exists, return the text
             return x.text()
         });
-      }
         if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
           let coords = location.split(",")
           friend.lat = coords[0]
-          friend.lng = coords[1]
+          friend.lng = coords[1] 
+          friend.ring = this.computeRing(location);
         }
+      }
       }
     }
 
     this.setState({ friends: friendList });
 
   }
+  /**
+   * Calculates and returns the ring a friend belongs to
+   * @param {String} location of the friend 
+   * @returns {int} corresponding ring
+   */
+  computeRing(location){
+    var loc = latAndLngFromLocation(location);    
+    var distance = this.distanceBetweenCoordinates(loc.lat, loc.lng);
+    //Returns the corresponding ring
+    if (distance <= this.state.range) {
+      return 1;
+    }
+    if (distance <= (this.state.range * 1.5)) {
+      return 2;
+    }
+    if (distance > (this.state.range * 1.5)) {
+      return 3;
+    }
+  }
+
 
   // Starts the timer to reload the friends locations every second
   async startTimer() {
