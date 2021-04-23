@@ -47,7 +47,8 @@
   position: fixed;
   justify-self: left;
   display: inline-block;
-  border: none;
+  border:none;
+  box-shadow: 0px 0px 2px grey;
   text-decoration: none;
   background: #ffffff;
   cursor: pointer;

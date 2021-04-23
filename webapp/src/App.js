@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from "./components/Map";
-//import Map from "./components/LeafletMap";
+import GMap from "./components/Map";
+import LMap from "./components/LeafletMap";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
@@ -30,7 +30,8 @@ class App extends React.Component {
       currentLng: null,
       friends: [],
       myPhoto: "./user.png",
-      myLocations: []// Locations from solid pod and manually added
+      myLocations: [],// Locations from solid pod and manually added
+      mapType: 'gmap'
     };
     this.getLocation();
     this.loadFriendsLocations();
@@ -228,6 +229,13 @@ class App extends React.Component {
     });
   }
 
+  changeMapType() {
+    if (this.state.mapType === 'gmap')
+      this.setState({ mapType: 'lmap' })
+    else
+      this.setState({ mapType: 'gmap' })
+  }
+
   // Renders the most part of the webpage:
   // - Title
   // - Menu button and menu
@@ -237,34 +245,41 @@ class App extends React.Component {
     return (
       <div className="App">
         <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" /></button>
-          {google ? null : <LoadScript
-            id="script-loader"
-            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-            libraries={libraries}> </LoadScript>}
-          
-          <div id="sidemenu">
+        {google ? null : <LoadScript
+          id="script-loader"
+          googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+          libraries={libraries}> </LoadScript>}
 
-            <LoggedOut>
-              <LoginButton popup="https://inrupt.net/common/popup.html" />
-            </LoggedOut>
+        <div id="sidemenu">
 
-            <LoggedIn>
+          <LoggedOut>
+            <LoginButton popup="https://inrupt.net/common/popup.html" />
+          </LoggedOut>
 
-              <LogoutButton />
-              <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
-              <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
-              <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-              <FriendList friends={this.state.friends}></FriendList>
+          <LoggedIn>
 
-            </LoggedIn>
-          </div>
+            <LogoutButton />
+            <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
+            <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
+            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
+            <FriendList friends={this.state.friends}></FriendList>
+            <button onClick={() => this.changeMapType()}>Change Map</button>
+          </LoggedIn>
+        </div>
 
-          {
-            this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+        {
+          this.state.currentLat && this.state.currentLng ?
+            this.state.mapType === 'gmap' && window.google !== undefined ?
+              <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                 myIcon={this.state.myPhoto} locations={this.state.myLocations} />
-              : <h2>Location needed for services</h2>
-          }
+
+
+              : this.state.mapType === 'lmap' ?
+                <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                  myIcon={this.state.myPhoto} locations={this.state.myLocations} />
+                : <h2>Error loading the map</h2>
+            : <h2>Location needed for services</h2>
+        }
       </div >
     )
   }
