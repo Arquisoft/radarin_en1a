@@ -130,6 +130,7 @@ class App extends React.Component {
     await this.getMyPhoto();
     //Reloads the first one to ask for every friend's location
     this.reloadRing(1);
+    this.startTimer();
   }
 
  /**
@@ -192,14 +193,21 @@ class App extends React.Component {
       new window.google.maps.LatLng({ lat: lat, lng: lng }));
   }
 
-
-  // Starts the timer to reload the friends locations every second
+  /**
+   * Starts the timer to reload the friends locations
+   */
   async startTimer() {
-    // TODO: This should be a state variable
+    let self = this;
     setInterval(() => {
-      this.reloadRing(this.state.friends);
-      this.getLocation();
-    }, 1000);
+      self.reloadRing(1);
+      //self.getLocation();
+    }, 1000); // 1 second
+    setInterval(() => {
+      self.reloadRing(2);
+    }, 10000); // 10 seconds
+    setInterval(() => {
+      self.reloadRing(3);
+    }, 60000); // 1 minute
     //this.reloadRing()
   }
 
@@ -263,7 +271,10 @@ class App extends React.Component {
   async getMyPhoto() {
     let session = await this.getCurrentSession();
     data[session.webId]["vcard:hasPhoto"].then((x) => {
-      const photo = x.value;
+      var photo = "./user.png";
+      if(x !== undefined){
+         photo = x.value;
+      }
       this.setState({ myPhoto: photo });
     });
   }
@@ -310,7 +321,7 @@ class App extends React.Component {
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations} />
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range = {this.state.range} />
 
 
               : this.state.mapType === 'lmap' ?
@@ -324,6 +335,14 @@ class App extends React.Component {
   }
 
 }
-
+  
+function latAndLngFromLocation(l) {
+  var tp = l.split(',');
+  var d = {
+    lat: parseFloat(tp[0]),
+    lng: parseFloat(tp[1])
+  }
+  return d;
+}
 
 export default App;

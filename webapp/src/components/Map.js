@@ -23,7 +23,9 @@ class MyMap extends React.Component {
         super(props)
         this.state = {
             range: this.props.range,
-            selected: null
+            selected: null,
+            lat: this.props.lat,
+            lng: this.props.lng
         }
         this.markers = [];
 
@@ -83,7 +85,7 @@ class MyMap extends React.Component {
                     id="radarin-map"
                     mapContainerStyle={mapContainerStyle}
                     zoom={15}
-                    center={{ lat: this.props.lat, lng: this.props.lng }}
+                    center={{ lat: this.state.lat, lng: this.state.lng }}
                     options={this.options}
                 >
                     {/* User current location marker */}
