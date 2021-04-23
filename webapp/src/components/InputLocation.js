@@ -33,9 +33,9 @@ class InputLocation extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <input type="text" name="lat" value={this.state.lat} onChange={this.handleChangeLat.bind(this)} />
-        <input type="text" name="lng" value={this.state.lng} onChange={this.handleChangeLng.bind(this)} />
-        <input type="text" name="name" value={this.state.name} onChange={this.handleChangeName.bind(this)} />
+        <input type="text" name="lat" value={this.state.lat} onChange={this.handleChangeLat.bind(this)} placeholder="Latitude of the location"/>
+        <input type="text" name="lng" value={this.state.lng} onChange={this.handleChangeLng.bind(this)} placeholder="Longitude of the location"/>
+        <input type="text" name="name" value={this.state.name} onChange={this.handleChangeName.bind(this)} placeholder="Name of the location"/>
         <input type="submit" value="+" />
       </form>
     );
