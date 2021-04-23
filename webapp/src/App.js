@@ -133,30 +133,28 @@ class App extends React.Component {
     this.startTimer();
   }
 
- /**
-  * Method that requests the locations of the friends in a given ring
-  * @param {*} ring 
-  */
+  /**
+   * Method that requests the locations of the friends in a given ring
+   * @param {*} ring 
+   */
   async reloadRing(ring) {
-
     // We do this to get a copy of the list of friends.
     let friendList = this.state.friends;
-
     if (friendList !== undefined) {
       for await (var friend of friendList) {
-        if(friend.ring === ring){
-        var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
-        var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
-          if (x.status === 200)  // if the file exists, return the text
-            return x.text()
-        });
-        if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
-          let coords = location.split(",")
-          friend.lat = coords[0]
-          friend.lng = coords[1] 
-          friend.ring = this.computeRing(location);
+        if (friend.ring === ring) {
+          var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
+          var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+            if (x.status === 200)  // if the file exists, return the text
+              return x.text()
+          });
+          if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
+            let coords = location.split(",")
+            friend.lat = coords[0]
+            friend.lng = coords[1]
+            friend.ring = this.computeRing(location);
+          }
         }
-      }
       }
     }
 
@@ -168,8 +166,8 @@ class App extends React.Component {
    * @param {String} location of the friend 
    * @returns {int} corresponding ring
    */
-  computeRing(location){
-    var loc = latAndLngFromLocation(location);    
+  computeRing(location) {
+    var loc = latAndLngFromLocation(location);
     var distance = this.distanceBetweenCoordinates(loc.lat, loc.lng);
     //Returns the corresponding ring
     if (distance <= this.state.range) {
@@ -242,7 +240,6 @@ class App extends React.Component {
     });
     if (radar === "")
       return;
-    console.log(radar)
 
     const locations = JSON.parse(radar);
     this.setState({ myLocations: locations })
@@ -272,8 +269,8 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     data[session.webId]["vcard:hasPhoto"].then((x) => {
       var photo = "./user.png";
-      if(x !== undefined){
-         photo = x.value;
+      if (x !== undefined) {
+        photo = x.value;
       }
       this.setState({ myPhoto: photo });
     });
@@ -285,7 +282,10 @@ class App extends React.Component {
     else
       this.setState({ mapType: 'gmap' })
   }
-
+  // Handles the change of the range slider
+  handRangeChange(event) {
+    this.setState({ range: event.target.value })
+  }
   // Renders the most part of the webpage:
   // - Title
   // - Menu button and menu
@@ -320,9 +320,13 @@ class App extends React.Component {
         {
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
-              <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations} range = {this.state.range} />
-
+              <div>
+                <div className="slider-container">
+                  <input className="slider" type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
+                </div>
+                <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} />
+              </div>
 
               : this.state.mapType === 'lmap' ?
                 <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
@@ -335,7 +339,7 @@ class App extends React.Component {
   }
 
 }
-  
+
 function latAndLngFromLocation(l) {
   var tp = l.split(',');
   var d = {

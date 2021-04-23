@@ -22,7 +22,6 @@ class MyMap extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            range: this.props.range,
             selected: null,
             lat: this.props.lat,
             lng: this.props.lng
@@ -59,7 +58,7 @@ class MyMap extends React.Component {
         const self = this;
         var markerList;
         markerList = this.markers.map(marker => {
-            if (self.distanceBetweenCoordinates(marker.props.lat, marker.props.lng) < parseFloat(self.range))
+            if (self.distanceBetweenCoordinates(marker.props.lat, marker.props.lng) < parseFloat(self.props.range))
                 return marker;
             return null;
         })
@@ -69,18 +68,12 @@ class MyMap extends React.Component {
     // Turn string locations into google markers objects
     // createMarkers(locations)
 
-    // Handles the change of the range slider
-    handRangeChange(event) {
-        this.setState({ range: event.target.value })
-    }
+
 
     render() {
 
         return (
             <div className="map-Container">
-                <div className="slider-container">
-                    <input className="slider" type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
-                </div>
                 <GoogleMap
                     id="radarin-map"
                     mapContainerStyle={mapContainerStyle}
@@ -99,7 +92,7 @@ class MyMap extends React.Component {
                     <FriendsMarkers friends={this.props.friends} setSelected={this.setSelected} />
                     <FriendsMarkers friends={this.props.locations} setSelected={this.setSelected} />
                     {/* Visualization of range selected by the user */}
-                    <Circle center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.state.range)} />
+                    <Circle center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.props.range)} />
                     {/* Only shows friends inside the range selected by the user */}
                     {this.displayMarkers()}
                 </GoogleMap>
