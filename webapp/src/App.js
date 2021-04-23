@@ -75,7 +75,7 @@ class App extends React.Component {
   // It also checks if the location is already in the list before inserting it
   handleNewLocation(lat, lng, name) {
 
-    if (lat === "" | lng === "") {
+    if (lat === "" || lng === "") {
       alert("Empty coordinates not allowed!");
       return;
     }
