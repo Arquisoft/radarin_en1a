@@ -120,28 +120,32 @@ class App extends React.Component {
         name: await data[friend].name.value,
         photo: await data[friend]["vcard:hasPhoto"].value,
         lat: null,
-        lng: null
+        lng: null,
+        ring: 1
       };
       friends.push(lFriend);
     }
     this.setState({ friends: friends });
     await this.getMyPhoto();
-    this.reloadFriendLocations(friends);
+    //Reloads the first one to ask for every friend's location
+    this.reloadRing(1);
   }
 
-  // Method that requests the last location to the friend's pods
-  async reloadFriendLocations(friends) {
+  // Method that requests the last location to the friend's pods in that ring
+  async reloadRing(ring) {
 
-    // We do this to get a copy of the list.
+    // We do this to get a copy of the list of friends.
     let friendList = friends;
 
     if (friends !== undefined) {
-      for await (var friend of friends) {
+      for await (var friend of friendList) {
+        if(friend.ring = ring){
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
         var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
           if (x.status === 200)  // if the file exists, return the text
             return x.text()
         });
+      }
         if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
           let coords = location.split(",")
           friend.lat = coords[0]
@@ -158,10 +162,10 @@ class App extends React.Component {
   async startTimer() {
     // TODO: This should be a state variable
     setInterval(() => {
-      this.reloadFriendLocations(this.state.friends);
+      this.reloadRing(this.state.friends);
       this.getLocation();
     }, 1000);
-    //this.reloadFriendLocations()
+    //this.reloadRing()
   }
 
   // Displays the side menu 
