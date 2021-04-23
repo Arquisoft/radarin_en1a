@@ -40,7 +40,6 @@ class MyMap extends React.Component {
                     window.google.maps.MapTypeId.SATELLITE,window.google.maps.MapTypeId.TERRAIN] 
             }
         }
-
     };
 
     /**
