@@ -77,15 +77,15 @@ class App extends React.Component {
 
   // Handles the insertion of a new location checking that it is not empty
   // It also checks if the location is already in the list before inserting it
-  handleNewLocation(lat, lng, name) {
+  handleNewLocation(name) {
 
-    if (lat === "" || lng === "") {
-      alert("Empty coordinates not allowed!");
+    if (name === "") {
+      this.addNewNotification("Empty location name not allowed!", "Please, add an unique tag to save your location", "danger");
       return;
     }
     let locationJson = {
-      lat: lat,
-      lng: lng,
+      lat: this.state.currentLat,
+      lng: this.state.currentLng,
       name: name,
       photo: "./logo192.png"
     };
@@ -100,7 +100,7 @@ class App extends React.Component {
       this.setState({ myLocations });
     }
     else
-      alert("Repeated location not allowed!");
+      this.addNewNotification("Repeated location name not allowed!", "Please, add an unique tag to save your location", "danger");
   }
 
   // Handles the deletion of a location and 
@@ -155,9 +155,8 @@ class App extends React.Component {
             let coords = location.split(",")
             friend.lat = coords[0]
             friend.lng = coords[1]
-            console.log("Ring: " + ring)
             friend.ring = this.computeRing(location);
-            if(friend.ring === 1 && ring !== 1){
+            if (friend.ring === 1 && ring !== 1) {
               this.notifyNewFriendEntered(friend.name);
             }
           }
@@ -294,18 +293,18 @@ class App extends React.Component {
     this.setState({ range: event.target.value })
   }
 
-  notifyNewFriendEntered(name){
-    var message ="Your friend " + name + " is near you!";
-    this.addNewNotification("New friend nearby!", message);
+  notifyNewFriendEntered(name) {
+    var message = "Your friend " + name + " is near you!";
+    this.addNewNotification("New friend nearby!", message, "success");
   }
   /**
    * Function to add new notification in our GUI
    */
-  addNewNotification(title1, message) {
+  addNewNotification(title, message, type) {
     store.addNotification({
-      title: title1,
+      title: title,
       message: message,
-      type: "success",
+      type: type,
       insert: "bottom",
       container: "bottom-left",
       animationIn: ["animate__animated", "animate__fadeIn"],
@@ -326,7 +325,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" /></button>
+        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
         {google ? null : <LoadScript
           id="script-loader"
           googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
@@ -342,7 +341,7 @@ class App extends React.Component {
 
             <LogoutButton />
             <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
-            <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
+            <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} />
             <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
             <FriendList friends={this.state.friends}></FriendList>
             <button onClick={() => this.changeMapType()}>Change Map</button>

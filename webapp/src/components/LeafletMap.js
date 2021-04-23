@@ -11,7 +11,8 @@ class MyMap extends React.Component {
         super(props)
         this.state = {
             pos: [props.lat, props.lng],
-            range: 40000
+            range: 40000,
+            myIcon: this.props.myIcon
         }
     }
 
@@ -20,8 +21,6 @@ class MyMap extends React.Component {
     }
 
     render() {
-
-        console.log(this.props.friends)
         return (
             <div className="map-Container"><div className="slider-container">
                 <input type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handleRangeChange.bind(this)} />
@@ -35,8 +34,8 @@ class MyMap extends React.Component {
                         iconSize: new Point(20, 20),
                     })}>
                     </Marker>
-                    <FriendMarkers friends={this.props.friends} />
-                    <FriendMarkers friends={this.props.locations} />
+                    <MyMarkers friends={this.props.friends} pos={this.state.pos} range={this.state.range}/>
+                    <MyMarkers friends={this.props.locations} pos={undefined} radius={Number.MAX_VALUE}/>
                     <Circle center={this.state.pos} radius={this.state.range} />
 
                 </MapContainer>
@@ -45,14 +44,19 @@ class MyMap extends React.Component {
     }
 }
 
-class FriendMarkers extends React.Component {
+class MyMarkers extends React.Component {
 
+    distanceTo(lat, lng) {
+        if (this.props.pos === undefined)
+            return 0;
+        else
+            return ( Math.sqrt(Math.pow(this.props.pos[0] - lat, 2) + Math.pow(this.props.pos[1] - lng, 2))*100000);
+    }
 
     render() {
         return this.props.friends.map(
             (friend) => {
-                if (friend.lng !== null) {
-                    console.log("Coords from " + friend.name + ": " + friend.lat + " : " + friend.lng)
+                if (this.distanceTo(parseFloat(friend.lat), parseFloat(friend.lng)) < this.props.range) {
                     return (
                         <Marker position={[friend.lat, friend.lng]} icon={new Icon({
                             iconUrl: friend.photo === undefined ? "./user.png" : friend.photo,
@@ -65,7 +69,6 @@ class FriendMarkers extends React.Component {
                     )
                 }
                 else {
-                    console.log("Unable to get the location from " + friend.name)
                     return null;
                 }
             }

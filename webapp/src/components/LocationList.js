@@ -5,20 +5,16 @@ class LocationListDisplay extends React.Component {
 
     render() {
         return (
-            <table key="LocationListDisplayTable">
-                <tbody key="LocationListDisplayTableBody">
+                <ul key="LocationListDisplayTableBody">
                 {this.props.locations.map((location) => {
                     return (
-                        <tr key="LocationListDisplayTableRow">
-                            <td key={location.name}>
+                            <li key={location.name}>
                                 {location.name}
                                 <button onClick={() => this.props.deleteLocation(location)}>-</button>
-                            </td>
-                        </tr>
+                            </li>
                     );
                 })}
-                </tbody>
-            </table>
+                </ul>
         );
     }
 }

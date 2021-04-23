@@ -17,7 +17,7 @@ class InputLocation extends React.Component {
 
   // Handles the new location and adds it into the props
   handleSubmit(event) {
-    this.props.addNewLocation(this.props.lat, this.props.lng, this.state.name);
+    this.props.addNewLocation(this.state.name);
     event.preventDefault();
   }
 
