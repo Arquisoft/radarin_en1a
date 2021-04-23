@@ -155,7 +155,11 @@ class App extends React.Component {
             let coords = location.split(",")
             friend.lat = coords[0]
             friend.lng = coords[1]
+            console.log("Ring: " + ring)
             friend.ring = this.computeRing(location);
+            if(friend.ring === 1 && ring !== 1){
+              this.notifyNewFriendEntered(friend.name);
+            }
           }
         }
       }
@@ -224,8 +228,6 @@ class App extends React.Component {
       document.getElementById('sidemenu').style.width = '';
       document.getElementById('ShowMenu').style.transform = "scaleX(1)";
     }
-
-    this.addNewNotification();
   }
 
   // Load the locations from solid and put them into the state
@@ -292,14 +294,17 @@ class App extends React.Component {
     this.setState({ range: event.target.value })
   }
 
-
+  notifyNewFriendEntered(name){
+    var message ="Your friend " + name + " is near you!";
+    this.addNewNotification("New friend nearby!", message);
+  }
   /**
    * Function to add new notification in our GUI
    */
-  addNewNotification() {
+  addNewNotification(title1, message) {
     store.addNotification({
-      title: "Titulo goes here",
-      message: "Mensaje de la notificaion",
+      title: title1,
+      message: message,
       type: "success",
       insert: "bottom",
       container: "bottom-left",
