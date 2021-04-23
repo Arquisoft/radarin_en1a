@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from "./components/Map";
-//import Map from "./components/LeafletMap";
+import GMap from "./components/Map";
+import LMap from "./components/LeafletMap";
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
@@ -30,7 +30,9 @@ class App extends React.Component {
       currentLng: null,
       friends: [],
       myPhoto: "./user.png",
-      myLocations: []// Locations from solid pod and manually added
+      myLocations: [],// Locations from solid pod and manually added
+      mapType: 'gmap',
+      range: 6000
     };
     this.getLocation();
     this.loadFriendsLocations();
@@ -119,23 +121,30 @@ class App extends React.Component {
         name: await data[friend].name.value,
         photo: await data[friend]["vcard:hasPhoto"].value,
         lat: null,
-        lng: null
+        lng: null,
+        ring: 1
       };
       friends.push(lFriend);
     }
     this.setState({ friends: friends });
     await this.getMyPhoto();
-    this.reloadFriendLocations(friends);
+    //Reloads the first one to ask for every friend's location
+    this.reloadRing(1);
+    this.startTimer();
   }
 
-  // Method that requests the last location to the friend's pods
-  async reloadFriendLocations(friends) {
+ /**
+  * Method that requests the locations of the friends in a given ring
+  * @param {*} ring 
+  */
+  async reloadRing(ring) {
 
-    // We do this to get a copy of the list.
-    let friendList = friends;
+    // We do this to get a copy of the list of friends.
+    let friendList = this.state.friends;
 
-    if (friends !== undefined) {
-      for await (var friend of friends) {
+    if (friendList !== undefined) {
+      for await (var friend of friendList) {
+        if(friend.ring === ring){
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
         var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
           if (x.status === 200)  // if the file exists, return the text
@@ -144,23 +153,62 @@ class App extends React.Component {
         if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
           let coords = location.split(",")
           friend.lat = coords[0]
-          friend.lng = coords[1]
+          friend.lng = coords[1] 
+          friend.ring = this.computeRing(location);
         }
+      }
       }
     }
 
     this.setState({ friends: friendList });
 
   }
+  /**
+   * Calculates and returns the ring a friend belongs to
+   * @param {String} location of the friend 
+   * @returns {int} corresponding ring
+   */
+  computeRing(location){
+    var loc = latAndLngFromLocation(location);    
+    var distance = this.distanceBetweenCoordinates(loc.lat, loc.lng);
+    //Returns the corresponding ring
+    if (distance <= this.state.range) {
+      return 1;
+    }
+    if (distance <= (this.state.range * 1.5)) {
+      return 2;
+    }
+    if (distance > (this.state.range * 1.5)) {
+      return 3;
+    }
+  }
+  /**
+   * Calculates and returns the distance between the current location of the user and a given location
+   * @param {*} lat latitude to compute the distance to
+   * @param {*} lng longitude to compute the distance to
+   * @returns  distance between the user and the given location
+   */
+  distanceBetweenCoordinates(lat, lng) {
+    return window.google.maps.geometry.spherical.computeDistanceBetween(new window.google.maps.LatLng({ lat: this.state.currentLat, lng: this.state.currentLng }),
+      new window.google.maps.LatLng({ lat: lat, lng: lng }));
+  }
 
-  // Starts the timer to reload the friends locations every second
+  /**
+   * Starts the timer to reload the friends locations
+   */
   async startTimer() {
-    // TODO: This should be a state variable
+    let self = this;
     setInterval(() => {
-      this.reloadFriendLocations(this.state.friends);
-      this.getLocation();
-    }, 1000);
-    //this.reloadFriendLocations()
+      self.reloadRing(1);
+      //self.getLocation();
+    }, 1000); // 1 second
+    setInterval(() => {
+      self.reloadRing(2);
+    }, 10000); // 10 seconds
+    setInterval(() => {
+      self.reloadRing(3);
+    }, 60000); // 1 minute
+    //this.reloadRing()
   }
 
   // Displays the side menu 
@@ -223,9 +271,19 @@ class App extends React.Component {
   async getMyPhoto() {
     let session = await this.getCurrentSession();
     data[session.webId]["vcard:hasPhoto"].then((x) => {
-      const photo = x.value;
+      var photo = "./user.png";
+      if(x !== undefined){
+         photo = x.value;
+      }
       this.setState({ myPhoto: photo });
     });
+  }
+
+  changeMapType() {
+    if (this.state.mapType === 'gmap')
+      this.setState({ mapType: 'lmap' })
+    else
+      this.setState({ mapType: 'gmap' })
   }
 
   // Renders the most part of the webpage:
@@ -236,40 +294,55 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="" /></button>
-          {google ? null : <LoadScript
-            id="script-loader"
-            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-            libraries={libraries}> </LoadScript>}
-          
-          <div id="sidemenu">
+        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" /></button>
+        {google ? null : <LoadScript
+          id="script-loader"
+          googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+          libraries={libraries}> </LoadScript>}
 
-            <LoggedOut>
-              <LoginButton popup="https://inrupt.net/common/popup.html" />
-            </LoggedOut>
+        <div id="sidemenu">
 
-            <LoggedIn>
+          <LoggedOut>
+            <LoginButton popup="https://inrupt.net/common/popup.html" />
+          </LoggedOut>
 
-              <LogoutButton />
-              <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
-              <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
-              <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-              <FriendList friends={this.state.friends}></FriendList>
+          <LoggedIn>
 
-            </LoggedIn>
-          </div>
+            <LogoutButton />
+            <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
+            <InputLocation addNewLocation={(lat, lng, name) => this.handleNewLocation(lat, lng, name)} />
+            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
+            <FriendList friends={this.state.friends}></FriendList>
+            <button onClick={() => this.changeMapType()}>Change Map</button>
+          </LoggedIn>
+        </div>
 
-          {
-            this.state.currentLat && this.state.currentLng ?
-              <Map lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations} />
-              : <h2>Location needed for services</h2>
-          }
+        {
+          this.state.currentLat && this.state.currentLng ?
+            this.state.mapType === 'gmap' && window.google !== undefined ?
+              <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range = {this.state.range} />
+
+
+              : this.state.mapType === 'lmap' ?
+                <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                  myIcon={this.state.myPhoto} locations={this.state.myLocations} />
+                : <h2>Error loading the map</h2>
+            : <h2>Location needed for services</h2>
+        }
       </div >
     )
   }
 
 }
-
+  
+function latAndLngFromLocation(l) {
+  var tp = l.split(',');
+  var d = {
+    lat: parseFloat(tp[0]),
+    lng: parseFloat(tp[1])
+  }
+  return d;
+}
 
 export default App;
