@@ -10,6 +10,9 @@ import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
 import FriendList from './components/FriendList';
 import { LoadScript } from "@react-google-maps/api"
+import ReactNotification from 'react-notifications-component'
+import { store } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css'
 
 
 const auth = require('solid-auth-client');
@@ -176,6 +179,8 @@ class App extends React.Component {
       document.getElementById('sidemenu').style.width = '';
       document.getElementById('ShowMenu').style.transform = "scaleX(1)";
     }
+
+    this.addNewNotification();
   }
 
   // Load the locations from solid and put them into the state
@@ -236,6 +241,24 @@ class App extends React.Component {
       this.setState({ mapType: 'gmap' })
   }
 
+  /**
+   * Function to add new notification in our GUI
+   */
+  addNewNotification() {
+    store.addNotification({title: "Titulo goes here",
+            message: "Mensaje de la notificaion",
+            type: "success",
+            insert: "bottom",
+            container: "bottom-left",
+            animationIn: ["animate__animated", "animate__fadeIn"],
+            animationOut: ["animate__animated", "animate__fadeOut"],
+            dismiss: {
+              duration: 5000,
+              onScreen: true
+            }}
+    )
+  }
+
   // Renders the most part of the webpage:
   // - Title
   // - Menu button and menu
@@ -251,7 +274,7 @@ class App extends React.Component {
           libraries={libraries}> </LoadScript>}
 
         <div id="sidemenu">
-
+          
           <LoggedOut>
             <LoginButton popup="https://inrupt.net/common/popup.html" />
           </LoggedOut>
@@ -266,7 +289,8 @@ class App extends React.Component {
             <button onClick={() => this.changeMapType()}>Change Map</button>
           </LoggedIn>
         </div>
-
+        {/* System notification componenet */}
+        <ReactNotification />
         {
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
@@ -278,7 +302,7 @@ class App extends React.Component {
                 <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                   myIcon={this.state.myPhoto} locations={this.state.myLocations} />
                 : <h2>Error loading the map</h2>
-            : <h2>Location needed for services</h2>
+            : <h2> Loading map ... </h2>
         }
       </div >
     )
