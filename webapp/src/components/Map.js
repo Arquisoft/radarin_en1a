@@ -9,8 +9,8 @@ import mapsStyles from "./MapStyles";
 import '../App.css'
 
 const mapContainerStyle = {
-    width: '99vw',
-    height: '99vh',
+    width: '100vw',
+    height: '100vh',
 }
 
 
