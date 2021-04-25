@@ -129,9 +129,9 @@ class App extends React.Component {
         lat: null,
         lng: null,
         ring: 3,
-        permission: false
+        permission: null
       };
-      //friend.permission = this.checkFriendsPermission(friend);
+      this.checkFriendsPermission(lFriend);
       friends.push(lFriend);
     }
     this.setState({ friends: friends });
@@ -295,6 +295,37 @@ class App extends React.Component {
     return session;
   }
 
+  async handlePermission(friend) {
+
+    let session = await this.getCurrentSession();
+    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+    let aclObject = await fc.aclUrlParser(url)
+    if (friend.permission) {
+      friend.permission = false;
+      aclObject = await fc.acl.addUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
+    } else {
+      friend.permission = true;
+      aclObject = await fc.acl.deleteUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
+    }
+    const aclBloks = [aclObject] // array of block rules
+    const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
+    const { acl: aclUrl } = await fc.getItemLinks(url, { links: 'include_possible' })
+    await fc.putFile(aclUrl, aclContent, 'text/turtle')
+  }
+
+  async checkFriendsPermission(friend){
+    let session = await this.getCurrentSession();
+    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+    
+    let aclObject = await fc.aclUrlParser(url)
+    const aclBloks = [aclObject] // array of block rules
+    const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
+ 
+    // TODO: This is a dirty hack, we should properly check if the user has permissions, not just look if its webID is on the list
+    friend.permission = (aclContent.includes(friend.pod));
+    
+  }
+
   async getMyPhoto() {
     let session = await this.getCurrentSession();
     data[session.webId]["vcard:hasPhoto"].then((x) => {
@@ -351,14 +382,6 @@ class App extends React.Component {
     audio.play();
   }
 
-  handlePermission(friend) {
-    if (friend.permission)
-      friend.permission = false;
-    else
-      friend.permission = true;
-    console.log(JSON.stringify(friend));
-  }
-
   // Renders the most part of the webpage:
   // - Title
   // - Menu button and menu
@@ -382,7 +405,7 @@ class App extends React.Component {
 
             <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} /><hr />
             <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} /><hr />
-            <FriendList friends={this.state.friends} handlePermission={this.handlePermission}></FriendList><hr />
+            <FriendList friends={this.state.friends} handlePermission={(friend) => this.handlePermission(friend)}></FriendList><hr />
             <button onClick={() => this.changeMapType()} className="button-ChangeMap">Change Map</button><hr />
             <LogoutButton className="button-Logout" />
           </LoggedIn>
