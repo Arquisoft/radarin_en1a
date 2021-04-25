@@ -59,7 +59,6 @@
   padding-top: 1%;
   padding-bottom: 1%;
   text-align: right;
-  border: white;
   background-color: rgba(200, 200, 200, 0.2) ;
 }
 
@@ -124,6 +123,15 @@
   justify-self: center;
 }
 
+#newLocationText{
+  width: 60%;
+  padding: 1%;
+  margin: 10% 1%;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
 
 .friendLink:link {
   color: red;

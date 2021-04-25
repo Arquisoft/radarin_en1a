@@ -25,10 +25,13 @@ class InputLocation extends React.Component {
   // the locations entered in the input
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <input id = "newLocationText" type="text" name="name" value={this.state.name} onChange={this.handleChangeName.bind(this)} placeholder="Name of the location"/>
-        <input type="submit" value="➕" className="button-add-location"/>
-      </form>
+      <div>
+        <h3 className="friends-title">Store your current location:</h3>
+        <form onSubmit={this.handleSubmit}>
+          <input id="newLocationText" type="text" name="name" value={this.state.name} onChange={this.handleChangeName.bind(this)} placeholder="Name of the location" />
+          <input type="submit" value="➕" className="button-add-location" />
+        </form>
+      </div>
     );
   }
 
