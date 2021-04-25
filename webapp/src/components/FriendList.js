@@ -7,9 +7,8 @@ class FriendList extends React.Component {
         if (friendsList !== undefined)
             return (
                 <div>
-                    <p>Friends list:</p>
-                    <ul id='friends_list'>
-
+                    <h3 className ="friends-title">Friends list:</h3>
+                    <table id='friends'>
                         {friendsList.map((friend) => {
                             var photo = friend.photo;
                             if (photo === undefined)
@@ -17,13 +16,14 @@ class FriendList extends React.Component {
                             // Alt is a tag that's used when the image cannot be loaded,
                             // needed, if not warnings are sent
                             // Using target="_blank" without rel="noreferrer" is a security risk
-                            return <li>
-                                <img width="24px" height="24px" src={photo} alt="Load error" />
-                                <a target="_blank" rel="noreferrer" className="friendLink" href={friend.pod}>{friend.name}</a>
-                                <button id={"button-" + friend.pod} onClick={this.props.handlePermission(friend)}></button>
-                            </li>
+                            return <tr>
+                            <th className="profile-pic"><img width="24px" height="24px" src={photo} alt="Load error" /></th>
+                            <th><a target="_blank" rel="noreferrer" className="friendLink" href={friend.pod}>{friend.name}</a></th>
+                            <th><button class="button-permission" id={"button-" + friend.pod} 
+                                        onClick={() => this.props.handlePermission(friend)}>{friend.permission?"❌":"✔️"}</button></th>
+                            </tr>
                         })}
-                    </ul>
+                    </table>
                 </div>)
         else return <div></div>;
     }

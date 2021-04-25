@@ -26,8 +26,8 @@ class InputLocation extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <input type="text" name="name" value={this.state.name} onChange={this.handleChangeName.bind(this)} placeholder="Name of the location"/>
-        <input type="submit" value="+" />
+        <input id = "newLocationText" type="text" name="name" value={this.state.name} onChange={this.handleChangeName.bind(this)} placeholder="Name of the location"/>
+        <input type="submit" value="➕" className="button-add-location"/>
       </form>
     );
   }

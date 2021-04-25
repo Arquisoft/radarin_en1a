@@ -17,7 +17,7 @@
     display:table-cell;
     height: 100%; /* 100% Full-height */
     width: 0%; /* 0 width - change this with JavaScript */
-    z-index: 1;
+    z-index: 2;
     top: 0; /* Stay at the top */
     left: 0;
     position: fixed;
@@ -34,13 +34,58 @@
 
 }
 
+#friends,
+#locations {
+  border-collapse: collapse;
+  width: 60%;
+  margin:auto;
+}
+#friends td, #friends th, 
+#locations td, #locations th {
+  padding: 1%;
+}
+
+#friends th, .friends-title,
+#locations th {
+  padding-top: 1%;
+  padding-bottom: 1%;
+  text-align: center;
+  background-color: none ;
+  color: white;
+}
+
+.profile-pic
+{
+  padding-top: 1%;
+  padding-bottom: 1%;
+  text-align: right;
+  border: white;
+  background-color: rgba(200, 200, 200, 0.2) ;
+}
+
+.friends-title{
+  font-size:x-large;
+}
+
+.button-Login,.button-Logout,
+.button-add-location,
+.button-delete-location,
+.button-permission,
+.button-ChangeMap{
+  border: none;
+  background: rgba(200, 200, 200, 0.8);
+  padding: 1% 1%;
+  text-align: center;
+  border-radius: 10%;
+}
+
 #ShowMenu{
   min-width: 48px;
   min-height: 48px;
   width: 5vh;
   height: 5vh;
   margin-top: 1vh;
-  z-index: 2;
+  z-index: 3;
   margin-left: 0.5vw;
   top: 0; /* Stay at the top */
   left: 0;
@@ -86,7 +131,7 @@
 
 /* visited link */
 .friendLink:visited {
-  color: green;
+  color: limegreen;
 }
 
 /* mouse over link */
@@ -116,7 +161,8 @@
   top: 0; /* Stay at the top */
   right: 0;
   width: 30%;
-  margin-top: 5vh;
+  min-width: 400px;
+  margin-top: 8vh;
   margin-right: 1vw;
   color: white;
   background-color: transparent;

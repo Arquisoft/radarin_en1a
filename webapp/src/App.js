@@ -6,7 +6,6 @@ import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
 import LocationListDisplay from "./components/LocationList";
-import SolidStorage from "./components/SolidStorage";
 import InputLocation from "./components/InputLocation";
 import FriendList from './components/FriendList';
 import { LoadScript } from "@react-google-maps/api"
@@ -93,12 +92,14 @@ class App extends React.Component {
 
     let repeated = false;
     for (let i = 0; i < this.state.myLocations.length; i++) {
-      if (locationJson.lat === this.state.myLocations[i].lat && locationJson.lng === this.state.myLocations[i].lng)
+      if (locationJson.name === this.state.myLocations[i].name)
         repeated = true;
     }
     if (!repeated) {
       const myLocations = this.state.myLocations.concat(locationJson);
       this.setState({ myLocations });
+      document.getElementById('newLocationText').value = "";
+      this.saveStoredLocationToSolid();
     }
     else
       this.addNewNotification("Repeated location name not allowed!", "Please, add an unique tag to save your location", "danger");
@@ -110,6 +111,7 @@ class App extends React.Component {
     const myLocations = this.state.myLocations.slice();
     myLocations.splice(myLocations.indexOf(location), 1);
     this.setState({ myLocations });
+    this.saveStoredLocationToSolid();
   }
 
   // Method that loads the friends location to 
@@ -129,7 +131,7 @@ class App extends React.Component {
         ring: 3,
         permission: false
       };
-      friend.permission = this.checkFriendsPermission(friend);
+      //friend.permission = this.checkFriendsPermission(friend);
       friends.push(lFriend);
     }
     this.setState({ friends: friends });
@@ -181,7 +183,6 @@ class App extends React.Component {
   computeRing(friend) {
     var loc = { lat: parseFloat(friend.lat), lng: parseFloat(friend.lng) };
     var distance = this.distanceBetweenCoordinates(loc.lat, loc.lng);
-    console.log(JSON.stringify(loc) + " - " + distance)
     //Returns the corresponding ring
     if (distance <= this.state.range) {
       return 1;
@@ -243,10 +244,12 @@ class App extends React.Component {
     var width = document.getElementById('sidemenu').style.width;
     if (width.toString().length === 0) {
       document.getElementById('sidemenu').style.width = '25%';
+      document.getElementById('sidemenu').style.minWidth = "400px";
       document.getElementById('ShowMenu').style.transform = "scaleX(-1)";
     }
     else {
       document.getElementById('sidemenu').style.width = '';
+      document.getElementById('sidemenu').style.minWidth = "0px";
       document.getElementById('ShowMenu').style.transform = "scaleX(1)";
     }
   }
@@ -280,7 +283,6 @@ class App extends React.Component {
     let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
     let myJSON = JSON.stringify(this.state.myLocations);
     await fc.postFile(fileUrl, new Blob([myJSON]));
-    alert("Saved to your Solid POD");
   }
 
   // Returns the current session
@@ -349,28 +351,12 @@ class App extends React.Component {
     audio.play();
   }
 
-  async checkFriendsPermission(friend) {
-    /*let session = await this.getCurrentSession();
-    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-    let aclObject = await fc.aclUrlParser(url);
-    console.log(aclObject);
-    */return true;
-  }
-
-  async handlePermission(friend) {
-    /*let session = await this.getCurrentSession();
-    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-    let aclObject = await fc.aclUrlParser(url);
-    console.log(aclObject);
-
-*/
-    if (friend.permission) {
-      // Remove file permission in pod
+  handlePermission(friend) {
+    if (friend.permission)
       friend.permission = false;
-    } else {
-      // Add file permission in pod
+    else
       friend.permission = true;
-    }
+    console.log(JSON.stringify(friend));
   }
 
   // Renders the most part of the webpage:
@@ -389,17 +375,16 @@ class App extends React.Component {
         <div id="sidemenu">
 
           <LoggedOut>
-            <LoginButton popup="https://inrupt.net/common/popup.html" />
+            <LoginButton className="button-Login" popup="https://inrupt.net/common/popup.html" />
           </LoggedOut>
 
           <LoggedIn>
 
-            <LogoutButton />
-            <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
-            <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} />
-            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-            <FriendList friends={this.state.friends} handlePermission={this.handlePermission}></FriendList>
-            <button onClick={() => this.changeMapType()}>Change Map</button>
+            <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} /><hr />
+            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} /><hr />
+            <FriendList friends={this.state.friends} handlePermission={this.handlePermission}></FriendList><hr />
+            <button onClick={() => this.changeMapType()} className="button-ChangeMap">Change Map</button><hr />
+            <LogoutButton className="button-Logout" />
           </LoggedIn>
         </div>
         {/* System notification componenet */}
@@ -421,7 +406,7 @@ class App extends React.Component {
                 <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                   myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
 
-                : <h2>Error loading the map</h2>
+                : <div />
             : <h2> Loading map ... </h2>
         }
       </div >
