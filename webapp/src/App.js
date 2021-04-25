@@ -35,7 +35,8 @@ class App extends React.Component {
       myPhoto: "./user.png",
       myLocations: [],// Locations from solid pod and manually added
       mapType: 'gmap',
-      range: 6000
+      range: 6000,
+      zoom: 13
     };
     this.getLocation();
     this.loadFriendsLocations();
@@ -283,10 +284,14 @@ class App extends React.Component {
   }
 
   changeMapType() {
-    if (this.state.mapType === 'gmap')
-      this.setState({ mapType: 'lmap' })
-    else
-      this.setState({ mapType: 'gmap' })
+    if (this.state.mapType === 'gmap') {
+      this.setState({ mapType: 'lmap' });
+      document.getElementById('ShowMenu').style.marginTop = "10vh";
+    }
+    else {
+      this.setState({ mapType: 'gmap' });
+      document.getElementById('ShowMenu').style.marginTop = "1vh";
+    }
   }
   // Handles the change of the range slider
   handRangeChange(event) {
@@ -325,7 +330,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
         {google ? null : <LoadScript
           id="script-loader"
           googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
@@ -348,21 +352,24 @@ class App extends React.Component {
           </LoggedIn>
         </div>
         {/* System notification componenet */}
+
+        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
+        <div className="slider-container">
+          <input className="slider" type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
+        </div>
         <ReactNotification />
         {
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
-              <div>
-                <div className="slider-container">
-                  <input className="slider" type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
-                </div>
-                <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} />
-              </div>
+
+              <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom}/>
 
               : this.state.mapType === 'lmap' ?
+
                 <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                  myIcon={this.state.myPhoto} locations={this.state.myLocations} />
+                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom}/>
+
                 : <h2>Error loading the map</h2>
             : <h2> Loading map ... </h2>
         }

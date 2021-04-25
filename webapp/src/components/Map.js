@@ -23,8 +23,8 @@ class MyMap extends React.Component {
         super(props)
         this.state = {
             selected: null,
-            lat: this.props.lat,
-            lng: this.props.lng
+            center: { lat: this.props.lat, lng: this.props.lng },
+            mapRef: null
         }
 
         this.options = {
@@ -44,13 +44,16 @@ class MyMap extends React.Component {
     render() {
 
         return (
+
             <div className="map-Container">
                 <GoogleMap
                     id="radarin-map"
+                    onLoad={(map) => this.setState({ mapRef: map })}
                     mapContainerStyle={mapContainerStyle}
-                    zoom={15}
-                    center={{ lat: this.state.lat, lng: this.state.lng }}
+                    zoom={this.props.zoom}
+                    center={this.state.center}
                     options={this.options}
+                    onCenterChanged={() => this.state.mapRef !== null ? this.setState({ center: this.state.mapRef.getCenter() }) : false}
                 >
                     {/* User current location marker */}
                     <Marker
@@ -61,7 +64,7 @@ class MyMap extends React.Component {
                         }}
                     />
                     <MyMarkers friends={this.props.friends} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} />
-                    <MyMarkers friends={this.props.locations} setSelected={this.setSelected} range = {Number.MAX_VALUE}/>
+                    <MyMarkers friends={this.props.locations} setSelected={this.setSelected} range={Number.MAX_VALUE} />
                     {/* Visualization of range selected by the user */}
                     <Circle center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.props.range)} />
                 </GoogleMap>
@@ -76,9 +79,7 @@ class MyMarkers extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selected: null,
-            lat: parseFloat(this.props.lat),
-            lng: parseFloat(this.props.lng)
+            selected: null
         }
     }
 
@@ -90,7 +91,7 @@ class MyMarkers extends React.Component {
      */
     distanceBetweenCoordinates(lat2, lng2) {
         const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-            new window.google.maps.LatLng({ lat: this.state.lat, lng: this.state.lng }),
+            new window.google.maps.LatLng({ lat: this.props.lat, lng: this.props.lng }),
             new window.google.maps.LatLng({ lat: lat2, lng: lng2 }));
         return distance;
     }

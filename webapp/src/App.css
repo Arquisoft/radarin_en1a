@@ -39,8 +39,8 @@
   min-height: 48px;
   width: 5vh;
   height: 5vh;
+  margin-top: 1vh;
   z-index: 2;
-  margin-top: 5vh;
   margin-left: 0.5vw;
   top: 0; /* Stay at the top */
   left: 0;
