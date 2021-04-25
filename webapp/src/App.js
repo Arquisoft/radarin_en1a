@@ -300,17 +300,18 @@ class App extends React.Component {
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
     let aclObject = await fc.aclUrlParser(url)
-    if (friend.permission) {
-      friend.permission = false;
+    if (!friend.permission) {
+      friend.permission = true;
       aclObject = await fc.acl.addUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
     } else {
-      friend.permission = true;
+      friend.permission = false;
       aclObject = await fc.acl.deleteUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
     }
     const aclBloks = [aclObject] // array of block rules
     const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
-    const { acl: aclUrl } = await fc.getItemLinks(url, { links: 'include_possible' })
-    await fc.putFile(aclUrl, aclContent, 'text/turtle')
+    const { acl: aclUrl } = await fc.getItemLinks(url, { links: 'include_possible' });
+    console.log(aclContent);
+    console.log(fc.putFile(aclUrl, aclContent, 'text/turtle'));
   }
 
   async checkFriendsPermission(friend){
