@@ -168,6 +168,10 @@ class App extends React.Component {
               this.notifyNewFriendExited(friend.name);
             }
           }
+          else
+          {
+            document.getElementById("friend-"+friend.pod).style.color = "grey";
+          }
         }
       }
     }

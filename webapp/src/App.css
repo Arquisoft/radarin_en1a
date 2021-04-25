@@ -78,6 +78,14 @@
   border-radius: 5px;
 }
 
+.button-Login:hover,.button-Logout:hover,
+.button-add-location:hover,
+.button-delete-location:hover,
+.button-permission:hover,
+.button-ChangeMap:hover{
+  background: rgba(150, 150, 150, 0.8);
+}
+
 #ShowMenu{
   min-width: 48px;
   min-height: 48px;
@@ -170,7 +178,7 @@
   right: 0;
   width: 30%;
   min-width: 400px;
-  margin-top: 8vh;
+  margin-top: 2vh;
   margin-right: 1vw;
   color: white;
   background-color: transparent;

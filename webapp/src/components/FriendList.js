@@ -18,9 +18,9 @@ class FriendList extends React.Component {
                             // Using target="_blank" without rel="noreferrer" is a security risk
                             return <tr>
                             <th className="profile-pic"><img width="24px" height="24px" src={photo} alt="Load error" /></th>
-                            <th><a target="_blank" rel="noreferrer" className="friendLink" href={friend.pod}>{friend.name}</a></th>
-                            <th><button class="button-permission" id={"button-" + friend.pod} 
-                                        onClick={() => this.props.handlePermission(friend)}>{friend.permission?"❌":"✔️"}</button></th>
+                            <th><a id={"friend-" + friend.pod} target="_blank" rel="noreferrer" className="friendLink" href={friend.pod}>{friend.name}</a></th>
+                            <th><button title="Enable/Disable friend's permissions" class="button-permission" id={"button-" + friend.pod} 
+                                        onClick={() => this.props.handlePermission(friend)}>{friend.permission?"✔️":"❌"}</button></th>
                             </tr>
                         })}
                     </table>
