@@ -41,7 +41,6 @@ class MyMap extends React.Component {
 
 class MyMarkers extends React.Component {
 
-
     // SOURCE OF THIS ALGORITHM : https://www.movable-type.co.uk/scripts/latlong.html
     distanceTo(lat1, lon1) {
         if (this.props.pos === undefined)

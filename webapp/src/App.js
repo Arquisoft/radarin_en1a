@@ -126,14 +126,16 @@ class App extends React.Component {
         photo: await data[friend]["vcard:hasPhoto"].value,
         lat: null,
         lng: null,
-        ring: 1
+        ring: 3,
+        permission: false
       };
+      friend.permission = this.checkFriendsPermission(friend);
       friends.push(lFriend);
     }
     this.setState({ friends: friends });
     await this.getMyPhoto();
     //Reloads the first one to ask for every friend's location
-    this.reloadRing(1);
+    this.reloadRing(3);
     this.startTimer();
   }
 
@@ -156,9 +158,12 @@ class App extends React.Component {
             let coords = location.split(",")
             friend.lat = coords[0]
             friend.lng = coords[1]
-            friend.ring = this.computeRing(location);
+            friend.ring = this.computeRing(friend);
             if (friend.ring === 1 && ring !== 1) {
               this.notifyNewFriendEntered(friend.name);
+            }
+            if (friend.ring !== 1 && ring === 1) {
+              this.notifyNewFriendExited(friend.name);
             }
           }
         }
@@ -170,12 +175,13 @@ class App extends React.Component {
   }
   /**
    * Calculates and returns the ring a friend belongs to
-   * @param {String} location of the friend 
+   * @param {Object} friend 
    * @returns {int} corresponding ring
    */
-  computeRing(location) {
-    var loc = latAndLngFromLocation(location);
+  computeRing(friend) {
+    var loc = { lat: parseFloat(friend.lat), lng: parseFloat(friend.lng) };
     var distance = this.distanceBetweenCoordinates(loc.lat, loc.lng);
+    console.log(JSON.stringify(loc) + " - " + distance)
     //Returns the corresponding ring
     if (distance <= this.state.range) {
       return 1;
@@ -187,15 +193,30 @@ class App extends React.Component {
       return 3;
     }
   }
+
   /**
    * Calculates and returns the distance between the current location of the user and a given location
    * @param {*} lat latitude to compute the distance to
    * @param {*} lng longitude to compute the distance to
    * @returns  distance between the user and the given location
    */
-  distanceBetweenCoordinates(lat, lng) {
-    return window.google.maps.geometry.spherical.computeDistanceBetween(new window.google.maps.LatLng({ lat: this.state.currentLat, lng: this.state.currentLng }),
-      new window.google.maps.LatLng({ lat: lat, lng: lng }));
+  // SOURCE OF THIS ALGORITHM : https://www.movable-type.co.uk/scripts/latlong.html
+  distanceBetweenCoordinates(lat1, lng1) {
+    const lat2 = parseFloat(this.state.currentLat);
+    const lng2 = parseFloat(this.state.currentLng);
+
+    const R = 6371e3; // metres
+    const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) *
+      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // in metres  
   }
 
   /**
@@ -302,6 +323,10 @@ class App extends React.Component {
     var message = "Your friend " + name + " is near you!";
     this.addNewNotification("New friend nearby!", message, "success");
   }
+  notifyNewFriendExited(name) {
+    var message = "Your friend " + name + " went away!";
+    this.addNewNotification("Friend out of the radar!", message, "warning");
+  }
   /**
    * Function to add new notification in our GUI
    */
@@ -320,6 +345,32 @@ class App extends React.Component {
       }
     }
     )
+    var audio = new Audio('n_sound.mp3');
+    audio.play();
+  }
+
+  async checkFriendsPermission(friend) {
+    /*let session = await this.getCurrentSession();
+    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+    let aclObject = await fc.aclUrlParser(url);
+    console.log(aclObject);
+    */return true;
+  }
+
+  async handlePermission(friend) {
+    /*let session = await this.getCurrentSession();
+    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+    let aclObject = await fc.aclUrlParser(url);
+    console.log(aclObject);
+
+*/
+    if (friend.permission) {
+      // Remove file permission in pod
+      friend.permission = false;
+    } else {
+      // Add file permission in pod
+      friend.permission = true;
+    }
   }
 
   // Renders the most part of the webpage:
@@ -347,7 +398,7 @@ class App extends React.Component {
             <SolidStorage loadFromSolid={() => this.loadStoredLocationFromSolid()} saveToSolid={() => this.saveStoredLocationToSolid()} />
             <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} />
             <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} />
-            <FriendList friends={this.state.friends}></FriendList>
+            <FriendList friends={this.state.friends} handlePermission={this.handlePermission}></FriendList>
             <button onClick={() => this.changeMapType()}>Change Map</button>
           </LoggedIn>
         </div>
@@ -363,12 +414,12 @@ class App extends React.Component {
             this.state.mapType === 'gmap' && window.google !== undefined ?
 
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom}/>
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
 
               : this.state.mapType === 'lmap' ?
 
                 <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom}/>
+                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
 
                 : <h2>Error loading the map</h2>
             : <h2> Loading map ... </h2>
@@ -377,15 +428,6 @@ class App extends React.Component {
     )
   }
 
-}
-
-function latAndLngFromLocation(l) {
-  var tp = l.split(',');
-  var d = {
-    lat: parseFloat(tp[0]),
-    lng: parseFloat(tp[1])
-  }
-  return d;
 }
 
 export default App;

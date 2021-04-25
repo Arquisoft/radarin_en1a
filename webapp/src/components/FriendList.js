@@ -20,6 +20,7 @@ class FriendList extends React.Component {
                             return <li>
                                 <img width="24px" height="24px" src={photo} alt="Load error" />
                                 <a target="_blank" rel="noreferrer" className="friendLink" href={friend.pod}>{friend.name}</a>
+                                <button id={"button-" + friend.pod} onClick={this.props.handlePermission(friend)}></button>
                             </li>
                         })}
                     </ul>

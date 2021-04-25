@@ -127,6 +127,7 @@ class MyMarkers extends React.Component {
                     </div>
                 );
             }
+            return null;
         });
     }
 

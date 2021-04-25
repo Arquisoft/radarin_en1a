@@ -16,11 +16,15 @@
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
-    }
+    },
     {
       "src": "oMenu.png",
       "type": "image/png",
       "sizes": "64x64"
+    },
+    {
+      "src": "n_sound.mp3",
+      "type": "audio/mpeg"
     }
   ],
   "start_url": ".",
