@@ -274,3 +274,27 @@ h1 {
 .Map-content {
   padding-top: 2rem;
 }
+
+.loader {
+  position: absolute;
+  left: 45%;
+  top: 45%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border: 26px solid #f3f3f3; /* Light grey */
+  border-top: 26px solid #91c788; 
+  border-radius: 60%;
+  width: 140px;
+  height: 140px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+body {
+  color: inherit;
+  background-color: #999b84;
+}
