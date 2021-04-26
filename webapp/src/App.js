@@ -156,16 +156,20 @@ class App extends React.Component {
             if (x.status === 200)  // if the file exists, return the text
               return x.text()
           });
-          if (location != null) { //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
+          if (location != null) { 
+            //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
+            document.getElementById("friend-"+friend.pod).style.color = "lime";
             let coords = location.split(",")
             friend.lat = coords[0]
             friend.lng = coords[1]
             friend.ring = this.computeRing(friend);
-            if (friend.ring === 1 && ring !== 1) {
+            if (friend.ring === 1 && ring !== 1 && !friend.hasExited) {
               this.notifyNewFriendEntered(friend.name);
+              friend.hasExited = true;
             }
-            if (friend.ring !== 1 && ring === 1) {
+            if (friend.ring !== 1 && ring === 1 && friend.hasExited) {
               this.notifyNewFriendExited(friend.name);
+              friend.hasExited = false;
             }
           }
           else
