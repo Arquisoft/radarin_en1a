@@ -39,7 +39,7 @@ class MyMap extends React.Component {
                 window.google.maps.MapTypeId.SATELLITE, window.google.maps.MapTypeId.TERRAIN]
             }
         }
-    };
+    }
 
     render() {
 
@@ -66,7 +66,7 @@ class MyMap extends React.Component {
                     <MyMarkers friends={this.props.friends} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} />
                     <MyMarkers friends={this.props.locations} setSelected={this.setSelected} range={Number.MAX_VALUE} />
                     {/* Visualization of range selected by the user */}
-                    <Circle center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.props.range)} />
+                    <Circle data-testid="friends-circle" center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.props.range)} />
                 </GoogleMap>
             </div>
         )
