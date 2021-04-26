@@ -435,7 +435,7 @@ class App extends React.Component {
                   myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
 
                 : <div />
-            : <h2> Loading map ... </h2>
+            : ( <div className="loader"></div> )
         }
       </div >
     )
