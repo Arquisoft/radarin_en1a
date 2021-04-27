@@ -22,8 +22,6 @@ const fc = new FC(auth);
 const libraries = ["places", "geometry"];
 const google = window.google;
 
-//var timer;
-
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -156,9 +154,9 @@ class App extends React.Component {
             if (x.status === 200)  // if the file exists, return the text
               return x.text()
           });
-          if (location != null) { 
+          if (location != null) {
             //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
-            document.getElementById("friend-"+friend.pod).style.color = "lime";
+            document.getElementById("friend-" + friend.pod).style.color = "lime";
             let coords = location.split(",")
             friend.lat = coords[0]
             friend.lng = coords[1]
@@ -172,9 +170,8 @@ class App extends React.Component {
               friend.hasExited = false;
             }
           }
-          else
-          {
-            document.getElementById("friend-"+friend.pod).style.color = "grey";
+          else {
+            document.getElementById("friend-" + friend.pod).style.color = "grey";
           }
         }
       }
@@ -297,7 +294,7 @@ class App extends React.Component {
   async getCurrentSession() {
     let session = await auth.currentSession();
     if (!session) {
-      let popupUri = 'https://solidcommunity.net/common/popup.html';
+      let popupUri = './popup.html';
       session = await auth.popupLogin({ popupUri });
     }
     return session;
@@ -322,17 +319,17 @@ class App extends React.Component {
     console.log(fc.putFile(aclUrl, aclContent, 'text/turtle'));
   }
 
-  async checkFriendsPermission(friend){
+  async checkFriendsPermission(friend) {
     let session = await this.getCurrentSession();
     let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-    
+
     let aclObject = await fc.aclUrlParser(url)
     const aclBloks = [aclObject] // array of block rules
     const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
- 
+
     // TODO: This is a dirty hack, we should properly check if the user has permissions, not just look if its webID is on the list
     friend.permission = (aclContent.includes(friend.pod));
-    
+
   }
 
   async getMyPhoto() {
@@ -407,7 +404,7 @@ class App extends React.Component {
         <div id="sidemenu">
 
           <LoggedOut>
-            <LoginButton className="button-Login" popup="https://inrupt.net/common/popup.html" />
+            <LoginButton className="button-Login" popup="./popup.html" />
           </LoggedOut>
 
           <LoggedIn>
@@ -439,7 +436,7 @@ class App extends React.Component {
                   myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
 
                 : <div />
-            : ( <div className="loader"></div> )
+            : (<div className="loader"></div>)
         }
       </div >
     )
