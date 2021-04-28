@@ -6,9 +6,9 @@ const fc = new FC(auth);
 
 class SolidFacade {
 
-/**
-     * Saves the location into the solid pod
-     */
+    /**
+         * Saves the location into the solid pod
+         */
     async saveLocationToSolid(lat, lng) {
         var locationString = lat + ',' + lng; // Son ambos null ??
 
@@ -86,8 +86,7 @@ class SolidFacade {
         const aclBloks = [aclObject] // array of block rules
         const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
         const { acl: aclUrl } = await fc.getItemLinks(url, { links: 'include_possible' });
-        console.log(aclContent);
-        console.log(fc.putFile(aclUrl, aclContent, 'text/turtle'));
+        fc.putFile(aclUrl, aclContent, 'text/turtle');
     }
 
     async checkFriendsPermission(friend) {
@@ -105,12 +104,12 @@ class SolidFacade {
 
     async getMyPhoto() {
         let session = await this.getCurrentSession();
-        data[session.webId]["vcard:hasPhoto"].then((x) => {
+        return data[session.webId]["vcard:hasPhoto"].then((x) => {
             var photo = "./user.png";
             if (x !== undefined) {
                 photo = x.value;
             }
-            this.setState({ myPhoto: photo });
+            return photo;
         });
     }
 

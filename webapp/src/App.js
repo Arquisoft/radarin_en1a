@@ -102,10 +102,11 @@ class App extends React.Component {
   // show them in the map later
   // TODO: Cambiar el nombre de esto
   async loadFriendsLocations() {
-    var friends = solid.loadFriendsFromSolid();
-
+    var friends = await solid.loadFriendsFromSolid();
     this.setState({ friends: friends });
-    await solid.getMyPhoto();
+    var photo = await solid.getMyPhoto();
+    this.setState({ myPhoto: photo });
+    console.log(photo);console.log(friends);
     //Reloads the first one to ask for every friend's location
     this.reloadRing(3);
     this.startTimer();
