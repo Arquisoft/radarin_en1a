@@ -152,6 +152,11 @@ class SolidFacade {
         return friends;
     }
 
+    /**
+     * Retrieves the location given a friend as a param
+     * @param {Friend} friend object representing the solid friends
+     * @returns coords the coordinates of the friend
+     */
     async getFriendLocation(friend){
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
         var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
