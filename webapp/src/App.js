@@ -12,13 +12,9 @@ import { LoadScript } from "@react-google-maps/api"
 import ReactNotification from 'react-notifications-component'
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css'
+import SolidFacade from './components/SolidFacade';
 
-
-const auth = require('solid-auth-client');
-const { default: data } = require('@solid/query-ldflex');
-const fetch = auth.fetch;
-const FC = require('solid-file-client');
-const fc = new FC(auth);
+const solid = new SolidFacade();
 const libraries = ["places", "geometry"];
 const google = window.google;
 
@@ -37,7 +33,7 @@ class App extends React.Component {
     };
     this.getLocation();
     this.loadFriendsLocations();
-    this.loadStoredLocationFromSolid();
+    solid.loadStoredLocationFromSolid();
   }
 
   // Obtains the localization with the navigator
@@ -60,17 +56,7 @@ class App extends React.Component {
       currentLat: position.coords.latitude,
       currentLng: position.coords.longitude
     })
-    this.saveLocationToSolid()
-  }
-
-  async saveLocationToSolid() {
-    var locationString = this.state.currentLat + ',' + this.state.currentLng; // Son ambos null ??
-    let session = await this.getCurrentSession();
-    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-    if (this.state.currentLat != null && this.state.currentLng != null) {
-      // If the file does not exist its created, otherwise is just overwritten
-      await fc.postFile(url, new Blob([locationString]));
-    }
+    solid.saveLocationToSolid(this.state.currentLat, this.state.currentLng)
   }
 
   // Handles the insertion of a new location checking that it is not empty
@@ -97,7 +83,7 @@ class App extends React.Component {
       const myLocations = this.state.myLocations.concat(locationJson);
       this.setState({ myLocations });
       document.getElementById('newLocationText').value = "";
-      this.saveStoredLocationToSolid();
+      solid.saveStoredLocationToSolid();
     }
     else
       this.addNewNotification("Repeated location name not allowed!", "Please, add an unique tag to save your location", "danger");
@@ -109,31 +95,17 @@ class App extends React.Component {
     const myLocations = this.state.myLocations.slice();
     myLocations.splice(myLocations.indexOf(location), 1);
     this.setState({ myLocations });
-    this.saveStoredLocationToSolid();
+    solid.saveStoredLocationToSolid();
   }
 
   // Method that loads the friends location to 
   // show them in the map later
   // TODO: Cambiar el nombre de esto
   async loadFriendsLocations() {
-    var session = await this.getCurrentSession();
-    var person = data[session.webId];
-    var friends = [];
-    for await (const friend of person.friends) {
-      var lFriend = {
-        pod: `${await data[friend]}`,
-        name: await data[friend].name.value,
-        photo: await data[friend]["vcard:hasPhoto"].value,
-        lat: null,
-        lng: null,
-        ring: 3,
-        permission: null
-      };
-      this.checkFriendsPermission(lFriend);
-      friends.push(lFriend);
-    }
+    var friends = solid.loadFriendsFromSolid();
+
     this.setState({ friends: friends });
-    await this.getMyPhoto();
+    await solid.getMyPhoto();
     //Reloads the first one to ask for every friend's location
     this.reloadRing(3);
     this.startTimer();
@@ -259,90 +231,6 @@ class App extends React.Component {
     }
   }
 
-  // Load the locations from solid and put them into the state
-  async loadStoredLocationFromSolid() {
-    let session = await this.getCurrentSession();
-
-    // If the file does not exist, is created
-    let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
-    if (!(await fc.itemExists(fileUrl)))
-      await fc.postFile(fileUrl, new Blob());
-    // Until here
-
-    let url = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
-    let radar = await fetch(url).then((x) => {
-      if (x.status === 200)  // if the file exists, return the text
-        return x.text()
-    });
-    if (radar === "")
-      return;
-
-    const locations = JSON.parse(radar);
-    this.setState({ myLocations: locations })
-  }
-
-  // Saves the locations into the solid profile
-  async saveStoredLocationToSolid() {
-    let session = await this.getCurrentSession();
-    // If the file does not exist, it is created
-    let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
-    let myJSON = JSON.stringify(this.state.myLocations);
-    await fc.postFile(fileUrl, new Blob([myJSON]));
-  }
-
-  // Returns the current session
-  async getCurrentSession() {
-    let session = await auth.currentSession();
-    if (!session) {
-      let popupUri = './popup.html';
-      session = await auth.popupLogin({ popupUri });
-    }
-    return session;
-  }
-
-  async handlePermission(friend) {
-
-    let session = await this.getCurrentSession();
-    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-    let aclObject = await fc.aclUrlParser(url)
-    if (!friend.permission) {
-      friend.permission = true;
-      aclObject = await fc.acl.addUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
-    } else {
-      friend.permission = false;
-      aclObject = await fc.acl.deleteUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
-    }
-    const aclBloks = [aclObject] // array of block rules
-    const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
-    const { acl: aclUrl } = await fc.getItemLinks(url, { links: 'include_possible' });
-    console.log(aclContent);
-    console.log(fc.putFile(aclUrl, aclContent, 'text/turtle'));
-  }
-
-  async checkFriendsPermission(friend) {
-    let session = await this.getCurrentSession();
-    let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-
-    let aclObject = await fc.aclUrlParser(url)
-    const aclBloks = [aclObject] // array of block rules
-    const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
-
-    // TODO: This is a dirty hack, we should properly check if the user has permissions, not just look if its webID is on the list
-    friend.permission = (aclContent.includes(friend.pod));
-
-  }
-
-  async getMyPhoto() {
-    let session = await this.getCurrentSession();
-    data[session.webId]["vcard:hasPhoto"].then((x) => {
-      var photo = "./user.png";
-      if (x !== undefined) {
-        photo = x.value;
-      }
-      this.setState({ myPhoto: photo });
-    });
-  }
-
   changeMapType() {
     if (this.state.mapType === 'gmap') {
       this.setState({ mapType: 'lmap' });
@@ -410,8 +298,8 @@ class App extends React.Component {
           <LoggedIn>
 
             <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} /><hr />
-            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => this.handleDeleteLocation(location)} /><hr />
-            <FriendList friends={this.state.friends} handlePermission={(friend) => this.handlePermission(friend)}></FriendList><hr />
+            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => solid.handleDeleteLocation(location)} /><hr />
+            <FriendList friends={this.state.friends} handlePermission={(friend) => solid.handlePermission(friend)}></FriendList><hr />
             <button onClick={() => this.changeMapType()} className="button-ChangeMap">Change Map</button><hr />
             <LogoutButton className="button-Logout" />
           </LoggedIn>

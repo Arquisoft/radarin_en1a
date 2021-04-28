@@ -1,5 +1,3 @@
-import React from 'react';
-
 const auth = require('solid-auth-client');
 const { default: data } = require('@solid/query-ldflex');
 const fetch = auth.fetch;
@@ -8,11 +6,11 @@ const fc = new FC(auth);
 
 class SolidFacade {
 
-    async saveLocationToSolid() {
-        var locationString = this.state.currentLat + ',' + this.state.currentLng; // Son ambos null ??
+    async saveLocationToSolid(lat, lng) {
+        var locationString = lat + ',' + lng; // Son ambos null ??
         let session = await this.getCurrentSession();
         let url = session.webId.replace("profile/card#me", "radarin/last.txt");
-        if (this.state.currentLat != null && this.state.currentLng != null) {
+        if (lat != null && lng != null) {
             // If the file does not exist its created, otherwise is just overwritten
             await fc.postFile(url, new Blob([locationString]));
         }
@@ -59,4 +57,69 @@ class SolidFacade {
         await fc.postFile(fileUrl, new Blob([myJSON]));
     }
 
+    async handlePermission(friend) {
+
+        let session = await this.getCurrentSession();
+        let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+        let aclObject = await fc.aclUrlParser(url)
+        if (!friend.permission) {
+            friend.permission = true;
+            aclObject = await fc.acl.addUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
+        } else {
+            friend.permission = false;
+            aclObject = await fc.acl.deleteUserMode(aclObject, [{ agent: friend.pod }], ['Read']);
+        }
+        const aclBloks = [aclObject] // array of block rules
+        const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
+        const { acl: aclUrl } = await fc.getItemLinks(url, { links: 'include_possible' });
+        console.log(aclContent);
+        console.log(fc.putFile(aclUrl, aclContent, 'text/turtle'));
+    }
+
+    async checkFriendsPermission(friend) {
+        let session = await this.getCurrentSession();
+        let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+
+        let aclObject = await fc.aclUrlParser(url)
+        const aclBloks = [aclObject] // array of block rules
+        const aclContent = await fc.acl.createContent('radarin/last.txt', aclBloks);
+
+        // TODO: This is a dirty hack, we should properly check if the user has permissions, not just look if its webID is on the list
+        friend.permission = (aclContent.includes(friend.pod));
+
+    }
+
+    async getMyPhoto() {
+        let session = await this.getCurrentSession();
+        data[session.webId]["vcard:hasPhoto"].then((x) => {
+            var photo = "./user.png";
+            if (x !== undefined) {
+                photo = x.value;
+            }
+            this.setState({ myPhoto: photo });
+        });
+    }
+
+    async loadFriendsFromSolid() {
+        var friends = [];
+        var session = await this.getCurrentSession();
+        var person = data[session.webId]
+        for await (const friend of person.friends) {
+            var lFriend = {
+                pod: `${await data[friend]}`,
+                name: await data[friend].name.value,
+                photo: await data[friend]["vcard:hasPhoto"].value,
+                lat: null,
+                lng: null,
+                ring: 3,
+                permission: null
+            };
+            this.checkFriendsPermission(lFriend);
+            friends.push(lFriend);
+        }
+        return friends;
+    }
+
 }
+
+export default SolidFacade;
