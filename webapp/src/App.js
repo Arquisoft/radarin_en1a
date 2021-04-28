@@ -114,10 +114,10 @@ class App extends React.Component {
 
   // Method that loads the friends location to 
   // show them in the map later
-  // Made by Fran, one friday at 1 AM, who drank maybe a bit too much cocacola
+  // TODO: Cambiar el nombre de esto
   async loadFriendsLocations() {
     var session = await this.getCurrentSession();
-    var person = data[session.webId]
+    var person = data[session.webId];
     var friends = [];
     for await (const friend of person.friends) {
       var lFriend = {
