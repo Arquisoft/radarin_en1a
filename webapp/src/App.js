@@ -29,8 +29,7 @@ class App extends React.Component {
       zoom: 13
     };
     this.getLocation();
-    this.loadFriendsLocations();
-    solid.loadStoredLocationFromSolid();
+    this.loadLocations();
   }
 
   // Obtains the localization with the navigator
@@ -98,9 +97,17 @@ class App extends React.Component {
   // Method that loads the friends location to 
   // show them in the map later
   // TODO: Cambiar el nombre de esto
-  async loadFriendsLocations() {
+  async loadLocations() {
+
+    // First, we load and store the stored locations:
+    let myLocations = await solid.loadStoredLocationFromSolid()
+    this.setState({ myLocations });
+    
+    // Then we do the same with the friends locations and data:
     var friends = await solid.loadFriendsFromSolid();
     this.setState({ friends: friends });
+
+    // Finally, we get our own profile pic, and store it:
     var photo = await solid.getMyPhoto();
     this.setState({ myPhoto: photo });
     //Reloads the first one to ask for every friend's location
@@ -247,6 +254,7 @@ class App extends React.Component {
     if (this.state.mapType === 'gmap') {
       this.setState({ mapType: 'lmap' });
       document.getElementById('ShowMenu').style.marginTop = "10vh";
+      console.log(this.state.myLocations)
     }
     else {
       this.setState({ mapType: 'gmap' });
@@ -267,8 +275,8 @@ class App extends React.Component {
           googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
           libraries={libraries}> </LoadScript>}
 
-        <SideMenu handleNewLocation = {(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations} 
-        solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation = {(location) => this.handleDeleteLocation(location)}/>
+        <SideMenu handleNewLocation={(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations}
+          solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation={(location) => this.handleDeleteLocation(location)} />
         {/* System notification componenet */}
         <ReactNotification />
 
@@ -281,7 +289,8 @@ class App extends React.Component {
             this.state.mapType === 'gmap' && window.google !== undefined ?
 
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range}
+                deleteLocation={(location) => this.handleDeleteLocation(location)} zoom={this.state.zoom} />
 
               : this.state.mapType === 'lmap' ?
 
