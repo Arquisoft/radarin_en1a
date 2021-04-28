@@ -55,6 +55,11 @@
   text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
 }
 
+.popup-img{
+  max-width: 280px;
+  max-height: 120px;
+}
+
 #friends th, .friends-title,
 #locations th {
   padding-top: 1%;

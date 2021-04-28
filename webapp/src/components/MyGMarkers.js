@@ -45,6 +45,8 @@ class MyGMarkers extends React.Component {
                 return (
                     <div>
                         <Marker
+
+                            title={location.name}
                             key={location.pod}
                             position={{
                                 lat: parseFloat(location.lat),
@@ -58,7 +60,7 @@ class MyGMarkers extends React.Component {
                         />
                         {
                             this.state.selected === location ?
-                                <div>{ self.renderInfoView(location) }</div>
+                                <div>{self.renderInfoView(location)}</div>
                                 : null
                         }
                     </div>
