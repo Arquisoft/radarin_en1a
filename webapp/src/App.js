@@ -122,7 +122,7 @@ class App extends React.Component {
       for await (var friend of friendList) {
         if (friend.ring === ring) {
           
-          var coords = solid.getFriendLocation(friend);
+          var coords = await solid.getFriendLocation(friend);
           if (coords !== null) {
             //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
             document.getElementById("friend-" + friend.pod).style.color = "lime";
