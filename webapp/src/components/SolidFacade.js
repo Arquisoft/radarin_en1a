@@ -6,8 +6,12 @@ const fc = new FC(auth);
 
 class SolidFacade {
 
+/**
+     * Saves the location into the solid pod
+     */
     async saveLocationToSolid(lat, lng) {
         var locationString = lat + ',' + lng; // Son ambos null ??
+
         let session = await this.getCurrentSession();
         let url = session.webId.replace("profile/card#me", "radarin/last.txt");
         if (lat != null && lng != null) {
@@ -16,7 +20,10 @@ class SolidFacade {
         }
     }
 
-    // Returns the current session
+    /**
+     * Retrieves the current session
+     * @returns the current session
+     */
     async getCurrentSession() {
         let session = await auth.currentSession();
         if (!session) {
@@ -26,7 +33,11 @@ class SolidFacade {
         return session;
     }
 
-    // Load the locations from solid and put them into the state
+    /**
+     * First, access the file stored_locations.json or creates it if it does not exist.
+     * Then, loads the locations stored in the file and returns it
+     * @returns locations loaded from the pod
+     */
     async loadStoredLocationFromSolid() {
         let session = await this.getCurrentSession();
 
@@ -48,7 +59,10 @@ class SolidFacade {
         return locations;
     }
 
-    // Saves the locations into the solid profile
+    /**
+    * Saves the locations into the solid profile
+    * @param {Array} myLocations locations that are stored into the the pod
+    */
     async saveStoredLocationToSolid(myLocations) {
         let session = await this.getCurrentSession();
         // If the file does not exist, it is created
