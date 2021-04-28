@@ -6,11 +6,13 @@ const fc = new FC(auth);
 
 class SolidFacade {
 
-/**
-     * Saves the location into the solid pod
+    /**
+     * Saves the location inserted as a param into the solid pod
+     * @param {number} lat latitude of the location
+     * @param {number} lng longitude of the location
      */
     async saveLocationToSolid(lat, lng) {
-        var locationString = lat + ',' + lng; // Son ambos null ??
+        var locationString = lat + ',' + lng; 
 
         let session = await this.getCurrentSession();
         let url = session.webId.replace("profile/card#me", "radarin/last.txt");
@@ -71,8 +73,11 @@ class SolidFacade {
         await fc.postFile(fileUrl, new Blob([myJSON]));
     }
 
+    /**
+     * Works as a switch, gives or not the permission to a friend to see your location
+     * @param {Friend} friend object representing a friend
+     */
     async handlePermission(friend) {
-
         let session = await this.getCurrentSession();
         let url = session.webId.replace("profile/card#me", "radarin/last.txt");
         let aclObject = await fc.aclUrlParser(url)
@@ -90,6 +95,10 @@ class SolidFacade {
         console.log(fc.putFile(aclUrl, aclContent, 'text/turtle'));
     }
 
+    /**
+     * It does a first check when starting the web to see if you have the friends permission
+     * @param {Friend} friend object that represents the friend
+     */
     async checkFriendsPermission(friend) {
         let session = await this.getCurrentSession();
         let url = session.webId.replace("profile/card#me", "radarin/last.txt");
@@ -103,6 +112,11 @@ class SolidFacade {
 
     }
 
+    // TODO
+    /**
+     * Retrives the photo from the pod
+     * @returns photo user picture from his pod
+     */
     async getMyPhoto() {
         let session = await this.getCurrentSession();
         data[session.webId]["vcard:hasPhoto"].then((x) => {
@@ -114,6 +128,10 @@ class SolidFacade {
         });
     }
 
+    /**
+     * Retrieves the friends list from the session
+     * @returns {Array} friends list of friends stored in the pod
+     */
     async loadFriendsFromSolid() {
         var friends = [];
         var session = await this.getCurrentSession();
