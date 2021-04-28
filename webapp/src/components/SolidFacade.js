@@ -54,10 +54,12 @@ class SolidFacade {
         let radar = await fetch(url).then((x) => {
             if (x.status === 200)  // if the file exists, return the text
                 return x.text()
+            else
+                return undefined;
         });
-        if (radar === "")
+        if (radar === undefined || radar === "" || radar === null)
             return;
-
+        console.log(radar);
         const locations = JSON.parse(radar);
         return locations;
     }

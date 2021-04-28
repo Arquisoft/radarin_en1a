@@ -2,17 +2,14 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GMap from "./components/Map";
 import LMap from "./components/LeafletMap";
-import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
 import './App.css';
 import './leaflet.css';
-import LocationListDisplay from "./components/LocationList";
-import InputLocation from "./components/InputLocation";
-import FriendList from './components/FriendList';
 import { LoadScript } from "@react-google-maps/api"
 import ReactNotification from 'react-notifications-component'
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css'
 import SolidFacade from './components/SolidFacade';
+import SideMenu from './components/SideMenu';
 
 const solid = new SolidFacade();
 const libraries = ["places", "geometry"];
@@ -83,7 +80,7 @@ class App extends React.Component {
       const myLocations = this.state.myLocations.concat(locationJson);
       this.setState({ myLocations });
       document.getElementById('newLocationText').value = "";
-      solid.saveStoredLocationToSolid();
+      solid.saveStoredLocationToSolid(myLocations);
     }
     else
       this.addNewNotification("Repeated location name not allowed!", "Please, add an unique tag to save your location", "danger");
@@ -121,7 +118,7 @@ class App extends React.Component {
     if (friendList !== undefined) {
       for await (var friend of friendList) {
         if (friend.ring === ring) {
-          
+
           var coords = await solid.getFriendLocation(friend);
           if (coords !== null) {
             //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
@@ -211,32 +208,6 @@ class App extends React.Component {
     //this.reloadRing()
   }
 
-  // Displays the side menu 
-  displayMenu() {
-
-    var width = document.getElementById('sidemenu').style.width;
-    if (width.toString().length === 0) {
-      document.getElementById('sidemenu').style.width = '25%';
-      document.getElementById('sidemenu').style.minWidth = "400px";
-      document.getElementById('ShowMenu').style.transform = "scaleX(-1)";
-    }
-    else {
-      document.getElementById('sidemenu').style.width = '';
-      document.getElementById('sidemenu').style.minWidth = "0px";
-      document.getElementById('ShowMenu').style.transform = "scaleX(1)";
-    }
-  }
-
-  changeMapType() {
-    if (this.state.mapType === 'gmap') {
-      this.setState({ mapType: 'lmap' });
-      document.getElementById('ShowMenu').style.marginTop = "10vh";
-    }
-    else {
-      this.setState({ mapType: 'gmap' });
-      document.getElementById('ShowMenu').style.marginTop = "1vh";
-    }
-  }
   // Handles the change of the range slider
   handRangeChange(event) {
     this.setState({ range: event.target.value })
@@ -272,6 +243,17 @@ class App extends React.Component {
     audio.play();
   }
 
+  changeMapType() {
+    if (this.state.mapType === 'gmap') {
+      this.setState({ mapType: 'lmap' });
+      document.getElementById('ShowMenu').style.marginTop = "10vh";
+    }
+    else {
+      this.setState({ mapType: 'gmap' });
+      document.getElementById('ShowMenu').style.marginTop = "1vh";
+    }
+  }
+
   // Renders the most part of the webpage:
   // - Title
   // - Menu button and menu
@@ -285,29 +267,16 @@ class App extends React.Component {
           googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
           libraries={libraries}> </LoadScript>}
 
-        <div id="sidemenu">
-
-          <LoggedOut>
-            <LoginButton className="button-Login" popup="./popup.html" />
-          </LoggedOut>
-
-          <LoggedIn>
-
-            <InputLocation addNewLocation={(name) => this.handleNewLocation(name)} /><hr />
-            <LocationListDisplay locations={this.state.myLocations} deleteLocation={(location) => solid.handleDeleteLocation(location)} /><hr />
-            <FriendList friends={this.state.friends} handlePermission={(friend) => solid.handlePermission(friend)}></FriendList><hr />
-            <button onClick={() => this.changeMapType()} className="button-ChangeMap">Change Map</button><hr />
-            <LogoutButton className="button-Logout" />
-          </LoggedIn>
-        </div>
+        <SideMenu handleNewLocation = {(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations} 
+        solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation = {(location) => this.handleDeleteLocation(location)}/>
         {/* System notification componenet */}
+        <ReactNotification />
 
-        <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
         <div className="slider-container">
           <input className="slider" type="range" min="1000" max="100000" step="500" value={this.state.range} onChange={this.handRangeChange.bind(this)} />
         </div>
-        <ReactNotification />
         {
+
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
 
