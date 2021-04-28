@@ -7,15 +7,11 @@ const fc = new FC(auth);
 class SolidFacade {
 
     /**
-<<<<<<< HEAD
-         * Saves the location into the solid pod
-         */
-=======
+
      * Saves the location inserted as a param into the solid pod
      * @param {number} lat latitude of the location
      * @param {number} lng longitude of the location
      */
->>>>>>> b9be3ad4cdc4a44e3e6d393716e47c56f91ff1a6
     async saveLocationToSolid(lat, lng) {
         var locationString = lat + ',' + lng; 
 
