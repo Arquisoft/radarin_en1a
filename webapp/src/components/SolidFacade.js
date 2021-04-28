@@ -133,6 +133,21 @@ class SolidFacade {
         return friends;
     }
 
+    async getFriendLocation(friend){
+        var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
+        var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
+            if (x.status === 200)  // if the file exists, return the text
+              return x.text();
+            else
+                return null;
+          });
+          if (location === null){
+          console.log ("Friend " + friend.name + " has no location");
+            return null;}
+          let coords = location.split(",")
+          return coords;
+    }
+
 }
 
 export default SolidFacade;

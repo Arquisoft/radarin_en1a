@@ -106,7 +106,6 @@ class App extends React.Component {
     this.setState({ friends: friends });
     var photo = await solid.getMyPhoto();
     this.setState({ myPhoto: photo });
-    console.log(photo);console.log(friends);
     //Reloads the first one to ask for every friend's location
     this.reloadRing(3);
     this.startTimer();
@@ -122,17 +121,13 @@ class App extends React.Component {
     if (friendList !== undefined) {
       for await (var friend of friendList) {
         if (friend.ring === ring) {
-          var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
-          var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
-            if (x.status === 200)  // if the file exists, return the text
-              return x.text()
-          });
-          if (location != null) {
+          
+          var coords = solid.getFriendLocation(friend);
+          if (coords !== null) {
             //TODO: validate what we have before pushing it (it has to be two doubles separated by a comma)
             document.getElementById("friend-" + friend.pod).style.color = "lime";
-            let coords = location.split(",")
-            friend.lat = coords[0]
-            friend.lng = coords[1]
+            friend.lat = coords[0];
+            friend.lng = coords[1];
             friend.ring = this.computeRing(friend);
             if (friend.ring === 1 && ring !== 1 && !friend.hasExited) {
               this.notifyNewFriendEntered(friend.name);
