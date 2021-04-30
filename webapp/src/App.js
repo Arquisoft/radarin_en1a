@@ -262,11 +262,12 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        {google ? null : <LoadScript
+        {
+          google ? null : <LoadScript
           id="script-loader"
           googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-          libraries={libraries}> </LoadScript>}
-
+          libraries={libraries}> </LoadScript>
+        }
         <SideMenu handleNewLocation = {(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations} 
         solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation = {(location) => this.handleDeleteLocation(location)}/>
         {/* System notification componenet */}
