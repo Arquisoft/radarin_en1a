@@ -9,7 +9,7 @@ it('renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-it("renders correclty", ()=>
+it("map renders correclty", ()=>
 {
     const {queryByTestId} = renderer(<Map/>);
 

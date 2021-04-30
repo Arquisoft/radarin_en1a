@@ -31,7 +31,7 @@ class SideMenu extends React.Component {
     }
 
     render() {
-        return <div id="sidemenu">
+        return <div id="sidemenu" data-testid="sidemenu">
 
             <LoggedOut>
                 <LoginButton className="button-Login" popup="./popup.html" />
