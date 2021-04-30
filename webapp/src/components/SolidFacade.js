@@ -16,7 +16,7 @@ class SolidFacade {
         var locationString = lat + ',' + lng;
 
         let session = await this.getCurrentSession();
-        let url = session.webId.replace("profile/card#me", "radarin/last.txt");
+        let url = await session.webId.replace("profile/card#me", "radarin/last.txt");
         if (lat != null && lng != null) {
             // If the file does not exist its created, otherwise is just overwritten
             await fc.postFile(url, new Blob([locationString]));
@@ -60,7 +60,10 @@ class SolidFacade {
         if (radar === undefined || radar === "" || radar === null)
             return;
         console.log(radar);
-        const locations = JSON.parse(radar);
+        var locations = JSON.parse(radar);
+        if(locations === undefined){
+            locations = [];
+        }
         return locations;
     }
 

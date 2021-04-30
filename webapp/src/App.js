@@ -101,6 +101,9 @@ class App extends React.Component {
 
     // First, we load and store the stored locations:
     let myLocations = await solid.loadStoredLocationFromSolid()
+    if(myLocations === undefined){
+      myLocations = [];
+    }
     this.setState({ myLocations });
     
     // Then we do the same with the friends locations and data:
@@ -214,10 +217,15 @@ class App extends React.Component {
     }, 60000); // 1 minute
     //this.reloadRing()
   }
-
+  reloadAllRings(){
+    this.reloadRing(1);
+    this.reloadRing(2);
+    this.reloadRing(3);
+  }
   // Handles the change of the range slider
   handRangeChange(event) {
     this.setState({ range: event.target.value })
+    this.reloadAllRings();
   }
 
   notifyNewFriendEntered(name) {

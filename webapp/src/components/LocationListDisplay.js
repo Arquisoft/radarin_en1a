@@ -7,7 +7,9 @@ class LocationListDisplay extends React.Component {
         return (
             <table className="locations">
                 <tbody>
-                {this.props.locations.map((location) => {
+                {
+                this.props.locations !== undefined ? 
+                this.props.locations.map((location) => {
                     return (
                         <tr>
                             <th key={location.name} className={location.selected? "activeLocation": "inactiveLocation"}>
@@ -15,7 +17,7 @@ class LocationListDisplay extends React.Component {
                             <th><button className="button-delete-location" onClick={() => this.props.deleteLocation(location)}>➖</button></th>
                         </tr>
                     );
-                })}
+                }): null}
                 </tbody>
             </table>
         );

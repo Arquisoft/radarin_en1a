@@ -1,9 +1,9 @@
 import React from "react";
 
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
-import LocationListDisplay from "./LocationList";
-import InputLocation from "./InputLocation";
-import FriendList from './FriendList';
+import LocationListDisplay from "./LocationListDisplay.js";
+import InputLocation from "./InputLocation.js";
+import FriendList from './FriendList.js';
 
 class SideMenu extends React.Component {
 

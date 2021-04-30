@@ -47,7 +47,7 @@ class MyGMarkers extends React.Component {
                         <Marker
 
                             title={location.name}
-                            key={location.pod}
+                            key={"marker-" + location.name}
                             position={{
                                 lat: parseFloat(location.lat),
                                 lng: parseFloat(location.lng)
