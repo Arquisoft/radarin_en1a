@@ -7,10 +7,7 @@ import App from '../../App';
 
 it("Google maps render correcty", () => {
     const div = document.createElement("div");
-    ReactDOM.render(<App></App>, div);
-    setTimeout(()=> {
-
-    },5000);
+        
     ReactDOM.render(<GMap></GMap>, div);
 })
 

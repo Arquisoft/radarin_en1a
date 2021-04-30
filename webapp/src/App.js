@@ -280,16 +280,13 @@ class App extends React.Component {
 
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
-
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                 myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
-
               : this.state.mapType === 'lmap' ?
-
-                <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
-
-                : <div />
+              
+              <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
+              : <div />
             : (<div className="loader"></div>)
         }
       </div >
