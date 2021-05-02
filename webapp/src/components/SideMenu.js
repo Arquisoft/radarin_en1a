@@ -41,7 +41,7 @@ class SideMenu extends React.Component {
 
                 <InputLocation addNewLocation={(name) => this.props.handleNewLocation(name)} /><hr />
                 <LocationListDisplay locations={this.props.myLocations} deleteLocation={(location) => this.props.handleDeleteLocation(location)} /><hr />
-                <FriendList friends={this.props.friends} handlePermission={(friend) => this.props.solid.handlePermission(friend)}></FriendList><hr />
+                <FriendList data-testid="friendList" friends={this.props.friends} handlePermission={(friend) => this.props.solid.handlePermission(friend)}></FriendList><hr />
                 <button onClick={() => this.props.changeMapType()} className="button-ChangeMap">Change Map</button><hr />
                 <LogoutButton className="button-Logout" />
             </LoggedIn>
