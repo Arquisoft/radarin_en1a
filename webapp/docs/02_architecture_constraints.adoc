@@ -7,8 +7,10 @@
 |===
 |Constraint|Description
 | _React_ | The application will be programmed using the React Framework.
-| _Solid_ | The application must follow the Solid conventions (https://github.com/solid/solid-spec).
+| _Solid_ | The application must use the Solid pods to work with users information.
 | _Docker_ | The application will run on docker.
+| _Interactive Map_ | The application will contain a map to show the friends and user localizations.
+| _GitHub_ | All the changes are registered in a version control app. In this case we use git bash and GitHub. This provides several organization tools like issues, branches or wikis to make the work easier.
 |===
 
 .Organizational Constraints
@@ -16,8 +18,10 @@
 |===
 |Constraint|Description
 | _Time_ |  The application will be finished before the end of the course.
-| _Team size_ | The team is composed of four people.
-| _Data_ |  The data storage will be separated from the application.
+| _Team size_ | The team is composed of four people and usually is composed of six people.
+| _Data_ |  The data is stored completely on the users' pods. Then their data is managed only by them.
+| _Other work_ |  The students work on other subjects and some even have a job.
+| _Meetings adjustment_ |  The students are busy and we do not have the same timetables on a day so sometimes is difficult to arrange meetings. Also, remote work makes comunication worse but at least we do not need to waste time travelling to meet.
 |===
 
 .Conventions
@@ -25,5 +29,7 @@
 |===
 |Constraint|Description
 | _JavaScript Conventions_ | The application will be written following the Javascript conventions https://jsdoc.app/
-| _Language_ | The application will be in English
+| _Language_ | The application will be in English.
+| _Good coding_ | Modularity, low coupling and other characteristics of good code are needed for high sustainability and extension.
+| _Solid_ | The application must follow the Solid conventions (https://github.com/solid/solid-spec).
 |===
