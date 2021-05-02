@@ -11,10 +11,10 @@ Radarin is designed to use users locations and timestamps , so they can get noti
 === Business Context
 
 
-image:03_UML-BusinessContext.svg["Business Diagram"]
+image:images/03_UML-BusinessContext.svg["Business Diagram"]
 
 
 === Technical Context
 
 
-image:03_UML-TechnicalContext.svg["Technical Diagram"]
+image:images/03_UML-TechnicalContext.svg["Technical Diagram"]

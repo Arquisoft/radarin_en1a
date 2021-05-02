@@ -9,6 +9,8 @@
         Solid gives the user the freedom to choose what data he wants to share and gives us an easy way of accessing it.
 	Docker & Heroku::
         Docker and Heroku will be user for application deployment.
+        Jest::
+        Tool we use for testing the components and the renderization.
 
 === Top-level decomposition of the system.
 	MVC::
