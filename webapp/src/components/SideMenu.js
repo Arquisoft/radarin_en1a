@@ -34,7 +34,7 @@ class SideMenu extends React.Component {
         return <div id="sidemenu" data-testid="sidemenu">
 
             <LoggedOut>
-                <LoginButton className="button-Login" popup="./popup.html" />
+                <LoginButton data-testid="button-Login" className="button-Login" popup="./popup.html" />
             </LoggedOut>
 
             <LoggedIn>
@@ -46,7 +46,7 @@ class SideMenu extends React.Component {
                 <LogoutButton className="button-Logout" />
             </LoggedIn>
 
-            <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
+            <button data-testid="ShowMenu" id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
         </div>
     }
 }
