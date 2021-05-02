@@ -32,7 +32,7 @@ class SideMenu extends React.Component {
 
     render() {
         return <div id="sidemenu" data-testid="sidemenu">
-
+            <img className = "logoImg" src="./logo_big.png"/>
             <LoggedOut>
                 <LoginButton className="button-Login" popup="./popup.html" />
             </LoggedOut>

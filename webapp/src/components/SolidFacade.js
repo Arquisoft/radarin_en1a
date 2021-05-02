@@ -59,7 +59,6 @@ class SolidFacade {
         });
         if (radar === undefined || radar === "" || radar === null)
             return;
-        console.log(radar);
         const locations = JSON.parse(radar);
         return locations;
     }
