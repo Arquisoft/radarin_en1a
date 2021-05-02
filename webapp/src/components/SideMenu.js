@@ -1,9 +1,9 @@
 import React from "react";
 
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
-import LocationListDisplay from "./LocationList";
-import InputLocation from "./InputLocation";
-import FriendList from './FriendList';
+import LocationListDisplay from "./LocationListDisplay.js";
+import InputLocation from "./InputLocation.js";
+import FriendList from './FriendList.js';
 
 class SideMenu extends React.Component {
 
@@ -32,9 +32,9 @@ class SideMenu extends React.Component {
 
     render() {
         return <div id="sidemenu" data-testid="sidemenu">
-
+            <img className = "logoImg" src="./logo_big.png"/>
             <LoggedOut>
-                <LoginButton className="button-Login" popup="./popup.html" />
+                <LoginButton data-testid="button-Login" className="button-Login" popup="./popup.html" />
             </LoggedOut>
 
             <LoggedIn>
@@ -46,7 +46,7 @@ class SideMenu extends React.Component {
                 <LogoutButton className="button-Logout" />
             </LoggedIn>
 
-            <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
+            <button data-testid="ShowMenu" id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
         </div>
     }
 }

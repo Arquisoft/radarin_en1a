@@ -2,11 +2,12 @@ import React from "react";
 import {
     GoogleMap,
     Marker,
-    Circle,
-    InfoWindow
+    Circle
 } from "@react-google-maps/api";
 import mapsStyles from "./MapStyles";
 import '../App.css'
+import MyGMarkers from './MyGMarkers.js'
+import MyStoredLocationsGMarkers from './MyStoredLocationsGMarkers.js'
 
 const mapContainerStyle = {
     width: '100vw',
@@ -69,8 +70,9 @@ class MyMap extends React.Component {
                             scaledSize: new window.google.maps.Size(36, 36) 
                         }}
                     />
-                    <MyMarkers friends={this.props.friends} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} />
-                    <MyMarkers friends={this.props.locations} setSelected={this.setSelected} range={Number.MAX_VALUE} />
+                    <MyGMarkers locations={this.props.friends} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} />
+                    <MyStoredLocationsGMarkers locations={this.props.locations} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} 
+                                                deleteLocation = {(location) => this.props.deleteLocation(location)}/>
                     {/* Visualization of range selected by the user */}
                     <Circle data-testid="friends-circle" center={{ lat: this.props.lat, lng: this.props.lng }} radius={parseFloat(this.props.range)} />
                 </GoogleMap>
