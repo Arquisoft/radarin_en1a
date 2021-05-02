@@ -14,7 +14,6 @@ const mapContainerStyle = {
     height: '100vh',
 }
 
-
 /**
  * Constant storing resulting Map configuration and its behaviour
  */
@@ -28,16 +27,24 @@ class MyMap extends React.Component {
             mapRef: null
         }
 
-        this.options = {
-            styles: mapsStyles,
-            zoomControl: true,
-            mapTypeControl: true,
-            mapTypeControlOptions: {
-                position: window.google.maps.ControlPosition.TOP_CENTER,
-                style: window.google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                //Default layer styles, if some layer must be removed delete it from here 
-                mapTypeIds: [window.google.maps.MapTypeId.HYBRID, window.google.maps.MapTypeId.ROADMAP,
-                window.google.maps.MapTypeId.SATELLITE, window.google.maps.MapTypeId.TERRAIN]
+        if(window.google !== undefined){
+            this.options = {
+                styles: mapsStyles,
+                zoomControl: true,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    position: window.google.maps.ControlPosition.TOP_CENTER,
+                    style: window.google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                    //Default layer styles, if some layer must be removed delete it from here 
+                    mapTypeIds: [window.google.maps.MapTypeId.HYBRID, window.google.maps.MapTypeId.ROADMAP,
+                    window.google.maps.MapTypeId.SATELLITE, window.google.maps.MapTypeId.TERRAIN]
+                }
+            }
+        } else {
+            this.options = {
+                styles: mapsStyles,
+                zoomControl: true,
+                mapTypeControl: true
             }
         }
     }
@@ -45,7 +52,6 @@ class MyMap extends React.Component {
     render() {
 
         return (
-
             <div className="map-Container">
                 <GoogleMap
                     id="radarin-map"
@@ -61,7 +67,7 @@ class MyMap extends React.Component {
                         position={{ lat: this.props.lat, lng: this.props.lng, }}
                         icon={{
                             url: this.props.myIcon,
-                            scaledSize: new window.google.maps.Size(36, 36)
+                            scaledSize: new window.google.maps.Size(36, 36) 
                         }}
                     />
                     <MyGMarkers locations={this.props.friends} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} />

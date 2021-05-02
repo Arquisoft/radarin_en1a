@@ -55,6 +55,12 @@
   text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
 }
 
+.logoSubtitle
+{
+  font-size: small;
+
+}
+
 .popup-img{
   max-width: 280px;
   max-height: 120px;
@@ -62,7 +68,7 @@
 
 #friends th, .friends-title,
 #locations th {
-  padding-top: 1%;
+  padding-top: 5%;
   padding-bottom: 1%;
   text-align: center;
   background-color: none ;
@@ -75,6 +81,11 @@
   padding-bottom: 1%;
   text-align: right;
   background-color: rgba(200, 200, 200, 0.2) ;
+}
+
+.logoImg
+{
+  height: 5vh;
 }
 
 .friends-title{
@@ -149,7 +160,7 @@
 #newLocationText{
   width: 60%;
   padding: 1%;
-  margin: 10% 1%;
+  margin: 2% 1%;
   display: inline-block;
   border: none;
   border-radius: 5px;
@@ -193,7 +204,7 @@
   right: 0;
   width: 30%;
   min-width: 400px;
-  margin-top: 2vh;
+  margin-top: 80px;
   margin-right: 1vw;
   color: white;
   background-color: transparent;
