@@ -32,13 +32,12 @@ class SideMenu extends React.Component {
 
     render() {
         return <div id="sidemenu" data-testid="sidemenu">
-            <img className = "logoImg" src="./logo_big.png"/>
+            <img className = "logoImg" src="./logo_big.png" alt="Logo" />
+            <h3 className="logoSubtitle">Lets meet!</h3>
             <LoggedOut>
                 <LoginButton className="button-Login" popup="./popup.html" />
             </LoggedOut>
-
             <LoggedIn>
-
                 <InputLocation addNewLocation={(name) => this.props.handleNewLocation(name)} /><hr />
                 <LocationListDisplay locations={this.props.myLocations} deleteLocation={(location) => this.props.handleDeleteLocation(location)} /><hr />
                 <FriendList data-testid="friendList" friends={this.props.friends} handlePermission={(friend) => this.props.solid.handlePermission(friend)}></FriendList><hr />

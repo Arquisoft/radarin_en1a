@@ -298,7 +298,6 @@ class App extends React.Component {
             this.state.mapType === 'gmap' && window.google !== undefined ?
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                 myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
-                deleteLocation={(location) => this.handleDeleteLocation(location)} zoom={this.state.zoom} />
               : this.state.mapType === 'lmap' ?
               
               <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
