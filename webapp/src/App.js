@@ -207,7 +207,7 @@ class App extends React.Component {
     let self = this;
     setInterval(() => {
       self.reloadRing(1);
-      //self.getLocation();
+      self.getLocation();
     }, 1000); // 1 second
     setInterval(() => {
       self.reloadRing(2);
