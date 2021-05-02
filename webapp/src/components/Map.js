@@ -81,4 +81,66 @@ class MyMap extends React.Component {
     }
 }
 
+// Another code refactoring thing done by Fran, one Saturday at 2 AM.
+class MyMarkers extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            selected: null
+        }
+    }
+
+    /**
+     * Shows distance between user current location and a target location
+     * @param {number} lat2 latitude of target location
+     * @param {number} lng2 longitude of target location
+     * @returns {number} distance to target location 
+     */
+    distanceBetweenCoordinates(lat2, lng2) {
+        const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+            new window.google.maps.LatLng({ lat: this.props.lat, lng: this.props.lng }),
+            new window.google.maps.LatLng({ lat: lat2, lng: lng2 }));
+        return distance;
+    }
+
+    render() {
+        var self = this;
+        return this.props.friends.map((friend) => {
+            if (self.distanceBetweenCoordinates(parseFloat(friend.lat), parseFloat(friend.lng)) < parseFloat(self.props.range)) {
+                return (
+                    <div>
+                        <Marker
+                            key={friend.pod}
+                            position={{
+                                lat: parseFloat(friend.lat),
+                                lng: parseFloat(friend.lng)
+                            }}
+                            icon={{ // If user has a profile image we select it, otherwise we user a default one
+                                url: friend.photo === undefined ? "/user.png" : friend.photo,
+                                scaledSize:new window.google.maps.Size(20, 20) 
+                            }}
+                            onClick={() => self.setState({ selected: friend })}
+                        />
+                        {
+                            this.state.selected === friend ?
+                                <InfoWindow position={{ lat: parseFloat(friend.lat), lng: parseFloat(friend.lng) }}
+                                    onCloseClick={() => self.setState({ selected: null })} >
+                                    <div>
+                                        {friend.name}
+                                    </div>
+                                </InfoWindow>
+                                : null
+                        }
+                    </div>
+                );
+            }
+            return null;
+        });
+    }
+
+}
+
 export default MyMap;
+
+export { MyMarkers }

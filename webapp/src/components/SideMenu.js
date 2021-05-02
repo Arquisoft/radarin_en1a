@@ -35,7 +35,7 @@ class SideMenu extends React.Component {
             <img className = "logoImg" src="./logo_big.png" alt="Logo" />
             <h3 className="logoSubtitle">Lets meet!</h3>
             <LoggedOut>
-                <LoginButton className="button-Login" popup="./popup.html" />
+                <LoginButton data-testid="button-Login" className="button-Login" popup="./popup.html" />
             </LoggedOut>
             <LoggedIn>
                 <InputLocation addNewLocation={(name) => this.props.handleNewLocation(name)} /><hr />
@@ -45,7 +45,7 @@ class SideMenu extends React.Component {
                 <LogoutButton className="button-Logout" />
             </LoggedIn>
 
-            <button id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
+            <button data-testid="ShowMenu" id="ShowMenu" onClick={() => this.displayMenu()}><img src="./oMenu.png" alt="_" /></button>
         </div>
     }
 }
