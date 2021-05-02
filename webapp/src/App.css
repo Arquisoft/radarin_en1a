@@ -77,6 +77,11 @@
   background-color: rgba(200, 200, 200, 0.2) ;
 }
 
+.logoImg
+{
+  width: 15vw;
+}
+
 .friends-title{
   font-size:x-large;
 }
