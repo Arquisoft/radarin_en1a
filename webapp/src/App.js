@@ -23,7 +23,7 @@ class App extends React.Component {
       currentLng: null,
       friends: [],
       myPhoto: "./user.png",
-      myLocations: [],// Locations from solid pod and manually added
+      myLocations: [], // Locations from solid pod and manually added
       mapType: 'gmap',
       range: 6000,
       zoom: 13

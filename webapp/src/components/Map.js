@@ -138,4 +138,7 @@ class MyMarkers extends React.Component {
     }
 
 }
+
 export default MyMap;
+
+export { MyMarkers }
