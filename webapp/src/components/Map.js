@@ -39,6 +39,12 @@ class MyMap extends React.Component {
                     window.google.maps.MapTypeId.SATELLITE, window.google.maps.MapTypeId.TERRAIN]
                 }
             }
+        } else {
+            this.options = {
+                styles: mapsStyles,
+                zoomControl: true,
+                mapTypeControl: true
+            }
         }
     }
 
@@ -60,7 +66,7 @@ class MyMap extends React.Component {
                         position={{ lat: this.props.lat, lng: this.props.lng, }}
                         icon={{
                             url: this.props.myIcon,
-                            scaledSize: window.google !== undefined ? new window.google.maps.Size(36, 36) : null
+                            scaledSize: new window.google.maps.Size(36, 36) 
                         }}
                     />
                     <MyMarkers friends={this.props.friends} setSelected={this.setSelected} lat={this.props.lat} lng={this.props.lng} range={this.props.range} />
@@ -110,7 +116,7 @@ class MyMarkers extends React.Component {
                             }}
                             icon={{ // If user has a profile image we select it, otherwise we user a default one
                                 url: friend.photo === undefined ? "/user.png" : friend.photo,
-                                scaledSize: new window.google.maps.Size(20, 20)
+                                scaledSize:new window.google.maps.Size(20, 20) 
                             }}
                             onClick={() => self.setState({ selected: friend })}
                         />
