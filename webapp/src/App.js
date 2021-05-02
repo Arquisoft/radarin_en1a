@@ -29,8 +29,7 @@ class App extends React.Component {
       zoom: 13
     };
     this.getLocation();
-    this.loadFriendsLocations();
-    solid.loadStoredLocationFromSolid();
+    this.loadLocations();
   }
 
   // Obtains the localization with the navigator
@@ -98,9 +97,20 @@ class App extends React.Component {
   // Method that loads the friends location to 
   // show them in the map later
   // TODO: Cambiar el nombre de esto
-  async loadFriendsLocations() {
+  async loadLocations() {
+
+    // First, we load and store the stored locations:
+    let myLocations = await solid.loadStoredLocationFromSolid()
+    if(myLocations === undefined){
+      myLocations = [];
+    }
+    this.setState({ myLocations });
+    
+    // Then we do the same with the friends locations and data:
     var friends = await solid.loadFriendsFromSolid();
     this.setState({ friends: friends });
+
+    // Finally, we get our own profile pic, and store it:
     var photo = await solid.getMyPhoto();
     this.setState({ myPhoto: photo });
     //Reloads the first one to ask for every friend's location
@@ -197,7 +207,7 @@ class App extends React.Component {
     let self = this;
     setInterval(() => {
       self.reloadRing(1);
-      //self.getLocation();
+      self.getLocation();
     }, 1000); // 1 second
     setInterval(() => {
       self.reloadRing(2);
@@ -207,10 +217,15 @@ class App extends React.Component {
     }, 60000); // 1 minute
     //this.reloadRing()
   }
-
+  reloadAllRings(){
+    this.reloadRing(1);
+    this.reloadRing(2);
+    this.reloadRing(3);
+  }
   // Handles the change of the range slider
   handRangeChange(event) {
     this.setState({ range: event.target.value })
+    this.reloadAllRings();
   }
 
   notifyNewFriendEntered(name) {
@@ -247,6 +262,7 @@ class App extends React.Component {
     if (this.state.mapType === 'gmap') {
       this.setState({ mapType: 'lmap' });
       document.getElementById('ShowMenu').style.marginTop = "10vh";
+      console.log(this.state.myLocations)
     }
     else {
       this.setState({ mapType: 'gmap' });
@@ -262,13 +278,14 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        {google ? null : <LoadScript
+        {
+          google ? null : <LoadScript
           id="script-loader"
           googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-          libraries={libraries}> </LoadScript>}
-
+          libraries={libraries}> </LoadScript>
+        }
         <SideMenu handleNewLocation = {(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations} 
-        solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation = {(location) => this.handleDeleteLocation(location)}/>
+        solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation = {(location) => this.handleDeleteLocation(location)}/>      
         {/* System notification componenet */}
         <ReactNotification />
 
@@ -279,16 +296,13 @@ class App extends React.Component {
 
           this.state.currentLat && this.state.currentLng ?
             this.state.mapType === 'gmap' && window.google !== undefined ?
-
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                 myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
-
               : this.state.mapType === 'lmap' ?
-
-                <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
-
-                : <div />
+              
+              <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
+              : <div />
             : (<div className="loader"></div>)
         }
       </div >

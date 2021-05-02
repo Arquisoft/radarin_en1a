@@ -1,9 +1,9 @@
 import React from "react";
 
 import { LoggedIn, LoginButton, LogoutButton, LoggedOut } from '@solid/react';
-import LocationListDisplay from "./LocationList";
-import InputLocation from "./InputLocation";
-import FriendList from './FriendList';
+import LocationListDisplay from "./LocationListDisplay.js";
+import InputLocation from "./InputLocation.js";
+import FriendList from './FriendList.js';
 
 class SideMenu extends React.Component {
 
@@ -31,17 +31,16 @@ class SideMenu extends React.Component {
     }
 
     render() {
-        return <div id="sidemenu">
-
+        return <div id="sidemenu" data-testid="sidemenu">
+            <img className = "logoImg" src="./logo_big.png" alt="Logo" />
+            <h3 className="logoSubtitle">Lets meet!</h3>
             <LoggedOut>
                 <LoginButton className="button-Login" popup="./popup.html" />
             </LoggedOut>
-
             <LoggedIn>
-
                 <InputLocation addNewLocation={(name) => this.props.handleNewLocation(name)} /><hr />
                 <LocationListDisplay locations={this.props.myLocations} deleteLocation={(location) => this.props.handleDeleteLocation(location)} /><hr />
-                <FriendList friends={this.props.friends} handlePermission={(friend) => this.props.solid.handlePermission(friend)}></FriendList><hr />
+                <FriendList data-testid="friendList" friends={this.props.friends} handlePermission={(friend) => this.props.solid.handlePermission(friend)}></FriendList><hr />
                 <button onClick={() => this.props.changeMapType()} className="button-ChangeMap">Change Map</button><hr />
                 <LogoutButton className="button-Logout" />
             </LoggedIn>
