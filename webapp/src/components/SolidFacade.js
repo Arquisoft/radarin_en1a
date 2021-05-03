@@ -57,7 +57,7 @@ class SolidFacade {
             else
                 return undefined;
         });
-        if (radar === "undefined")
+        if (radar === "undefined" ||radar === undefined || radar === "")
             return [];
         var locations = JSON.parse(radar);
         if(locations === undefined){
