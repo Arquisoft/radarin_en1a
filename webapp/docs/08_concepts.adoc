@@ -16,26 +16,27 @@ Here we have the different type of concepts in our case and also a brief explana
 === _User Experience concepts_
 This application is very simple on the view so we expect the user experience to be fast, simple and efficient. First, we need the user to be logged in. He can do this by clicking on the side menu and then on the log in button. After he logs in, he can see in the map his current location. On the side menu it can be seen the list of saved places and the list of friends. 
 
-Saved locations interaction: it is a simple textbox (to add the name to the location) with an add button. The user can put a name and click the add button and instantly see how the saved location is added on the list with a delete button.
+Saved locations interaction: it is a simple textbox (to add the name of the location) with an add button. The user can put a name and click the add button and instantly see how the saved location is added on the list with a delete button.
 
-List of friends interaction: the friends of the user are shown in a simple list. Each user has a button to allow the user to share his location with them. Also, each friend name has a link to their pod.
+List of friends interaction: the friends of the user are shown in a simple list. Each user has a button to allow the user to share his location with them. Also, each friend name has a link to their pod. The user can know if a friend is sharing his location with they if the friend's name is green. If it is grey, it means that either that friend isn't using radarin or that they are not sharing their location with the user.
 
 === _Safety and security concepts_
 We think that our application is very secure and safe. 
-First, we have a control of the users carried on by Solid, a trusted bussines which provide the pods. Then the attack to accounts or fradulent log ins are covered.
+First, we have a control of the users carried on by Solid, a trusted bussines which provide the pods. Then, brute force attacks or fraudulent log ins are covered. Also, as the application isn't using a database, vulnerabilities like SQL Injection, NoSQL attacks or any other type of compromises regarding the database won't be applicable here. Because of that an attacker won't ever be able to enumerate the users.
 
 Secondly, the safety on our application. We think its also very high because the user current location is only shared to his friends if and only if he has this friend added on solid and allows the sharing on the app. Therefore, we have a double gate security, the current location can be only shared to friends, and then the user can even share it to the friends he likes.
 
 === _Architecture and design patterns_
 After our course on design patterns and our experience on programming we tried to have a low coupling application. To archieve this, we applied several things:
-    - Modularity: the application is composed of several components that together make the app work. Changes on an individual component mostly don't affect other parts of the system.
-    - Facade design pattern: when coding, we realised that all the communication could be gathered in a Facade class. Then we created the SolidFacade.js class that interacts with Solid (loading friends and locations, saving locations, etc.).
+    
+    * Modularity: the application is composed of several components that together make the app work. Changes on an individual component mostly don't affect other parts of the system.
+    * Facade design pattern: when coding, we realised that all the communication could be gathered in a Facade class. Then we created the SolidFacade.js class that interacts with Solid (loading friends and locations, saving locations, etc.).
 
 === _“Under-the-hood” concepts_
-All the data of the user is stored in Solid and used only on the application. One flaw is the use of google maps because of the google policies with information. However the user can choose Leaflet API to have a free open source tool that does not take the information to make credit with it.
+All the data of the user is stored in Solid, and the application doesn't have a real backend. One flaw is the use of Google Maps, because of the Google privacy policies. However, the user can choose to use Leaflet to have a free open source tool that does not take the information to make credit with it.
 
 === _Development concepts_
-We have learnt several new concepts on this proyect: 
+We have learnt several new concepts on this project: 
 
 * Communication concepts
 * Division of work concepts
@@ -49,10 +50,10 @@ We have learnt several new concepts on this proyect:
 Among other small facts. 
 
 === _Operational concepts_
-As I explained before, this app is very brief (but not unuseful) in this first version so the user only have key options. We think that this simplicity is optimal for the app because we see it like a tool more than an entertaining or other type of app. We focused on the connection between friends, the distance between them, and the locations that the user can save. 
+As explained before, this application is very simple (but not unuseful) in this first version so the user only have key options. This simplicity is optimal because it is more of tool than an entertainment application. The focus is on the connection between friends, the distance between them, and the locations that the user can save. 
 
-This functionalities are the core of our app and there are several operations that allow working with them: 
+This functionalities are the core of our application, and there are several operations that allow working with them: 
 
-- Circle of friends radius: the user can increase or decrease the radius where he can see his friends. The user can decide how far can 
-- List of friends operations: the user can start and stop sharing his current location to any of his friends in any moment.
-- List of saved locations: the user can simply add a location with the textbox and the add button or remove any saved location with the remove button next to each location.
+- Circle of friends radius: the user can increase or decrease the radius where they can see their friends.
+- List of friends operations: the user can start and stop sharing their current location to any of their friends in any moment.
+- List of saved locations: the user can simply add a location with the textbox and the add button, or remove any saved location with the remove button next to each location.

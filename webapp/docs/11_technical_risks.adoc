@@ -8,7 +8,7 @@ We have identified the risk or technical debts we might encounter during the pro
 | Risk | Explanation | Solution 
 
 | Lack of knowledge of SOLID
-| It's a new technology, and we have no idea how to work with it. The documentation is lacklester and there are not many examples. Some of the 
+| It's a new technology, and we have no idea how to work with it. The documentation is lacklester and there are not many examples. Some of the libraries are in develepment, so they are unstable and buggy.
 | We must do our own research, ask other students and other developers. We need to have a good understanding of the technology first.
 
 | Lack of knowledge of React
@@ -20,8 +20,12 @@ We have identified the risk or technical debts we might encounter during the pro
 | All we can do is optimize our working time.
 
 | Working on teams
-| Working with other people is not always easy, since each one does things its way.
+| Working with other people is not always easy, since each one does things their way.
 | We have to do regular meetings and try to comment our code, so everyone can understand it and work with it.
+
+| Decentralized application
+| Working without a database makes development a lot harder, because we have to optimize the network usage so the application can run smoothly.
+| We have to be concerned about the load tests and try to optimize the algorithms so they do the least network petitions possible.
 
 |=========================================================
 
@@ -32,5 +36,8 @@ We have identified the risk or technical debts we might encounter during the pro
 
 | Host failures
 | In case the pod host fails (e.g. Inrupt went down for some minutes while we were testing) the application will be useless. Due to our pod-only design decision this cannot be solved.
+
+| Client failures
+| In case the user has a weak Internet connection, the application will run very slow. This is an issue any web application has.
 
 |=========================================================  

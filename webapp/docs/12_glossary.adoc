@@ -19,4 +19,6 @@ Here we have a table with some domain and technical terms that the stakeholders 
 
 |Admin |A super user in charge of managing some parts of the app.
 
+|Vulnerability |An application's bug or missconfiguration that can be used to compromise it.
+
 |===

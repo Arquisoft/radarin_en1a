@@ -22,9 +22,9 @@ Here we have a table with our quality goals, the scenarios and the priorities:
 |===
 |Quality goal|Scenario|Priority|Difficulty
 | Usability | The application should easily be usen by non-technical people. In case the user wants to use specific options they should be quickly available. | High | Medium
-| Confideniality |  The information management is decentralizad. The user has a complete control over the data they can share with the application. Thanks to the pods it has an easier difficulty | High | Medium
+| Confidentiality |  The information management is decentralizad. The user has a complete control over the data they can share with the application. Thanks to the pods it has an easier difficulty | High | High
 | Security | The application should not have vulnerabilities so we can assure the users that their data or accounts are safe. | High | Medium
-| Originality |  Having a different and innovative application can make our users feel good using our application and maybe even invite their friends. | Low | High
-| Testability |  The application should be designed to be tested, so the implementation flaws can be found. | Medium | Medium
-| Modifybility | The application should easily modifiable or new options should be easyly added. We should use programming patrons and design. | Medium | High
+| Originality |  Having a different and innovative application can make our users feel good using our application and maybe even invite their friends. | Medium | High
+| Testability |  The application should be designed to be tested, so the implementation flaws can be found. | Medium | High
+| Modifiability | The application should easily modifiable or new options should be easyly added. We should use programming patrons and design. | Low | High
 |===

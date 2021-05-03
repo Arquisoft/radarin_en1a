@@ -4,7 +4,7 @@
 
 Our system: Radarin, is aimed to ease the meeting and communication with friends using the new technologies, while respecting user's privacy and confidential data as
 close as possible. This is possible due to the decentralized nature of the system, being integrated with SOLID where users will be able to manage their PODs so all
-their personal data will be under their control. All the data used on the application is stored in the users' pods, so they can be unconcerned about they private data usage.
+their personal data will be under their control. All the data used on the application is stored in the users' pods, so they can be unconcerned about their private data usage.
 
 Radarin is designed to use users locations and timestamps , so they can get notified of any close friend around them at a given time. In addition, users can save their own locations manually and store them into the pod.
 

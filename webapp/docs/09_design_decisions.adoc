@@ -1,20 +1,20 @@
 [[section-design-decisions]]
 == Design Decisions
 
-In this section, we document the decions made that affect the application. However, they are not simply listed, they are explained with their context, status adn consequences.
+In this section, we document the decions made that affect the application. However, they are not simply listed, they are explained with their context, status and consequences.
 Here we have the decisions made:
 
 === Usage of google maps API
 
 Context:: 
 
-Obviously, for this app we need a map. So at first thought, like everybody nowadays, google maps come up. 
+Obviously, for this app we need a map. So at first thought, like everybody nowadays, Google Maps comes up. 
 
 Decision::
 
-After some investigation and some discussion, we decided that we were going to use the google maps API despite the fact that the free or demo part is limited. We thought that for a prototype like this application, we get a very useful API without the need of any payment.
+After some investigation and some discussion, we decided that we were going to use the Google Maps API despite the fact that the free or demo part is limited. We thought that for a prototype like this application, we get a very useful API without the need of any payment.
 
-(This was added later) In the end, we provide the option between google maps API and Leaflet API.
+(This was added later) In the end, we provide the option of choosing between Google Maps API and Leaflet API.
 
 Status::
 
@@ -22,7 +22,7 @@ Accepted.
 
 Consequences::
 
-The usage of google maps API has brought us several useful functions, for example the calculation of the distance between two points. We take for granted that we don't surpass the limit of the free version by now.
+The usage of Google Maps API has brought us several useful functions, like Street view and the different map modes. We take for granted that we won't surpass the limit of the free version by now.
 
 === Usage of built in SOLID friends 
 
@@ -86,7 +86,7 @@ The app specification an admin was required. This admin could manage some decisi
 
 Decision::
 
-After discussing this issue and considering the implementation of our app, we decided that it was completely useless to have an admin role user. All the controls that users need are provided and each user can only control their current location sharing and the list of friends. An admin here could not do anything special.
+After discussing this issue and considering the implementation of our app, we decided that it was completely useless to have an admin role user. All the controls that users need are provided and each user can only control their current location sharing and the list of friends. An admin here could not do anything special without breaking the main principles of the application.
 
 Status::
 
@@ -112,5 +112,5 @@ Accepted.
 
 Consequences::
 
-A very elegant notification system which informs the user correctly. A small flaw is that if we want to change the notification system we would need to change the API or work with a new one from scratch.
+We found a notification react component that was pretty useful so we did not need to implement our own solution.
 

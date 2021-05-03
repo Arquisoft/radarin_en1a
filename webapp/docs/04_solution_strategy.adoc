@@ -11,6 +11,10 @@
         Docker and Heroku will be user for application deployment.
         Jest::
         Tool we use for testing the components and the renderization.
+        Puppeteer::
+        Tool used for the end to end tests.
+        Gatling::
+        Tool used for the load tests.
 
 === Top-level decomposition of the system.
 	MVC::
@@ -18,22 +22,18 @@
 
 === Key quality goals
         Privacy::
-        One of the points in which we want to focus is user privacy. With the use of SOLID pods, we are able to sotre of minimal personal information from the user.
-                This increases their privacy and reduces the number of ways a user can can be attacked. In this aspect, we also want to make sure we don't compromise the information
-                that the users give us by trying to reduce the risk of a security break.
-
+        One of the points in which we want to focus is user privacy. With the use of SOLID pods, we are able to store no information from the user.
+                This increases their privacy and reduces the number of ways a user can can be attacked. In this aspect, we completely avoid managing any kind of information, thus making a data breach nearly impossible: no database = no possible leaks. The only ways of breaking in we've figured out are two: either a user suffers a man-in-the-middle attack, which would only affect this particular user and their friends, not the application as a whole, or our github accounts are hacked, so a potential attacker could upload malware to the repository.
         Software quality::
         Another important point we want to take in mind is the development of quality software. We want our project to follow a minimum number of conventions, have a correct package structure and 
                  make use of well known arquitectural and design patterns when possible, aside of having an addecuate number of comments and documentation to explain the functionalities of the system. 
 
         Proper system operation::
         To make sure the application accomplishes a minimum of quality goals, we want to make sure a proper testing methodology is followed. One of the main problems we want to avoid is simple 
-                bugs that evolve into more complex ones. We belive the best way around this is to find errors as soon as possible. To accomplish these with the maximum level of coordination among the
+                bugs that evolve into more complex ones. We believe the best way around this is to find errors as soon as possible. To accomplish these with the maximum level of coordination among the
                 team members, small tests for specific parts of the application will be ran before implementing new functionalities to the full application. After making sure everyting works as expected,
                 it will be merged with the main project, where it will be tested again. The types of tests to be ran are unit tests, acceptance tests and load tests.
-        Once the application is deployed, we want to prevent it from crashing in an unexpected way. That's why we want to implement a monitoring system for administrators, where the state of 
-                fundamental parts of the application such as the DB can be checked and managed.
-
+                
 === Organizational decisions
 	Lenguage::
         Comments, code and issues will be in English for internationalization purposes.

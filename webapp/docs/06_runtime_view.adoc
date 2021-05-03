@@ -20,23 +20,30 @@ _Bob : Check's Alice location -> Alice's pod : Sends the current location -> Rad
 
 === Checking for nearby friends:
 
-* _Alice : checks for nearby friends -> Radarin: Checks for all friends that are nearby (if their distance from Alice is less or equal than a given range) -> update map with those locations_
+* _Alice : checks for nearby friends -> Radarin: Checks for all friends that are nearby (if their distance from Alice is less or equal than a given range) -> update map with those locations -> Display notification_
 
-=== Update all friend's locations:
+=== Update friend's locations:
 
-* _Alice : Click the "Refresh" button -> Radarin: Asks all Alice's friend's pods for their location -> Display the returned locations_
+* _Radarin: Asks all Alice's friend's (who are in a determined distance) pods for their location -> Display the returned locations_
+* Note: This happens automatically. Deppending on the distance of the friend, it will be updated faster or slower.
 
 === Load saved locations:
 
-* _Alice : Clicks the "Load from solid" button -> Radarin: Requests Alice's pod for its saved locations list -> Display the list on the map_
+* _Radarin: Requests Alice's pod for its saved locations list -> Display the list on the map_
 
 === Remove a location from the saved locations:
 
-* _Alice : Loads her saved locations -> clicks on the "-" button next to the location to remove -> Radarin: Remove the location from the list._
+* _Alice : clicks on the "-" button next to the location to remove -> Radarin: Removes the location from the list. -> Removes the location from the map_
 
 === Add a location to the saved locations:
 
-* _Alice: Writes a location in the text area -> Clicks on the "+" button -> Radarin: Add the location to the list._
+* _Alice: Writes a location name in the text area -> Clicks on the "+" button -> Radarin: Adds the current location to the list._
 
 === Save the changes on the saved locations list:
-* _Alice: Makes changes to her locations list -> Clicks the "Save to solid" button -> Radarin: asks Alice's pod to override the saved locations list -> Alice's pod: Updates the location's list._
+* _Alice: Makes changes to her locations list -> Radarin: asks Alice's pod to override the saved locations list -> Alice's pod: Updates the location's list._
+
+=== Let a friend see where you are:
+* _Alice: clicks the "✓" button next to Bob's name in the friends' list -> Radarin: asks Alice's pod to override the read permissions of the file where the last location is stored -> Alice's pod: Updates the permissions._
+
+=== Revoke permissions to a friend to see where you are:
+* _Alice: clicks the "✖" button next to Bob's name in the friends' list -> Radarin: asks Alice's pod to override the read permissions of the file where the last location is stored -> Alice's pod: Updates the permissions._

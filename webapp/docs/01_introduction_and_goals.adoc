@@ -2,15 +2,17 @@
 == Introduction and Goals
 
 
-The goal of this proyect is to facilitate meetings between friends using new technologies. The application will use the localization of the phones to connect close friends.
+The goal of this project is to facilitate meetings between friends using new technologies. The application will use the geolocation of the devices to connect close friends.
 
 
 The technologies that will be used in this project will be:
 
 
-* The localization provided by the phone, if the users voluntarily allow it
+* The location provided by the device, if the users voluntarily allow it
 * The system will be compatible with the SOLID project.
-* The system only can store locations and timestamps which those locations happens, but it wont store other personal information.
+* All the user's data will be stored on the user's pod, who will be the owner of its own data.
+* The application won't have any control over the user's data.
+* The user will have control over who can see their location at any time.
 
 
 === Requirements Overview
@@ -19,11 +21,10 @@ The technologies that will be used in this project will be:
 Here we have the functional requirements that our application will provide:
 
 
-* Users will be able to visualize and maganage locations in the web application.
-* Admins will have options to manage users and monitor server status.
-* Users will be able to send their location to the server and get notified if friends are nearby.
-* Users' data will be stored in a decentralized way, from their personal pod.
-* The most part of users' information will be queried from the users' pod.
+* Users will be able to visualize and manage locations in the web application.
+* Users will be able to send their location to the pod and get notified if friends are nearby.
+* Users' data will be stored in a completely decentralized way, in their personal pod.
+* All the users' information will be queried from the users' pods.
 
 
 === Quality Goals
@@ -50,7 +51,7 @@ Our quality goals in this application are:
 |Role/Name|Expectations
 | Course teachers | The teachers expect a project delivery from the students which fullfills the requirements and is completely functional.
 | Users |  Users expect an easy to use application, a secure policy of data management and correct functionality.
-| Inrupt and Empathy |  They expect an interesting application which shows the kownledge of the students who worked on it.
+| Inrupt and Empathy |  They expect an interesting application which shows the knowledge of the students who worked on it.
 | Other students |  Other students expect a good example of an application which they can learn from or reuse parts.
 | The Team |  As students, we expect to learn new fields of the programming area and develop an optimal application with our work.
 |===
