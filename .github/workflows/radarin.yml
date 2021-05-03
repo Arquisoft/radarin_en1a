@@ -17,7 +17,6 @@ jobs:
         node-version: 12.14.1
     - run: npm ci
     - run: npm run build
-    - run: npm run docs
     - run: npm test
     - uses: codecov/codecov-action@v1
   e2e-tests:
@@ -29,6 +28,13 @@ jobs:
         node-version: 12.14.1
     - run: npm --prefix webapp install
     #- run: npm --prefix webapp run test:e2e
+  docs:
+    #Install software neccesary for generating the doc
+    - run: apt-get update && apt-get -y install ruby openjdk-8-jre
+    - run: gem install asciidoctor asciidoctor-diagram
+    - run: npm install shx --save-dev
+  #Generate the doc
+    - run: npm run docs
   deploy-webapp:
     needs: [e2e-tests]
     runs-on: ubuntu-latest
