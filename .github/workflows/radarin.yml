@@ -17,9 +17,13 @@ jobs:
         node-version: 12.14.1
     - run: npm ci
     - run: npm run build
-    - run: npm run docs
     - run: npm test
     - uses: codecov/codecov-action@v1
+
+    - run: gem install asciidoctor asciidoctor-diagram
+    - run: npm install shx --save-dev
+    - run: npm run docs
+
   e2e-tests:
     runs-on: ubuntu-latest
     steps:
