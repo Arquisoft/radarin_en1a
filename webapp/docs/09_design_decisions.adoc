@@ -14,6 +14,8 @@ Decision::
 
 After some investigation and some discussion, we decided that we were going to use the google maps API despite the fact that the free or demo part is limited. We thought that for a prototype like this application, we get a very useful API without the need of any payment.
 
+(This was added later) In the end, we provide the option between google maps API and Leaflet API.
+
 Status::
 
 Accepted.
@@ -63,6 +65,7 @@ SOLID principles are stronger in our application, since there is no kind of cent
 Context:: 
 
 Even if, as explained above, the average user of this app will not have too many friends, just in case we decided to create an optimization system to reduce the number of POD requests we send. The reasoning behind it is that you don't need to constantly request a location that you won't display since it is too far away. E.g: If your friend is in Madrid and you are in Oviedo with a range of 5km, it will take at least 1 hour for your friend to be close enough to be painted in the map. In this mean time we do not need to upload their location as frequently.
+
 Decision::
 
 The friends are divided in 3 different rings according to their distance to the user after the first time the whole list is traversed. From then on, each ring will be assigned a time interval after which it will be updated
@@ -74,3 +77,22 @@ Accepted.
 Consequences::
 
 Improvement in performance, which will be greater for users with lots of friends.
+
+=== Use of admin role
+
+Context:: 
+
+The app specification an admin was required. This admin could manage some decisions about the users. 
+
+Decision::
+
+After discussing this issue and considering the implementation of our app, we decided that it was completely useless to have an admin role user. All the controls that users need are provided and each user can only control their current location sharing and the list of friends. An admin here could not do anything special.
+
+Status::
+
+Accepted.
+
+Consequences::
+
+A cleaner app with complete authority over user information on each user.
+
