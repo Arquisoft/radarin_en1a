@@ -13,4 +13,10 @@ Here we have a table with some domain and technical terms that the stakeholders 
 
 |Solid  |A specification that lets people store their data securely in decentralized data stores called Pods
 
+|Database |A system used to store information. 
+
+|Interface |A  shared boundary across which two or more separate components of a computer system exchange information.
+
+|Admin |A super user in charge of managing some parts of the app.
+
 |===
