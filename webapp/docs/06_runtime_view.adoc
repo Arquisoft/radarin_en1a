@@ -38,5 +38,5 @@ _Bob : Check's Alice location -> Alice's pod : Sends the current location -> Rad
 
 * _Alice: Writes a location in the text area -> Clicks on the "+" button -> Radarin: Add the location to the list._
 
-== Save the changes on the saved locations list:
+=== Save the changes on the saved locations list:
 * _Alice: Makes changes to her locations list -> Clicks the "Save to solid" button -> Radarin: asks Alice's pod to override the saved locations list -> Alice's pod: Updates the location's list._

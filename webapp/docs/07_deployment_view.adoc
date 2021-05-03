@@ -1,6 +1,29 @@
 [[section-deployment-view]]
+== Deployment view
 
+To use this application there are two different but similar approaches the user can choose between. First, we will list the common points and then we will proceed to explain the differences between both approaches.
 
-== Deployment View
+|=== Common points
+|===
+| * The user can access the application from any device with a web browser, even though Chrome and Firefox are recommended, since both are the ones we used during development. Brave Browser, which is known to be strongly focused on security and privacy, is, so far, discouraged because even if its main principles are similar to the ones of our application, this browser is known to interfere with the location tracking. We look up to solve this issue in future version and make ourselves available in every modern browser. In mobile devices the situation is similar, and thus we recommend the Chrome application, which is the one we used for testing.
+| * Both location and pop up windows must be enabled for our application to work. The location is asked due to obvious reasons and the pop up windows are because of the login system. In future versions we might choose a different approach for the login or give an alternative.
+| * So far there is no mobile app, but we look forward to develop one in the future.
+| * As long as you have a SOLID pod, no register is needed, since we chose not to use a central database. This means anyone with a SOLID pod can easily use our application anytime in a quick, simple, straight-forward way.
+|===
 
-TO DO
+Regarding the application deployment, it is done in two ways. Via Heroku, where anyone can access through https://radarinen1awebapp.herokuapp.com or locally, where the users themselves can host the application easily.
+
+|=== Heroku hosting
+|===
+| This is the main and preferred option. Here the application is hosted by Heroku and can be accesed directly from any web browser. This alternative needs less resources, since you don't need to have a process running in your computer, and less technical skill.
+|===
+
+|=== Local hosting
+|===
+| Tech savvy users, or the most security-concerned ones can choose this option to fully controll every petition and connection the app does. To host it, the user can choose to directly run it using npm or to use a docker.
+|===
+
+|=== Motivation
+|===
+| This deployment structure is motivated by a strong belief in internet security and privacy. During development we always try to wear the users' shoes and give them as many possible options as we can for them to be and feel safe using our application. We have no interest in your data, nor think anyone should have, and that's why we chose to create an app that can even be completely hosted by yourself so you don't need to give our webpage permissions on your pod. This way you can be absolutely and completely sure there's no way we are obtaining ilegitimate profit from you
+|===
