@@ -6,13 +6,13 @@ import App from '../../App';
 import { LoadScript } from "@react-google-maps/api";
 
 it("Google maps render correcty", () => {
-    const div = document.createElement("div");
+  const div = document.createElement("div");
 
-    ReactDOM.render(<LoadScript
-        id="script-loader"
-        googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-        libraries={["places", "geometry"]}> </LoadScript>
-    ,div);
+  ReactDOM.render(<LoadScript
+    id="script-loader"
+    googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+    libraries={["places", "geometry"]}> </LoadScript>
+  ,div);
 /*
     function waitForCondition(conditionObj) {
         return new Promise(resolve => {
@@ -43,7 +43,7 @@ it("Google maps render correcty", () => {
 })
 
 it("Leaflet maps render correcty", () => {
-    const div = document.createElement("div");
+  const div = document.createElement("div");
 
-    ReactDOM.render(<LMap></LMap>, div);
+  ReactDOM.render(<LMap></LMap>, div);
 })
