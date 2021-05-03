@@ -57,8 +57,8 @@ class SolidFacade {
             else
                 return undefined;
         });
-        if (radar === undefined || radar === "" || radar === null)
-            return;
+        if (radar === "undefined")
+            return [];
         var locations = JSON.parse(radar);
         if(locations === undefined){
             locations = [];
@@ -75,6 +75,7 @@ class SolidFacade {
         // If the file does not exist, it is created
         let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
         let myJSON = JSON.stringify(myLocations);
+        console.log(myJSON);
         await fc.postFile(fileUrl, new Blob([myJSON]));
     }
 

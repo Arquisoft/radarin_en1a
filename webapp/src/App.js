@@ -88,10 +88,13 @@ class App extends React.Component {
   // Handles the deletion of a location and 
   // deletes the location from myLocations of the state
   handleDeleteLocation(location) {
-    const myLocations = this.state.myLocations.slice();
-    myLocations.splice(myLocations.indexOf(location), 1);
+    let myLocations = [];
+    this.state.myLocations.forEach((l) => {
+      if (l !== location)
+        myLocations.push(l);
+    });
     this.setState({ myLocations });
-    solid.saveStoredLocationToSolid();
+    solid.saveStoredLocationToSolid(myLocations);
   }
 
   // Method that loads the friends location to 
@@ -101,11 +104,11 @@ class App extends React.Component {
 
     // First, we load and store the stored locations:
     let myLocations = await solid.loadStoredLocationFromSolid()
-    if(myLocations === undefined){
+    if (myLocations === undefined) {
       myLocations = [];
     }
     this.setState({ myLocations });
-    
+
     // Then we do the same with the friends locations and data:
     var friends = await solid.loadFriendsFromSolid();
     this.setState({ friends: friends });
@@ -217,7 +220,7 @@ class App extends React.Component {
     }, 60000); // 1 minute
     //this.reloadRing()
   }
-  reloadAllRings(){
+  reloadAllRings() {
     this.reloadRing(1);
     this.reloadRing(2);
     this.reloadRing(3);
@@ -280,12 +283,12 @@ class App extends React.Component {
       <div className="App">
         {
           google ? null : <LoadScript
-          id="script-loader"
-          googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
-          libraries={libraries}> </LoadScript>
+            id="script-loader"
+            googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
+            libraries={libraries}> </LoadScript>
         }
-        <SideMenu handleNewLocation = {(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations} 
-        solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation = {(location) => this.handleDeleteLocation(location)}/>      
+        <SideMenu handleNewLocation={(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations}
+          solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation={(location) => this.handleDeleteLocation(location)} />
         {/* System notification componenet */}
         <ReactNotification />
 
@@ -299,10 +302,10 @@ class App extends React.Component {
               <GMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
                 myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
               : this.state.mapType === 'lmap' ?
-              
-              <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
-                myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
-              : <div />
+
+                <LMap lat={this.state.currentLat} lng={this.state.currentLng} friends={this.state.friends}
+                  myIcon={this.state.myPhoto} locations={this.state.myLocations} range={this.state.range} zoom={this.state.zoom} />
+                : <div />
             : (<div className="loader"></div>)
         }
       </div >
