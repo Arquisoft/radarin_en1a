@@ -30,10 +30,7 @@ We have identified the risk or technical debts we might encounter during the pro
 |=========================================================
 | Technical Debt | Explanation 
 
-| Corrupted Locations
-| Given the case that the last location in a user's pod gets corrupted, it will simply not show up on the map. However, it will be added to the list anyway. This should be fixed in later versions.
-
-| Pod permissions
-| The user has to give the application permission to use the pod, else it won't work. The user has to make 2 files by himself too. This must be changed later, to make those files automatically if they do not exisist.
+| Host failures
+| In case the pod host fails (e.g. Inrupt went down for some minutes while we were testing) the application will be useless. Due to our pod-only design decision this cannot be solved.
 
 |=========================================================  
