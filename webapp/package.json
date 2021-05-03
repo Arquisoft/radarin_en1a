@@ -17,6 +17,7 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "express": "^4.17.1",
+    "invoker": "^1.0.1",
     "leaflet": "^1.7.1",
     "msw": "^0.28.2",
     "react": "^17.0.1",
