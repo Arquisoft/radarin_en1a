@@ -96,3 +96,21 @@ Consequences::
 
 A cleaner app with complete authority over user information on each user.
 
+=== Use of a library for notifications
+
+Context:: 
+
+The app needed a notification system which informs the user of when a friend is nearby. This notifications should be shown when a friend of the user enters the ring or the ring's size changes. 
+
+Decision::
+
+Creating our own system would be way too complex and time demanding. Also we would have needed to work a lot with css.
+
+Status::
+
+Accepted.
+
+Consequences::
+
+A very elegant notification system which informs the user correctly. A small flaw is that if we want to change the notification system we would need to change the API or work with a new one from scratch.
+
