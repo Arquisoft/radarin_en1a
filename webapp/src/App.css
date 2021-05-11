@@ -315,6 +315,28 @@ h1 {
   animation: spin 2s linear infinite;
 }
 
+.loader-mini-green {
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border: 20px solid #ffffff; /* Light grey */
+  border-top: 20px solid #05ff58; 
+  border-radius: 60%;
+  width: 2rem;
+  height: 2rem;
+  animation: spin 2s linear infinite;
+}
+
+.loader-mini-red {
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border: 20px solid #ffffff; /* Light grey */
+  border-top: 20px solid #db0428; 
+  border-radius: 60%;
+  width: 2rem;
+  height: 2rem;
+  animation: spin 2s linear infinite;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
