@@ -92,6 +92,7 @@
   font-size:x-large;
 }
 
+
 .button-Login,.button-Logout,
 .button-add-location,
 .button-delete-location,
@@ -315,26 +316,23 @@ h1 {
   animation: spin 2s linear infinite;
 }
 
-.loader-mini-green {
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  border: 20px solid #ffffff; /* Light grey */
-  border-top: 20px solid #05ff58; 
-  border-radius: 60%;
-  width: 2rem;
-  height: 2rem;
+.loader-mini-green,
+.loader-mini-red{
+  margin: auto;
+  border: 10px solid #f3f3f3;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
 
-.loader-mini-red {
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  border: 20px solid #ffffff; /* Light grey */
-  border-top: 20px solid #db0428; 
-  border-radius: 60%;
-  width: 2rem;
-  height: 2rem;
-  animation: spin 2s linear infinite;
+.loader-mini-green{
+  border-right: 10px solid green;
+}
+
+.loader-mini-red{
+  border-bottom: 10px solid red;
 }
 
 @keyframes spin {
