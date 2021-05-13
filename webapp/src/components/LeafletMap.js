@@ -1,9 +1,12 @@
-
 import React from "react";
 import { Point, Icon } from 'leaflet'
 import { MapContainer, TileLayer, Marker, Circle } from 'react-leaflet'
 import MyLMarkers from "./MyLMarkers.js"
 import MyStoredLocationsLMarkers from "./MyStoredLocationsLMarkers.js"
+import MarkerClusterGroup from 'react-leaflet-markercluster';
+require('leaflet/dist/leaflet.css'); // inside .js file
+require('react-leaflet-markercluster/dist/styles.min.css'); // inside .js file
+
 /**
  * Constant storing resulting Map configuration and its behaviour
  */
@@ -31,13 +34,15 @@ class MyMap extends React.Component {
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Marker position={this.state.pos} icon={new Icon({
-                    iconUrl: this.state.myIcon === undefined ? "./user.png" : this.props.myIcon,
-                    iconSize: new Point(36, 36),
-                })}>
-                </Marker>
-                <MyLMarkers friends={this.props.friends} pos={this.state.pos} range={this.props.range} />
-                <MyStoredLocationsLMarkers locations={this.props.locations} pos={this.state.pos} range={this.props.range} />
+                <MarkerClusterGroup>
+                    <Marker position={this.state.pos} icon={new Icon({
+                        iconUrl: this.state.myIcon === undefined ? "./user.png" : this.props.myIcon,
+                        iconSize: new Point(36, 36),
+                    })}>
+                    </Marker>
+                    <MyLMarkers friends={this.props.friends} pos={this.state.pos} range={this.props.range} />
+                    <MyStoredLocationsLMarkers locations={this.props.locations} pos={this.state.pos} range={this.props.range} />
+                </MarkerClusterGroup>
                 <Circle center={this.state.pos} radius={this.props.range} />
 
             </MapContainer>

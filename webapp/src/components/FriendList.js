@@ -11,10 +11,10 @@ class FriendList extends React.Component {
                 friend.permissionsChanging = false;
                 clearInterval(timer);
             }
-        }, 500);
+        }, 400);
         setTimeout(function(){
             clearInterval(timer);
-        }, 10000);;
+        }, 8000);;
     }
 
     render() {
@@ -37,7 +37,6 @@ class FriendList extends React.Component {
                             <th key= {"friend-th2-" + friend.pod}><a id={"friend-" + friend.pod} target="_blank" rel="noreferrer" className="friendLink" href={friend.pod}>{friend.name}</a></th>
                             <th key= {"friend-th3-" + friend.pod}><button title="Enable/Disable friend's permissions" className="button-permission" id={"button-" + friend.pod} 
                                 onClick={() => this.changeFriendsPermission(friend)}> { friend.permission ? "✔️" : "❌" } </button></th> 
-                            {console.log(friend.permissionsChanging)} 
                             {friend.permissionsChanging ? (friend.permission ? <th><div className="loader-mini-red"></div></th> : <th><div className="loader-mini-green"></div></th>) : null} </tr>) 
                         })}
                         </tbody>
