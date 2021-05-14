@@ -57,10 +57,10 @@ class SolidFacade {
             else
                 return undefined;
         });
-        if (radar === "undefined" ||radar === undefined || radar === "")
+        if (radar === "undefined" || radar === undefined || radar === "")
             return [];
         var locations = JSON.parse(radar);
-        if(locations === undefined){
+        if (locations === undefined) {
             locations = [];
         }
         return locations;
@@ -75,8 +75,25 @@ class SolidFacade {
         // If the file does not exist, it is created
         let fileUrl = session.webId.replace("profile/card#me", "radarin/stored_locations.json");
         let myJSON = JSON.stringify(myLocations);
-        console.log(myJSON);
         await fc.postFile(fileUrl, new Blob([myJSON]));
+    }
+
+    /**
+    * Saves the location picture to solid
+    */
+    async saveLocationPicToSolid(name, blob) {
+        let session = await this.getCurrentSession();
+        // If the file does not exist, it is created
+        let fileUrl = session.webId.replace("profile/card#me", "radarin/" + name);
+        await fc.postFile(fileUrl, blob);
+        return fileUrl;
+    }
+
+   /**
+    * Deletes the location picture to solid
+    */
+    async deleteStoredPicture(name) {
+        await fc.deleteFile(name);
     }
 
     /**
@@ -162,7 +179,7 @@ class SolidFacade {
      * @param {Friend} friend object representing the solid friends
      * @returns coords the coordinates of the friend
      */
-    async getFriendLocation(friend){
+    async getFriendLocation(friend) {
         var url = friend.pod.split('profile')[0] // We have to do this because friends are saved with the full WebID (example.inrupt.net/profile/card#me)
         var location = await fetch(url + '/radarin/last.txt').then((x) => { //Fetch the file from the pod's storage
             if (x.status === 200)  // if the file exists, return the text
