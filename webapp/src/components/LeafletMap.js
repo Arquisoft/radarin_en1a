@@ -33,13 +33,15 @@ class MyMap extends React.Component {
             <MapContainer center={this.state.pos} zoom={this.props.zoom} scrollWheelZoom={true}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                    //url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
                 />
-                <MarkerClusterGroup>
-                    <Marker position={this.state.pos} icon={new Icon({
+                <Marker position={this.state.pos} icon={new Icon({
                         iconUrl: this.state.myIcon === undefined ? "./user.png" : this.props.myIcon,
                         iconSize: new Point(36, 36),
                     })}>
                     </Marker>
+                <MarkerClusterGroup>
                     <MyLMarkers friends={this.props.friends} pos={this.state.pos} range={this.props.range} />
                     <MyStoredLocationsLMarkers locations={this.props.locations} pos={this.state.pos} range={this.props.range} />
                 </MarkerClusterGroup>

@@ -77,7 +77,6 @@ class InputLocation extends React.Component {
       </div>
     );
   }
-
 }
 
 export default InputLocation
