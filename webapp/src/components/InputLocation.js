@@ -34,11 +34,6 @@ class InputLocation extends React.Component {
 
   // Auxiliary function to get the file as string
   async loadImage(file) {
-    // const fileReader = new FileReader();
-    // const self = this;
-    // fileReader.onloadend = () => callback(self, fileReader.result);
-    // fileReader.readAsArrayBuffer(file);
-
     var type;
 
     switch (file.type) {
@@ -60,54 +55,6 @@ class InputLocation extends React.Component {
     }
     else {
       this.props.warning();
-      document.getElementById("file-indicator").innerHTML = "❌";
-      document.getElementById("file-input").value = ""
-    }
-  }
-  // Auxiliary function to check if the supplied file is a image (JPEG, GIF, PNG)
-  async checkImage(self, e) {
-
-    var type;
-
-    /*
-    const headerBytes = new Uint8Array(e.slice(0, 4));
-    const header = headerBytes.map(x => x.toString(16)).join('');
-    // We represent the file header as a hex string
-    var hexArray = [];
-    for (var n = 0, l = header.length; n < l; n++) {
-      var hex = Number(header.charCodeAt(n)).toString(16);
-      hexArray.push(hex);
-    }
-    var hexString = hexArray.join("");
- 
-    // And check if it matches the image file headers
-    switch (hexString) {
-      case "89504e47":
-        type = ".png";
-        break;
-      case "47494638":
-        type = ".gif";
-        break;
-      case "ffd8ffe0":
-      case "ffd8ffe1":
-      case "ffd8ffe2":
-      case "ffd8ffe3":
-      case "ffd8ffe8":
-        type = ".jpeg";
-        break;
-      default:
-        type = false;
-        break;
-    }
-    */
-
-
-    if (type) {
-      self.setState({ photo: { blob: e, type: type } });
-      document.getElementById("file-indicator").innerHTML = "✔️";
-    }
-    else {
-      self.props.warning();
       document.getElementById("file-indicator").innerHTML = "❌";
       document.getElementById("file-input").value = ""
     }
