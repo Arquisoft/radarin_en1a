@@ -340,6 +340,33 @@ h1 {
   100% { transform: rotate(360deg); }
 }
 
+.file-select {          
+  position: relative;
+  display: inline-block;
+}
+ 
+.file-select::before {
+  background-color: #5678EF;
+  color: white;       
+  justify-content: center;
+  align-items: center;
+  padding: 1%;
+  border-radius: 3px;
+  position: absolute;
+  content: 'Optionally, upload a picture';                
+}
+ 
+.file-select input[type="file"] {
+  opacity: 0;
+  width: 200px;
+  height: 32px;
+  display: inline-block;            
+}
+
+#file-indicator{
+  display: inline;
+}
+
 body {
   color: inherit;
   background-color: #999b84;

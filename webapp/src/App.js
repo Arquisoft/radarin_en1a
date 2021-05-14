@@ -57,17 +57,23 @@ class App extends React.Component {
 
   // Handles the insertion of a new location checking that it is not empty
   // It also checks if the location is already in the list before inserting it
-  handleNewLocation(name) {
+  async handleNewLocation(name, photo) {
 
     if (name === "") {
       this.addNewNotification("Empty location name not allowed!", "Please, add an unique tag to save your location", "danger");
       return;
     }
+
+    var pic = "";
+    if (photo !== "") {
+      pic = await solid.saveLocationPicToSolid(name + photo.type, photo.blob);
+      }
+
     let locationJson = {
       lat: this.state.currentLat,
       lng: this.state.currentLng,
       name: name,
-      photo: "./logo192.png"
+      photo: pic
     };
 
     let repeated = false;
@@ -95,6 +101,7 @@ class App extends React.Component {
     });
     this.setState({ myLocations });
     solid.saveStoredLocationToSolid(myLocations);
+    solid.deleteStoredPicture(location.photo);
   }
 
   // Method that loads the friends location to 
@@ -287,7 +294,8 @@ class App extends React.Component {
             googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY}
             libraries={libraries}> </LoadScript>
         }
-        <SideMenu handleNewLocation={(name) => this.handleNewLocation(name)} myLocations={this.state.myLocations}
+        <SideMenu handleNewLocation={(name, photo) => this.handleNewLocation(name, photo)} myLocations={this.state.myLocations}
+          warning={() => this.addNewNotification("The file is not an image", "Please, check that the file you provided was a PNG, a JPG or a GIF", "danger")}
           solid={solid} friends={this.state.friends} changeMapType={(mapType) => this.changeMapType(mapType)} handleDeleteLocation={(location) => this.handleDeleteLocation(location)} />
         {/* System notification componenet */}
         <ReactNotification />
