@@ -11,10 +11,10 @@ class FriendList extends React.Component {
                 friend.permissionsChanging = false;
                 clearInterval(timer);
             }
-        }, 500);
+        }, 400);
         setTimeout(function(){
             clearInterval(timer);
-        }, 10000);;
+        }, 8000);;
     }
 
     render() {
